@@ -12,7 +12,7 @@
 
 % You don't need to change these.
 \course{CS181-S18}
-\assignment{Assignment \#1, v1.1}
+\assignment{Assignment \#1, v1.2}
 \duedate{11:59pm February 2, 2018}
 
 \usepackage[OT1]{fontenc}
@@ -174,11 +174,10 @@ Implement basis function regression with ordinary least squares for
 years vs. number of Republicans in the Senate. Some sample Python code
 is provided in \verb|linreg.py|, which implements linear regression.
 Plot the data and regression lines for the simple linear case, and for
-each of the following sets of basis functions:
-  % FDV: Check, are these good bases to use for this problem? Adjust number and lengthscales 
+each of the following sets of basis functions (only use (b) for years, skip for sunspots):
 \begin{itemize}
 	\item[(a)] $\phi_j(x) = x^j$ for $j=1, \ldots, 5$ 
-	\item[(b)] $\phi_j(x) = \exp{\frac{-(x-\mu_j)^2}{25}}$ for $\mu_j=1960, 1965, 1970, 1975, \ldots 2010$
+    \item[(b)] $\phi_j(x) = \exp{\frac{-(x-\mu_j)^2}{25}}$ for $\mu_j=1960, 1965, 1970, 1975, \ldots 2010$
 	\item[(c)] $\phi_j(x) = \cos(x / j)$ for $j=1, \ldots, 5$
 	\item[(d)] $\phi_j(x) = \cos(x / j)$ for $j=1, \ldots, 25$
 \end{itemize}
@@ -192,10 +191,6 @@ trends in the data.\\
 Republicans, using data only from before 1985.  What bases provide the
 best fit?  Given the quality of the fit, would you believe that the
 number of sunspots controls the number of Republicans in the senate?
-
-% FDV: Do we want to add something here about different bases becoming
-% more appropriate as we add more data?  E.g. do the whole problem for
-% 1960-1985, and then add the rest of the years?  
 
 \end{problem}
 
