@@ -20,7 +20,8 @@ def generate_data_points(K,n):
     # Define the polynomial based on the randomly selected parameters. 
     f = lambda x: np.array([a_mu[i]*x**i for i in range(K+1)]).sum(0)
     # Calculate the range of f over the sampled x_i, and set the noise variance
-    sigma = (f(x_i).max()-f(x_i).min())/10.
+    sigma = ((f(x_i).max()-f(x_i).min())/10.)
+    # or sigma = ((f(x_i).max()-f(x_i).min())/10.)**.5
     eta_i = np.random.normal(0,sigma,n)
     # Compute y_i corresponding to x_i
     y_i = f(x_i) + eta_i
