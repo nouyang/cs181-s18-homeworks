@@ -69,25 +69,18 @@ If there are $c$ classes, the set of possible outputs is $\{C_1 \ldots C_c \} = 
 Throughout the assignment we will assume
 that output $\boldy \in \{C_k\}_{k=1}^c$.\\
 
-The problem set has four problems: 
+The problem set has three problems: 
 \begin{itemize}
 \item In the first problem, you will explore the properties of Bayesian
 estimation methods for the Bernoulli model as well as the special
 case of Bayesian linear regression with a simple prior.
 %
-\item In the second problem, you will explore the properties of the softmax
-function, which is central to 
-the method of
-multiclass logistic regression. 
-%We will also see that the 
-%softmax plays a key role in  neural networks. 
-%
-\item  In the third
+\item  In the second
 problem, you will dive into  matrix algebra and the methods behind
 generative multiclass classifications. You will extend the discrete classifiers  
 that we see in  lecture to a Gaussian model.
 %
-\item Finally, in the fourth problem, you will implement 
+\item Finally, in the third problem, you will implement 
  logistic regression as well as a generative classifier 
 from close to scratch.
 %
@@ -144,7 +137,7 @@ This prior makes sense when you have little prior information and do not know mu
 
 \begin{enumerate}
 
-\item[5.] Using the method in lecture of taking logs, expanding and pushing terms
+\item[4.] Using the method in lecture of taking logs, expanding and pushing terms
 that don't depend on $\boldw$ into a constant, and finally collecting
 terms and completing the square, confirm that the posterior on
 weights after data $D$ is $\boldw\sim\mcN(\boldw|\boldm_n,\boldS_n)$,
