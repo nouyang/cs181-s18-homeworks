@@ -4,7 +4,7 @@
 
 % You don't need to change these.
 \course{CS181-S18}
-\assignment{Assignment \#2}
+\assignment{Assignment \#2 v1.0}
 \duedate{11:59pm Feb 23rd, 2018}
 
 \usepackage[OT1]{fontenc}
@@ -275,7 +275,7 @@ purchased and measured by Iain Murray:
 \begin{itemize}
 \item The three-class generalization of logistic regression, also
   known as softmax regression, for these data. You will do this by implementing
-  gradient descent on the negative log likelihood. You will need to find good values for the learning rate $\eta$ and regularization strength $\lambda$.
+  gradient descent on the negative log likelihood. You will need to find good values for the learning rate $\eta$ and regularization strength $\lambda$. See the third practice problem in the section 3 notes for information about multi-class logistic regression, softmax, and negative log likelihood.
 %
 \item A generative classifier with Gaussian
   class-conditional densities, as in Problem~3. In particular, make
@@ -288,7 +288,7 @@ purchased and measured by Iain Murray:
   points assigned to that class, without combining them as in the
   shared case.
 \end{itemize}
-You may use anything in  \texttt{numpy} or \texttt{scipy}, except for \texttt{scipy.optimize}. That being said, if you happen to find a function in \texttt{numpy} or \texttt{scipy} that seems like it is doing too much for you, run it by a staff member on Piazza. In general, linear algebra and random variable functions are fine. The controller file is \texttt{problem4.py}, in which you will specify hyperparameters. The actual implementations you will write will be in \texttt{LogisticRegression.py} and \texttt{GaussianGenerativeModel.py}.
+You may use anything in  \texttt{numpy} or \texttt{scipy}, except for \texttt{scipy.optimize}. That being said, if you happen to find a function in \texttt{numpy} or \texttt{scipy} that seems like it is doing too much for you, run it by a staff member on Piazza. In general, linear algebra and random variable functions are fine. The controller file is \texttt{problem3.py}, in which you will specify hyperparameters. The actual implementations you will write will be in \texttt{LogisticRegression.py} and \texttt{GaussianGenerativeModel.py}.
 
 
 You will be given class interfaces for \texttt{GaussianGenerativeModel} and \texttt{LogisticRegression} in the distribution code, 
