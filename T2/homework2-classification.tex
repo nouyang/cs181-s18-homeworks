@@ -24,6 +24,7 @@
 \usepackage[mmddyyyy,hhmmss]{datetime}
     
 
+
 \definecolor{verbgray}{gray}{0.9}
 \definecolor{answergreen}{rgb}{0.09,0.42,0.31}
 
@@ -40,6 +41,16 @@
     \color{answergreen}\bf}
   {%
   }
+
+
+
+%\newcommand{\FT}{\mathcal{F}}
+\newcommand{\bx}{\mathbf{x}} %%%% WARNING: may cause unexpected behavior
+\newcommand{\by}{\mathbf{y}} %%%% WARNING: may cause unexpected behavior
+
+% \newcommand{\*x}{\mathbf{x}} %%%% apparently not a thing in latex.
+
+
 
 \begin{document}
 
@@ -176,6 +187,8 @@ where
 (where $\pi_k$ is a parameter of the prior).
 %
 %that define the prior. 
+
+%5% xianzai
 Let  $p(\boldx|\boldy=C_k)$ denote
 the class-conditional density of features $\boldx$ (in this
 case for class $C_k$). Consider the data set $D = \{(\boldx_i,
@@ -249,9 +262,60 @@ $\boldX^{-\top} := (\boldX^{\top})^{-1}$
 
 
 
-
-
 \newpage
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Problem 2 - Worked 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{enumerate}
+    \item[1.] Write out the negated log-likelihood of the data set,
+    $-\ln p(D ; \bpi)$.
+
+        \begin{answer}
+
+           % $\FT test$
+        Let  $p(\bx|\by=C_k)$ 
+        $p(\by = C_k; \bpi) = \pi_k$ 
+        $p(\bx|\by=C_k)$ d
+
+        Let  $p(\bx|\by=C_k)$ denote
+        the class-conditional density of features $\bx$ (in this
+        case for class $C_k$). Consider the data set $D = \{(\bx_i,
+        \by_i)\}_{i=1}^n$ where as above $\by_i \in \{C_k\}_{k=1}^c$ is
+
+        \end{answer}
+
+    \item[2.]  Since the prior forms a distribution, it has the constraint that
+    $\sum_k\pi_k - 1 = 0$.  Using the hint on Lagrange multipliers below, give the
+    expression for the maximum-likelihood estimator for the prior
+    class-membership probabilities, i.e.  $\hat \pi_k.$
+    Make sure to write out the intermediary equation you need
+    to solve to obtain this estimator. Double-check your answer: the final
+    result should be very intuitive!
+
+  \item[3.] Derive the gradient of the negative log-likelihood with respect to vector $\bmu_k$.
+    Write the expression in matrix form as a function of the variables defined
+    throughout this exercise. Simplify as much as possible for full credit.
+
+  \item[4.] Derive the maximum-likelihood estimator for vector $\bmu_k$. Once
+    again, your final answer should seem intuitive.
+
+  \item[5.] Derive the gradient for the negative log-likelihood with respect to the
+    covariance matrix $\bSigma$ (i.e., looking to find an MLE for the covariance). 
+    :Since you are differentiating with respect to a \emph{matrix}, the resulting expression should be a matrix!
+%
+  \item[6.] Derive the maximum likelihood estimator of the covariance matrix.
+\end{enumerate}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Problem 3 - 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 \subsection*{3. Classifying Fruit [15pts]}
 You're tasked with  classifying three different kinds of fruit, based on their
