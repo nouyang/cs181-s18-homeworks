@@ -44,15 +44,20 @@
 
 
 
-%\newcommand{\FT}{\mathcal{F}}
-\newcommand{\bx}{\mathbf{x}} %%%% WARNING: may cause unexpected behavior
-\newcommand{\by}{\mathbf{y}} %%%% WARNING: may cause unexpected behavior
-
-% \newcommand{\*x}{\mathbf{x}} %%%% apparently not a thing in latex.
 
 
 
 \begin{document}
+%\newcommand{\FT}{\mathcal{F}}
+\newcommand{\bx}{\mathbf{x}} %%%% WARNING: may cause unexpected behavior
+\newcommand{\by}{\mathbf{y}} %%%% WARNING: may cause unexpected behavior
+%\newcommand{\bpi}{\mathbf{\pi}} %%%% Already built into latex 
+%\newcommand{\bmu}{\mathbf{\mu}} %%%% Already built into latex 
+\newcommand{\bvar}{\mathbf{\sigma}^2} %%%% WARNING: may cause unexpected behavior
+\newcommand{\bSig}{\mathbf{\Sigma}} %%%% WARNING: may cause unexpected behavior
+
+
+% \newcommand{\*x}{\mathbf{x}} %%%% apparently not a thing in latex.
 
 
 %%% Change the assignment details here:
@@ -269,22 +274,39 @@ $\boldX^{-\top} := (\boldX^{\top})^{-1}$
 % Problem 2 - Worked 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{enumerate}
-    \item[1.] Write out the negated log-likelihood of the data set,
-    $-\ln p(D ; \bpi)$.
+    \item[1.] Write out the negated log-likelihood of the data set
 
-        \begin{answer}
+    \begin{answer}
 
-           % $\FT test$
-        Let  $p(\bx|\by=C_k)$ 
-        $p(\by = C_k; \bpi) = \pi_k$ 
-        $p(\bx|\by=C_k)$ d
+       % $\FT test$
+        The likelihood of the dataset occuring is the product of the
+        probabilities of each datapoint occuring.
+        $$P(D;\bpi_k) = \prod_{i=1}^n P(x_i, y_i)$$
 
-        Let  $p(\bx|\by=C_k)$ denote
-        the class-conditional density of features $\bx$ (in this
-        case for class $C_k$). Consider the data set $D = \{(\bx_i,
-        \by_i)\}_{i=1}^n$ where as above $\by_i \in \{C_k\}_{k=1}^c$ is
+        By definition, the joint probability
+        $$P(\bx,\by) = p(\by) p(\bx|\by)$$
 
-        \end{answer}
+        %In english, our dataset likelihood equals
+        %our class probability (aka our class prior) times our class conditional.  %class prior = our belief about the shape of the distributions for each class 
+        %class conditional = our belief about how likely any datapoint is in any
+        %class
+        % e.g. how many cat datapoints are in our dataset 
+
+        We are given that:  \\
+        the class prior $p(\by=C_k; \bpi) = \pi_k$  \\
+        the class conditional $p(\bx|\by = C_k)$ 
+
+        Furthermore, we know that there are $c$ classes.  Thus we can write the likelihood 
+        %We need the likelihood of any particlar datapoint belonging to any particular dataset. 
+        $$P(D \bpi_k) = \prod_{i=1}^n \prod_{k=1}^c \pi_k p(x_i | y_i = C_k)$$
+       
+        To find the negative log likelihood 
+        \begin{align*}
+            - \ln p(D; \bpi) &= - \sum_{i=1}^n \sum_{k=1}^c \ln(\pi_k) + \ln p(x_i|y_i = C_k) \\ 
+                &= - \sum_{k=1}^c \ln(\pi_k) - \sum_{i=1}^n \sum_{k=1}^c \ln p(x_i|y_i = C_k) \\
+        \end{align*}
+
+    \end{answer}
 
     \item[2.]  Since the prior forms a distribution, it has the constraint that
     $\sum_k\pi_k - 1 = 0$.  Using the hint on Lagrange multipliers below, give the
@@ -307,7 +329,6 @@ $\boldX^{-\top} := (\boldX^{\top})^{-1}$
 %
   \item[6.] Derive the maximum likelihood estimator of the covariance matrix.
 \end{enumerate}
-
 
 
 
