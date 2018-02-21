@@ -22,8 +22,10 @@
 \usepackage{bm}
 
 \usepackage[mmddyyyy,hhmmss]{datetime}
+    
 
 \definecolor{verbgray}{gray}{0.9}
+\definecolor{answergreen}{rgb}{0.09,0.42,0.31}
 
 \lstnewenvironment{csv}{%
   \lstset{backgroundcolor=\color{verbgray},
@@ -31,6 +33,13 @@
   framerule=0pt,
   basicstyle=\ttfamily,
   columns=fullflexible}}{}
+
+
+
+\newenvironment{answer}{%
+    \color{answergreen}\bf}
+  {%
+  }
 
 \begin{document}
 
@@ -54,6 +63,12 @@ Discriminative Models).
 %, and, if MLE is troublesome, review 
 %the materal Section 1
 %and lecture 3.
+
+\textbf{\textcolor{answergreen}{asdf tes123123 sdfSDFSADFSFD asdsf }}
+\textcolor{answergreen}{123123}
+\begin{answer}
+    cats pompoms cats 
+\end{answer}
 
 As usual, we imagine that we have the input matrix $\boldX \in
 \reals^{n \times m}$ (or perhaps they have been mapped to some basis
