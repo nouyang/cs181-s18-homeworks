@@ -20,6 +20,7 @@
 \usepackage{listings}
 \usepackage{common}
 \usepackage{bm}
+\usepackage{relsize}
 
 \usepackage[mmddyyyy,hhmmss]{datetime}
     
@@ -55,6 +56,7 @@
 %\newcommand{\bmu}{\mathbf{\mu}} %%%% Already built into latex 
 \newcommand{\bvar}{\mathbf{\sigma}^2} %%%% WARNING: may cause unexpected behavior
 \newcommand{\bSig}{\mathbf{\Sigma}} %%%% WARNING: may cause unexpected behavior
+\newcommand{\lsum}{\mathlarger{\sum}} %%%% WARNING: may cause unexpected behavior
 
 
 % \newcommand{\*x}{\mathbf{x}} %%%% apparently not a thing in latex.
@@ -80,11 +82,6 @@ Discriminative Models).
 %the materal Section 1
 %and lecture 3.
 
-\textbf{\textcolor{answergreen}{asdf tes123123 sdfSDFSADFSFD asdsf }}
-\textcolor{answergreen}{123123}
-\begin{answer}
-    cats pompoms cats 
-\end{answer}
 
 As usual, we imagine that we have the input matrix $\boldX \in
 \reals^{n \times m}$ (or perhaps they have been mapped to some basis
@@ -278,7 +275,6 @@ $\boldX^{-\top} := (\boldX^{\top})^{-1}$
 
     \begin{answer}
 
-       % $\FT test$
         The likelihood of the dataset occuring is the product of the
         probabilities of each datapoint occuring.
         $$P(D;\bpi_k) = \prod_{i=1}^n P(x_i, y_i)$$
@@ -287,7 +283,8 @@ $\boldX^{-\top} := (\boldX^{\top})^{-1}$
         $$P(\bx,\by) = p(\by) p(\bx|\by)$$
 
         %In english, our dataset likelihood equals
-        %our class probability (aka our class prior) times our class conditional.  %class prior = our belief about the shape of the distributions for each class 
+        %our class probability (aka our class prior) times our class conditional.  
+        %class prior = our belief about the shape of the distributions for each class 
         %class conditional = our belief about how likely any datapoint is in any
         %class
         % e.g. how many cat datapoints are in our dataset 
@@ -298,22 +295,81 @@ $\boldX^{-\top} := (\boldX^{\top})^{-1}$
 
         Furthermore, we know that there are $c$ classes.  Thus we can write the likelihood 
         %We need the likelihood of any particlar datapoint belonging to any particular dataset. 
-        $$P(D \bpi_k) = \prod_{i=1}^n \prod_{k=1}^c \pi_k p(x_i | y_i = C_k)$$
+        $$p(D; \bpi) = \prod_{i=1}^n \prod_{k=1}^c \pi_k p(x_i | C_k)$$
        
         To find the negative log likelihood 
         \begin{align*}
-            - \ln p(D; \bpi) &= - \sum_{i=1}^n \sum_{k=1}^c \ln(\pi_k) + \ln p(x_i|y_i = C_k) \\ 
-                &= - \sum_{k=1}^c \ln(\pi_k) - \sum_{i=1}^n \sum_{k=1}^c \ln p(x_i|y_i = C_k) \\
+            - \ln p(D; \bpi) &= - \sum_{i=1}^n \sum_{k=1}^c \ln(\pi_k) + \ln p(x_i|C_k) \\ 
+                &= - n \sum_{k=1}^c \ln(\pi_k) - \sum_{i=1}^n \sum_{k=1}^c \ln p(x_i|C_k) \\
         \end{align*}
-
+    % FIN.
     \end{answer}
 
-    \item[2.]  Since the prior forms a distribution, it has the constraint that
-    $\sum_k\pi_k - 1 = 0$.  Using the hint on Lagrange multipliers below, give the
+    \item[2.]  Using the hint on Lagrange multipliers below, give the
     expression for the maximum-likelihood estimator for the prior
     class-membership probabilities, i.e.  $\hat \pi_k.$
+
+    \begin{answer}
+
+        To find the MLE for $\hat \pi_k$, we take the derivative of the
+        likelihood function with respect to $\pi_k$. 
+        
+        Note that the class conditional $p(x_i | C_k)$ does \textit{not} depend on
+        $\pi_k$, which is a parameter of a completely separate distribution (the
+        class prior), and so we may drop the class conditional term.
+
+        \begin{align*}
+            %%
+            \arg\max_{\bpi_k} 
+            -\ln L(D) 
+            &= \arg\max_{\bpi_k} 
+                - n \sum_{k=1}^c \ln(\pi_k) - \sum_{i=1}^n \sum_{k=1}^c \ln p(x_i|C_k) \\
+            &= \arg\max_{\bpi_k} - n \sum_{k=1}^c \ln(\pi_k) 
+        \end{align*}
+
+        To find the MLE for $\hat \pi_k$, aka the $\arg\max{\bpi_k}$ of the
+        likelihood function, we set the derivative (with respect to
+        $\bpi_k$) equal to zero and solve for $\bpi_k$, $\pi_k$. However, note
+        that as we have multiple $\bpi$ parameters (one for each class), we must
+        include the constraint that $\sum_{k=1}^c \pi_k-1=0$.
+
+        We will use the method of Lagrange multipliers to handle this extra
+        constraint when solving for $\hat \pi_k$.
+            
+        Substituing into the equation 
+        $$
+        Lag(\bx,\lambda) = f(\bx)+\lambda g(\bx) \\
+        $$
+        we get
+        $$
+        Lag(\bpi,\lambda) 
+            = -n \lsum_{k=1}^c  \frac{1}{\pi_k} + \lambda( \sum_{k=1}^c\pi_k-1)
+        $$
+
+        To find the optimum, we then solve the system of two equations 
+        $\frac{\partial}{\partial \bpi} Lag(\bpi_k,\lambda)=0$ and
+        $\frac{\partial}{\partial\lambda} Lag(\bpi_k, \lambda)= 0$.
+        
+        $$
+        \frac{\partial}{
+            \partial \bpi} Lag(\bpi,\lambda) = n \pi_k + \lambda
+        $$
+        Set equal to zero and we get that $\pi_i =  \lambda / n$.
+        $$
+        \frac{\partial}{
+            \partial \lambda} Lag(\bpi,\lambda) = \sum_{k=1}^c\pi_k-1
+        $$
+        %%(Note that the first term has no dependence on $\lambda$ so we drop it)
+        %%% SEE: kroenicker delta
+
+
+    \end{answer}
+%5% xianzai
+
     Make sure to write out the intermediary equation you need
-    to solve to obtain this estimator. Double-check your answer: the final
+    to solve to obtain this estimator. 
+
+    Double-check your answer: the final
     result should be very intuitive!
 
   \item[3.] Derive the gradient of the negative log-likelihood with respect to vector $\bmu_k$.
