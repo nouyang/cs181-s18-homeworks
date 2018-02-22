@@ -299,8 +299,8 @@ $\boldX^{-\top} := (\boldX^{\top})^{-1}$
        
         To find the negative log likelihood 
         \begin{align*}
-            - \ln p(D; \bpi) &= - \sum_{i=1}^n \sum_{k=1}^c \ln(\pi_k) + \ln p(x_i|C_k) \\ 
-                &= - n \sum_{k=1}^c \ln(\pi_k) - \sum_{i=1}^n \sum_{k=1}^c \ln p(x_i|C_k) \\
+            - \ln p(D; \bpi) &= - \sum_{i=1}^n \sum_{k=1}^c \ln(\pi_k) - \ln p(x_i|C_k) \\ 
+                &= - \sum_{i=1}^n \sum_{k=1}^c \ln(\pi_k) - \sum_{i=1}^n \sum_{k=1}^c \ln p(x_i|C_k) \\
         \end{align*}
     % FIN.
     \end{answer}
@@ -314,21 +314,21 @@ $\boldX^{-\top} := (\boldX^{\top})^{-1}$
         To find the MLE for $\hat \pi_k$, we take the derivative of the
         likelihood function with respect to $\pi_k$. 
         
-        Note that the class conditional $p(x_i | C_k)$ does \textit{not} depend on
-        $\pi_k$, which is a parameter of a completely separate distribution (the
-        class prior), and so we may drop the class conditional term.
 
         \begin{align*}
             %%
             \arg\max_{\bpi_k} 
             -\ln L(D) 
             &= \arg\max_{\bpi_k} 
-                - n \sum_{k=1}^c \ln(\pi_k) - \sum_{i=1}^n \sum_{k=1}^c \ln p(x_i|C_k) \\
-            &= \arg\max_{\bpi_k} - n \sum_{k=1}^c \ln(\pi_k) 
+                - \sum_{i=1}^n \sum_{k=1}^c \ln(\pi_k) - \sum_{i=1}^n \sum_{k=1}^c \ln p(x_i|C_k) \\
+            &= \arg\max_{\bpi_k} - \sum_{i=1}^n \sum_{k=1}^c \ln(\pi_k) 
         \end{align*}
+        (Note that the class conditional $p(x_i | C_k)$ does \textit{not} depend on
+        $\pi_k$, which is a parameter of a completely separate distribution (the
+        class prior), and so we have dropped the class conditional term.)
 
         To find the MLE for $\hat \pi_k$, aka the $\arg\max{\bpi_k}$ of the
-        likelihood function, we set the derivative (with respect to
+        likelihood function, we normally set the derivative (with respect to
         $\bpi_k$) equal to zero and solve for $\bpi_k$, $\pi_k$. However, note
         that as we have multiple $\bpi$ parameters (one for each class), we must
         include the constraint that $\sum_{k=1}^c \pi_k-1=0$.
@@ -343,24 +343,24 @@ $\boldX^{-\top} := (\boldX^{\top})^{-1}$
         we get
         $$
         Lag(\bpi,\lambda) 
-            = -n \lsum_{k=1}^c  \frac{1}{\pi_k} + \lambda( \sum_{k=1}^c\pi_k-1)
+            = - \lsum_{i=1}^n \lsum_{k=1}^c \ln(\pi_k) + \lambda( \sum_{k=1}^c\pi_k-1)
         $$
 
         To find the optimum, we then solve the system of two equations 
         $\frac{\partial}{\partial \bpi} Lag(\bpi_k,\lambda)=0$ and
         $\frac{\partial}{\partial\lambda} Lag(\bpi_k, \lambda)= 0$.
         
-        $$
-        \frac{\partial}{
-            \partial \bpi} Lag(\bpi,\lambda) = n \pi_k + \lambda
-        $$
-        Set equal to zero and we get that $\pi_i =  \lambda / n$.
-        $$
-        \frac{\partial}{
-            \partial \lambda} Lag(\bpi,\lambda) = \sum_{k=1}^c\pi_k-1
-        $$
-        %%(Note that the first term has no dependence on $\lambda$ so we drop it)
         %%% SEE: kroenicker delta
+        \begin{align*}
+        \frac{\partial}{
+            \partial \pi_k} Lag(\bpi,\lambda) &= -\sum_{i=1}^n \frac{1}{\pi_k} + \lambda = 0 \\
+            \pi_k &= \frac{n}{\lambda} \\
+            \\
+        \frac{\partial}{
+            \partial \lambda} Lag(\bpi,\lambda) &= \sum_{k=1}^c\pi_k-1 = 0 \\
+        \sum_{k=1}^c \pi_k &= 1
+        \end{align*}
+        %%(Note that the first term has no dependence on $\lambda$ so we drop it)
 
 
     \end{answer}
