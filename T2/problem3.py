@@ -2,6 +2,7 @@
 # class implementations that you will implement in
 # LogisticRegression.py and GaussianNaiveBayes.py
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 from LogisticRegression import LogisticRegression
 from GaussianGenerativeModel import GaussianGenerativeModel
@@ -13,6 +14,24 @@ from GaussianGenerativeModel import GaussianGenerativeModel
 # Logistic Regression parameters
 eta = .1
 lambda_parameter = .1
+
+
+##########
+
+# df = pd.read_csv("fruit.csv")
+# X = df[['width', 'height']].values
+# Y = (df['fruit'] - 1).values
+
+
+
+# lr = LogisticRegression(eta=eta, lambda_parameter=lambda_parameter)
+# lr.fit(X,Y)
+# lr.visualize('logistic_regression_result.png')
+
+# X_test = np.array([[4,11],[8.5,7]])
+# Y_nb1 = nb1.predict(X_test)
+# Y_nb2 = nb2.predict(X_test)
+# Y_lr = lr.predict(X_test)
 
 
 # Do not change anything below this line!!
