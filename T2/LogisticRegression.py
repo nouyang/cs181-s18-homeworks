@@ -3,6 +3,9 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as c
 from scipy.misc import logsumexp
 
+
+import sklearn.utils  ## for debugging  sklearn.utils.extmath.softmax
+
 # Please implement the fit and predict methods of this class. You can add additional private methods
 # by beginning them with two underscores. It may look like the __dummyPrivateMethod below.
 # You can feel free to change any of the class attributes, as long as you do not change any of 
@@ -17,16 +20,28 @@ class LogisticRegression:
     def __dummyPrivateMethod(self, input):
         return None
 
-    # TODO: Implement this method!
+    def softmax(array_input):
+        X = np.copy(X)
+        max_prob = np.max(X, axis=1).reshape((-1, 1))
+        X -= max_prob
+        np.exp(X, X)
+        sum_prob = np.sum(X, axis=1).reshape((-1, 1))
+        X /= sum_prob
+        return X
+
+
+
+    # TODO
+    # Run this before predict to produce a function we can compute on new x
+    # values
     def fit(self, X, C):
         self.X = X
         self.C = C
         return
 
-    # TODO: Implement this method!
+    # TODO
+    # Given new set of x's, and our trained model, predict ys
     def predict(self, X_to_predict):
-        # The code in this method should be removed and replaced! We included it just so that the distribution code
-        # is runnable and produces a (currently meaningless) visualization.
         Y = []
         for x in X_to_predict:
             val = 0
@@ -37,6 +52,10 @@ class LogisticRegression:
             Y.append(val)
         return np.array(Y)
 
+
+
+
+    # Done.
     def visualize(self, output_file, width=2, show_charts=False):
         X = self.X
 
