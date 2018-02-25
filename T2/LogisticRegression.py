@@ -8,6 +8,7 @@ from scipy.misc import logsumexp
 
 # Bishop, chapter 4.3.4 Multilass logistic regression
 # Bishop, chapter 5.2.4 Gradient descent optimization
+# Bishop, page 10 Regularization 
 class LogisticRegression:
     def __init__(self, eta, lambda_parameter):
         self.eta = eta
@@ -19,16 +20,35 @@ class LogisticRegression:
 
 
     def softmax(array_input):
-        # Input
-        # -- X, vector of score for each class Dims: 1.k
-        # Output
-        # -- vector of normalized scores for each class  Dims: 1.k
-        scores = np.exp(array_input)
-        sumscore = np.sum(scores)
-        softmax_scores =  scores / sumscore
-        return softmax_scores
+        # Input:
+        # - array of score for each class Dims: n.k
+        # Output:
+        # - vector of normalized scores, normalized by row  Dims: n.k
+        exp_data =  np.exp(array_input)
+        rowsum = np.sum(exp_data, axis=1)
+        array_softmax = (exp_data/1.0) / sumscore # divide by 1.0 b/c of int division paranoia
+        return array_softmax 
+    def err
 
-    # TODO
+    def grad_desc(w, x):
+        # Input:
+        # -- w - vector of weights
+        # -- x - array of parameters per datapoint
+        # Output:
+        # - w_new - vector of w' = w - eta*grad(w) - l2 regularization
+        # - class_errs - vector of error for each class
+            w_old = w_new
+            w_reshaped = w.reshape([d, k]) # d.k
+            wdotx = np.multiply(x, w_reshaped.T) # n.k
+            zscores = 1.0 / (1.0 + exp(wdotx)) # sigmoid fxn Dims: n.k
+            softscore = self.softmax(z_scores) # n.k
+            errs = softscores - C # n.k Question: Do we not want the absolute value of y_est - y?
+            class_errs = np.sum(errs, axis=0) # 1.k 
+            regterm = (self.lamda*0.5) * w_old**2  # Question: old w or w + grad(w)? does it matter
+            w_new = w_old - (self.eta*class_errs + regterm) # 1.w
+        return w_new, sum(class_errs)
+
+    # todo: document the math behind all of this matrix manipulation
     # Run this before predict to produce a function we can compute on new x
     # values
     def fit(self, X, C):
@@ -40,40 +60,21 @@ class LogisticRegression:
         # Output:
         # - vector of weights w, one for each class N.D
         self.X = X # shape N.D
-        self.C = C # true class :
+        self.C = C # true class -- convert to one-hot
 
-        n = X.shape[0]
-        d = X.shape[1]
-        k = max(C)
+        n = X.shape[0] # number of datapoints
+        d = X.shape[1] # number of features per datapoint
+        #k = max(C) # number of classes #Nah... what if our training set is missing a class entirely
+        k = 3
+        w = k*n # number of weights
 
-        # Initialize w estimates with 1s. Dims: 1.d
-        # Since we know a priori the # of classes, we'll list 'em out for now
-        # for clarity
-        w1 = np.ones([1,d])  # 1st of k classes, weights for each parameter (we have d=2)
-        w2 = np.ones([1,d]) 
-        w3 = np.ones([1,d]) 
+        C_hot =np.eye(k)[np.array(C).reshape(-1)] #one-hot. hattip to internet
+        
+        w_init = ones([1, k*d]) # todo: probably should be random?
 
-        Weights = np.vstack([w1,w2,w3]) # k.d
-        # z score for each datapoint belonging to each of the classes. k.n 
-        # matrix multiplication: dot product of each A.row by B.column 
-        # thus, k.D x n.D 
-        Scores = np.multiply(Weights,X.T)
+        # calc_loss = 
 
-        Scores =  
-        score_k1 = np.dot(w1, X[:,0].T)  
-        score_k2 = np.dot(w2, X.T)
-        score_k3 = np.dot(w3, X.T)
-
-        score_k1_param2
-        score_k2 = np.dot(w2, X.T)
-        score_k3 = np.dot(w3, X.T)
-
-        scores = np.hstack([score_k1, score_k2, score_k3]) # 1.k, where K = numclasses
-        softmax_scores = softmax(scores) # k.1, where axis=0 is [1...k] class per datapt
-
-        class_err = (softmax_classes - C)  # for each class, sum up total error across datapts
         # run gradient descent
-
         return #predicted weights
 
     # TODO
@@ -89,9 +90,6 @@ class LogisticRegression:
                 val += 1
             Y.append(val)
         return np.array(Y)
-
-
-
 
     # Done.
     def visualize(self, output_file, width=2, show_charts=False):
@@ -121,3 +119,11 @@ class LogisticRegression:
         plt.savefig(output_file)
         if show_charts:
             plt.show()
+
+
+# This problem was very confusing due to the lack of definitions between
+# loss, error, gradient of likelihood, log-likelihood 
+# Also the indices were very confusing. What are l, j, i, in the gradient
+# And whether or not the updates were per-weight or per-class etc.
+# Finally, the difference between the loss function and the gradient update
+# function
