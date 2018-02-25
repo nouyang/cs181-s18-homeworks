@@ -21,6 +21,7 @@
 \usepackage{common}
 \usepackage{bm}
 \usepackage{relsize}
+\usepackage{float}
 
 \usepackage[mmddyyyy,hhmmss]{datetime}
     
@@ -46,7 +47,10 @@
 \begin{document}
 %\newcommand{\FT}{\mathcal{F}}
 \newcommand{\bx}{\mathbf{x}} %%%% WARNING: may cause unexpected behavior
+\newcommand{\bX}{\mathbf{X}} %%%% WARNING: may cause unexpected behavior
 \newcommand{\by}{\mathbf{y}} %%%% WARNING: may cause unexpected behavior
+\newcommand{\bw}{\mathbf{w}} %%%% WARNING: may cause unexpected behavior
+\newcommand{\bS}{\mathbf{S}} %%%% WARNING: may cause unexpected behavior
 %\newcommand{\bpi}{\mathbf{\pi}} %%%% Already built into latex 
 %\newcommand{\bmu}{\mathbf{\mu}} %%%% Already built into latex 
 \newcommand{\bvar}{\mathbf{\sigma}^2} %%%% WARNING: may cause unexpected behavior
@@ -149,7 +153,7 @@ y_i\sim\mcN(\boldw^\top\boldx_i,\beta^{-1})
 $$
 for (known) precision $\beta$ (which is just the reciprocal
 of the variance). Given this, the likelihood of the
-data is $p(\boldy|\boldX,\boldw) = \mcN(\boldy|\boldX\boldw,\beta^{-1}\mathbf{I})$. Consider the special case of 
+data is Consider the special case of 
 an isotropic (spherical) prior on weights, with
 %
 $$
@@ -172,6 +176,221 @@ where
 \end{align*}
 \end{enumerate}
 \end{problem}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Problem 1 - Worked 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\begin{enumerate}
+    \item[1a.] Write down the expressions for the MLE, MAP and posterior predictive distributions
+
+    \begin{answer}
+        % As pulled from spring 2017 Lecture 7 notes
+        Define $num_0$ and $num_1$ as the number of 0s of and 1s, respectively,
+        that we have observed so far.
+
+        $$ MLE = \frac{num_0}{num_0 + num_1} $$
+
+        $$ MAP =  \frac{
+            \alpha+ num_1-1}{
+            \alpha+\beta+num_0+num_1-2} $$
+
+        $$ Postpred = \frac{
+            \alpha+num_1}{
+            \alpha+\beta+num_1+num_0}$$
+
+    \end{answer}
+
+    \item[1b.] And for a prior $\theta\sim Beta(4,2)$ on the parameter of the Bernoulli, and with data $D= 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0$, plot the three different estimates after each additional
+sample.
+    \begin{answer}
+
+        Plot of estimate for the $\theta_{MLE}$, $\theta_{MAP}$, and posterior predictive, after each of 16 observations.
+    \begin{figure}[H] \centering
+        \includegraphics[width=0.5\textwidth]{Problem1-1.png}
+        % yea it's a screenshot. 'sbecause I wanted to deal with a reasonable
+        % file manager GUI for saving the image
+        % Maybe I should have smoothed a line over the points, to make it
+        % clearer what's going on
+            \caption{}
+            \label{Problem 1, part 1.} %fig:posterior_distro}
+    \end{figure}
+
+
+%The posterior predictive gives us a guess for what value we might observe going forward, based on the observations so far (modeled as being a Bernoulli process) and our prior (modeled as a Beta distribution) 
+    \end{answer}
+%
+\item[2.] Plot the posterior distribution (prior for 0 examples) on $\theta$ after 0, 4, 8, 12 and 16
+examples. (Using whatever tools you like.)
+%
+    \begin{answer}
+
+Posterior distribution on theta (with initial zero prior) on $\theta$, after obtaining 0,4,8,12, and 16 samples
+
+    \begin{figure}[H] \centering
+        \includegraphics[width=0.5\textwidth]{Problem1-2.png}
+        % yea it's a screenshot. 'sbecause I wanted to deal with a reasonable
+        % file manager GUI for saving the image
+        % Maybe I should have smoothed a line over the points, to make it
+        % clearer what's going on
+            \caption{Problem 1, part 2.}
+        \label{fig:theta_obs} %fig:posterior_distro}
+    \end{figure}
+    \end{answer}
+
+
+\item[3.] Interpret the differences you see between the three different estimators.
+
+\begin{answer} 
+    % Bishop chapter 1.2.5 MAP (pg 30)
+    % Bishop chapter 2.1 Beta distribution
+    % Spring 2017 Lecture 5
+    We have defined the posterior distribution as equal to $Bernoulli(\theta)
+    \cdot Beta(\alpha, \beta)$.  The Bernoulli distribution is the generative
+    model, or \textit{likelihood} of our data occurring (given this distribution) and the
+    Beta distribution is our \textit{prior}, where we weigh the new observations 
+    against our prior belief about the system.
+
+    We started with an initial prior (in blue on Figure \ref{fig:theta_obs},
+    which lends us to believe that the Bernoulli process we're observing is
+    skewed toward producing ones, that is the $\theta$ parameter characterizing
+    the distribution is fairly large.
+
+    Note: In a Bernoulli distribution $\theta$ is the likelihood of seeing a one
+    and $1-\theta$ is the likelihood of seeing a zero.
+
+    Our maximum likelihood estimates do not incorporate a prior belief. Thus
+    $\theta_MLE$ exactly matches the initial two data points, zero. In contrast,
+    our maximum posteriors (MAPs), incorporate prior belief. Thus, although we
+    see two zeros, our MAP remains high. The posterior prediction incorporates
+    our uncertainty about w into our prediction. It tends to estimate a value
+    between the MAP and MLE, converging to the MAP prediction as the prior on
+    the MAP updates. Over time, the MLE also converges to the MAP since the
+    counts on average will equal the mean of the generative distribution.
+
+    We can actually see this on the Figure \ref{fig:theta_obs}. Initially our
+    mean on the prior is skewed to the right, but as we get more samples, we
+    update the prior so that it shifts to average around 0.5. Additionally, as
+    we get observation data, we become more confident about the shape of our
+    generative distribution, and thus the variance on the beta distribution goes down. 
+    % FIN.
+
+    % ?? Why is there a postpred estimate *above* the MAP?
+
+    % Full bayes vs MAP: posterior predictive considers uncertainty on w when
+    % making a prediction
+
+    % MAP = most probable of $w$ given the data, aka maximizing the posterior
+    % distribution
+    % todo: go over section 3 notes about difference between posterior
+    % predictive and posterior, both are distributions... What would concrete
+    % example be in this case -- one is distribution over theta of
+    % Bernoulli, one is distribution over expected values given our uncertainty
+    % in our prior
+
+\end{answer}
+
+
+% do: work this out without reference section 3 notes at all
+\item[4.]
+Given likelihood
+$$p(\boldy|\boldX,\boldw) = \mcN(\boldy|\boldX\boldw,\beta^{-1}\mathbf{I})$$
+and prior     
+$$ p(\boldw)=\mcN(\boldw|\bold0,\alpha^{-1}\boldI) $$
+    
+Confirm that the posterior on weights after data $D$ is 
+$$\boldw\sim\mcN(\boldw|\boldm_n,\boldS_n)$$
+where $\boldS_n =(\alpha\boldI+\beta\boldX^\top\boldX)^{-1}i$ and 
+$\boldm_n=\beta\boldS_n\boldX^\top\boldy$.
+
+Do so by [1] taking logs 
+[2] expanding and pushing terms that don't depend on $\boldw$ into a constant
+[3] finally collecting terms and completing the square
+
+% xianzai
+
+\begin{answer}
+   % As per [1] Taking logs: 
+    At a high level, the posterior equals the likelihood times
+    the prior. 
+    
+    After taking the natural log of the posterior, 
+    we get $$ \ln p(\bw|D) \propto \ln p(\by|\bX,\bw) + \ln p(\bw) $$
+
+    %As per [2] 
+    We expand using the definition of the normal distribution, as applied to
+    the likelihood and prior. 
+
+    Note that
+    $$ \mathcal{N}(\boldsymbol x \mid \boldsymbol\mu, \Sigma)
+             = \frac{1}{\sqrt{2\pi|\boldsymbol\Sigma|}}  \exp\left(-\frac 1 2 ({\mathbf x}-{\boldsymbol\mu})^\mathrm{T}{\boldsymbol\Sigma}^{-1}({\mathbf x}-{\boldsymbol\mu})\right)
+    $$
+
+            And that the natural log is equal to 
+    $$ - \frac{1}{2} \left( ( D \ln(2\pi) + \ln|\Sigma|) + (x - \mu_k)^T \Sigma^{-1} (x-\mu_k) \right)
+    $$
+    
+    % per [3] 
+    % VIM: no % in visual substitution
+    Plugging in and pushing terms that don't depend on $\bw$ into a constant, we get 
+    \begin{align*}
+        \ln p(\bw|D) &\propto  \\
+        &=-\frac{1}{2} (y-\bX\bw)^T \beta(y-\bX\bw) - \frac{1}{2} (w-0)^T(\alpha^{-1}I)^{-1}(w-0) \\
+        &=- \frac{\beta}{2}(y-\bX\bw)^T(y-\bX\bw) - \frac{\alpha}{2}w^Tw
+   \end{align*}
+
+       FOILing, and dropping the first term which doesn't  depend on $\bw$ ;
+       and on the second line noting that $\by^T\bX\bw = \bw^T\bX^T\by$ as well
+       as carrying out the transpose, we get
+   \begin{align}
+           &= - \frac{\beta}{2}     \left( - y^T \bX\bw - (\bX\bw)^T y + (\bX\bw)^T
+           \bX\bw \right) 
+           - \frac{\alpha}{2} w^Tw \\
+           % uh... there's someting fishy here about X^T * w vs X^T * w
+           % latex makes it really annoying to keep moving between per datapoint
+           % and per vector of data....  this is a little fishy but don't have
+           % time to fix
+        &=- \frac{1}{2}\left(- 2 \beta(\bw^T \bX^Ty) + \beta(w^TX^TXw) - \alpha
+        w^Tw \right) \\
+        &= - \frac{1}{2} \left( -2w^T(\beta X^Ty)- w^T(\beta X^TX - \alpha)w
+        \right) \label{target1}
+        % create aligned, numbered equation, while bumping up internal eqn
+        % counter in latex
+    \end{align}
+
+    Now working backwards, we note that we would like to show that
+    $\boldw\sim\mcN(\boldw|\boldm_n,\boldS_n)$. Doing as before (taking the log
+    and expanding), we get that our target equation is... (on third line,
+    dropping term without w, and combining two middle terms) 
+    \begin{align*}
+        &= - \frac{1}{2} \left( (\bw-m_n)^T S_n^{-1} (\bw-m_n) \right) \\
+        &= - \frac{1}{2} ( \bw^TS_n^{-1}\bw - m_n^TS_n^{-1}\bw - \bw^TS_n^{-1}m_n 
+        + m_n^TS_n^{-1}m_n ) \\
+        &= -\frac{1}{2} (\bw^TS_n^{-1}\bw - 2\bw^TS_n^{-1}m_n)  \\ % todo: work out why the middle two terms are equivalent
+        \addtocounter{equation}{1}\tag{2} \label{target2} \end{align*}
+
+    Looking above at Equation \ref{target1} we see that it is of similar form
+    to Equation \eqref{target2} above, if we define 
+    $$ \bS_n = (\alpha\mathbf{I} + \beta \bX^T \bX)^{-1} $$ 
+    $$ \bS_n^{-1}\mathbf{m}_n = \beta \bX^T \by$$
+
+    For the last equation, Shifting $S_n$ to the other side we get
+    $$ \mathbf{m}_n = \beta \bS_n \bX^T \by $$
+    as we were asked to prove.
+
+    % FIN.
+
+
+
+
+
+
+
+\end{answer}
+\end{enumerate}
+
 
 %\subsection*{2. Mooooar matrix calculus [10 pts]}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -295,7 +514,8 @@ $\boldX^{-\top} := (\boldX^{\top})^{-1}$
         To find the negative log likelihood 
         \begin{align*}
             - \ln p(D; \bpi) &= - \sum_{i=1}^n \sum_{k=1}^c \ln(\pi_k) - \ln p(x_i|C_k) \\ 
-                &= - \sum_{i=1}^n \sum_{k=1}^c \ln(\pi_k) - \sum_{i=1}^n \sum_{k=1}^c \ln p(x_i|C_k) \\
+                &= - \sum_{i=1}^n \sum_{k=1}^c \ln(\pi_k) - \sum_{i=1}^n
+                \sum_{k=1}^c \ln p(x_i| y_i = C_k) \\
         \end{align*}
     % FIN.
     \end{answer}

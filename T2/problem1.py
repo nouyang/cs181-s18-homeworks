@@ -2,7 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import beta
-#print("hellow world")
+#print("hello world")
 
 
 def MLE(num0, num1):
@@ -19,6 +19,7 @@ def postpred(alpha, beta, num0, num1):
     pred = float(alpha+num1) / (alpha+beta+num1+num0)
     return pred
 
+# our updated priors
 def postbeta(alpha, beta, num0, num1):
     updated = (num1 + alpha,  num0 + beta)
     return updated
@@ -38,7 +39,6 @@ for i in range(len(data)):
 
 alpha_init = 4
 beta_init = 2
-
 
 counts = zip(num0s, num1s)
 
@@ -64,7 +64,7 @@ plt.scatter(xs, postpreds, marker='x',label="Postpreds")
 
 plt.xlabel('Number of samples')
 plt.ylabel('Thetas')
-plt.title('Problem 1.1 - posterior predictive distributions, MAPs, MLEs')
+plt.title('Problem 1.1 - posterior predictive distribution, MAPs, MLEs')
 # Why is it so hard to add a caption in pyplot??
 #caption = '''Using Beta-Bernoulli model, with Beta(4,2), and data = [0, 0, 1, 1,
 #0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 1, 0]'''

@@ -127,3 +127,5 @@ class LogisticRegression:
 # And whether or not the updates were per-weight or per-class etc.
 # Finally, the difference between the loss function and the gradient update
 # function
+
+# Update: see ./README.md for answers to above
