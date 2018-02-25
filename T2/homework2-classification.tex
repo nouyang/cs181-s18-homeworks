@@ -52,6 +52,7 @@
 \newcommand{\bw}{\mathbf{w}} %%%% WARNING: may cause unexpected behavior
 \newcommand{\bS}{\mathbf{S}} %%%% WARNING: may cause unexpected behavior
 %\newcommand{\bpi}{\mathbf{\pi}} %%%% Already built into latex 
+
 %\newcommand{\bmu}{\mathbf{\mu}} %%%% Already built into latex 
 \newcommand{\bvar}{\mathbf{\sigma}^2} %%%% WARNING: may cause unexpected behavior
 \newcommand{\bSig}{\mathbf{\Sigma}} %%%% WARNING: may cause unexpected behavior
@@ -323,38 +324,42 @@ Do so by [1] taking logs
     We expand using the definition of the normal distribution, as applied to
     the likelihood and prior. 
 
-    Note that
+    ~~ Note that
     $$ \mathcal{N}(\boldsymbol x \mid \boldsymbol\mu, \Sigma)
-             = \frac{1}{\sqrt{2\pi|\boldsymbol\Sigma|}}  \exp\left(-\frac 1 2 ({\mathbf x}-{\boldsymbol\mu})^\mathrm{T}{\boldsymbol\Sigma}^{-1}({\mathbf x}-{\boldsymbol\mu})\right)
+             = \frac{1}{\sqrt{(2\pi)^D|\boldsymbol\Sigma|}}  \exp\left(-\frac 1 2 ({\mathbf x}-{\boldsymbol\mu})^\mathrm{T}{\boldsymbol\Sigma}^{-1}({\mathbf x}-{\boldsymbol\mu})\right)
     $$
 
-            And that the natural log is equal to 
-    $$ - \frac{1}{2} \left( ( D \ln(2\pi) + \ln|\Sigma|) + (x - \mu_k)^T \Sigma^{-1} (x-\mu_k) \right)
+    And that the natural log is equal to 
+    $$ - \frac{1}{2} \left( ( D \ln(2\pi) + \ln|\bSigma|) + (\bx - \bmu)^T
+    \bSigma^{-1} (\bx-\bmu) \right)
     $$
+   ~~ 
     
     % per [3] 
     % VIM: no % in visual substitution
     Plugging in and pushing terms that don't depend on $\bw$ into a constant, we get 
     \begin{align*}
         \ln p(\bw|D) &\propto  \\
-        &=-\frac{1}{2} (y-\bX\bw)^T \beta(y-\bX\bw) - \frac{1}{2} (w-0)^T(\alpha^{-1}I)^{-1}(w-0) \\
-        &=- \frac{\beta}{2}(y-\bX\bw)^T(y-\bX\bw) - \frac{\alpha}{2}w^Tw
+        &=-\frac{1}{2} (\by-\bX\bw)^T \beta(\by-\bX\bw) - \frac{1}{2}
+        (\bw-0)^T(\alpha^{-1}I)^{-1}(\bw-0) \\
+        &=- \frac{\beta}{2}(\by-\bX\bw)^T(\by-\bX\bw) - \frac{\alpha}{2}\bw^T\bw
    \end{align*}
 
        FOILing, and dropping the first term which doesn't  depend on $\bw$ ;
        and on the second line noting that $\by^T\bX\bw = \bw^T\bX^T\by$ as well
        as carrying out the transpose, we get
    \begin{align}
-           &= - \frac{\beta}{2}     \left( - y^T \bX\bw - (\bX\bw)^T y + (\bX\bw)^T
+           &= - \frac{\beta}{2}     \left( - \by^T \bX\bw - (\bX\bw)^T \by + (\bX\bw)^T
            \bX\bw \right) 
-           - \frac{\alpha}{2} w^Tw \\
+           - \frac{\alpha}{2} \bw^T\bw \\
            % uh... there's someting fishy here about X^T * w vs X^T * w
            % latex makes it really annoying to keep moving between per datapoint
            % and per vector of data....  this is a little fishy but don't have
            % time to fix
-        &=- \frac{1}{2}\left(- 2 \beta(\bw^T \bX^Ty) + \beta(w^TX^TXw) - \alpha
-        w^Tw \right) \\
-        &= - \frac{1}{2} \left( -2w^T(\beta X^Ty)- w^T(\beta X^TX - \alpha)w
+        &=- \frac{1}{2}\left(- 2 \beta(\bw^T \bX^T\by) + \beta(\bw^T\bX^T\bX\bw) - \alpha
+        \bw^T\bw \right) \\
+        &= - \frac{1}{2} \left( -2\bw^T(\beta \bX^T\by)- \bw^T(\beta \bX^T\bX -
+        \alpha)\bw
         \right) \label{target1}
         % create aligned, numbered equation, while bumping up internal eqn
         % counter in latex
@@ -365,10 +370,11 @@ Do so by [1] taking logs
     and expanding), we get that our target equation is... (on third line,
     dropping term without w, and combining two middle terms) 
     \begin{align*}
-        &= - \frac{1}{2} \left( (\bw-m_n)^T S_n^{-1} (\bw-m_n) \right) \\
-        &= - \frac{1}{2} ( \bw^TS_n^{-1}\bw - m_n^TS_n^{-1}\bw - \bw^TS_n^{-1}m_n 
-        + m_n^TS_n^{-1}m_n ) \\
-        &= -\frac{1}{2} (\bw^TS_n^{-1}\bw - 2\bw^TS_n^{-1}m_n)  \\ % todo: work out why the middle two terms are equivalent
+        &= - \frac{1}{2} \left( (\bw-\mathbf{m}_n)^T \bS_n^{-1} (\bw-\mathbf{m}_n) \right) \\
+        &= - \frac{1}{2} ( \bw^T\bS_n^{-1}\bw - \mathbf{m}_n^T\bS_n^{-1}\bw -
+        \bw^T\bS_n^{-1}\mathbf{m}_n 
+        + \mathbf{m}_n^T\bS_n^{-1}\mathbf{m}_n ) \\
+        &= -\frac{1}{2} (\bw^T\bS_n^{-1}\bw - 2\bw^T\bS_n^{-1}\mathbf{m}_n)  \\ % todo: work out why the middle two terms are equivalent
         \addtocounter{equation}{1}\tag{2} \label{target2} \end{align*}
 
     Looking above at Equation \ref{target1} we see that it is of similar form
@@ -381,8 +387,6 @@ Do so by [1] taking logs
     as we were asked to prove.
 
     % FIN.
-
-
 
 
 
