@@ -546,7 +546,7 @@ $\boldX^{-\top} := (\boldX^{\top})^{-1}$
     \begin{answer}
 
         To find the MLE for $\hat \pi_k$, we take the derivative of the
-        likelihood function with respect to $\pi_k$. 
+        negative log likelihood with respect to $\pi_k$. 
         
         \begin{align}
             %%
@@ -582,12 +582,8 @@ $\boldX^{-\top} := (\boldX^{\top})^{-1}$
         Lag(\bpi,\lambda) 
             = - \lsum_{i=1}^n \lsum_{k=1}^c \mBI \ln(\pi_k) + \lambda( \sum_{k=1}^c\pi_k-1)
         $$
-        $$
-        Lag(\pi_k,\lambda) 
-            = - \lsum_{i=1}^n \mBI \ln(\pi_k) + \lambda( \sum_{k=1}^c\pi_k-1)
-            $$
 
-        To find the optimum, we then solve the system of two equations  
+        To find the optimum using the Lagrange multiplier method, we then solve the system of two equations  
 
         \begin{equation*}
             \frac{\partial}{\partial \bpi} Lag(\bpi_k,\lambda)=0 \text{ and }
@@ -609,7 +605,7 @@ $\boldX^{-\top} := (\boldX^{\top})^{-1}$
         class, which we will denote as $N_k$. We may thus pull the $\pi_k$ out
         of the summation, and get $N_k \pi_k$. Thus we solve and get
 
-        $$ \pi_k = - \frac{\lambda}{N_k} \\ $$
+        $$ \pi_k = - \frac{N_k}{\lambda} \\ $$
 
         From the second derivative, we get
 
@@ -632,8 +628,8 @@ $\boldX^{-\top} := (\boldX^{\top})^{-1}$
         \end{align*}
 
         Thus we get that for each class, the prior on $y_k$, or our belief about
-        the distribution of $y_k$, is simply the percent of datapoints in that
-        $k$ class over the total number of datapoints $n$.
+        the distribution of $y_k$, is simply the number of datapoints in that
+        $k$ class ($N_k$) over the total number of datapoints($n$).
 
         $$ \pi_k = \frac{n}{N_k}
         $$
@@ -766,6 +762,7 @@ $\boldX^{-\top} := (\boldX^{\top})^{-1}$
         Taking the partial derivative, we get 
         \begin{equation}
         \frac{\partial L_g}{\partial \bSigma} = 
+             \frac{\partial L_g}{\partial \bSigma} 
             \sum_{i=1}^n \sum_{k=1}^c \mBI \left[ 
             -\frac{1}{2} (
                 \ln|\bSigma|+(\bx_i-\bmu_k)^T\Sigma^{-1} (\bx_i-\bmu_k) )
@@ -802,16 +799,16 @@ $\boldX^{-\top} := (\boldX^{\top})^{-1}$
         \end{equation}
 
         Left and right multiplying (on both sides of the equation) by
-        $\Sigma^{T}$ we get 
+        $\bSigma^{T}$ we get 
 
         $$
-          N \Sigma ^T =  
+          N \bSigma ^T =  
             \sum_{i=1}^n \sum_{k=1}^c \mBI (\bx_i - \bmu_k)^T (\bx_i - \bmu_k)
             $$
 
             Taking the transpose of both sides, finally we get that 
         $$
-          \Sigma  =   \frac{1}{N}
+          \bSigma  =   \frac{1}{N}
             \sum_{i=1}^n \sum_{k=1}^c \mBI (\bx_i - \bmu_k)^T (\bx_i - \bmu_k)
             $$
       Variance is a measure of how "spread out" a dataset is, relative to its
