@@ -788,7 +788,6 @@ $\boldX^{-\top} := (\boldX^{\top})^{-1}$
                 \right]  \label{gradsig}
         \end{equation}
 
-
         % FIN.
  \end{answer}
   \item[6.] Derive the maximum likelihood estimator of the covariance matrix.
@@ -801,7 +800,6 @@ $\boldX^{-\top} := (\boldX^{\top})^{-1}$
             \sum_{i=1}^n \sum_{k=1}^c \mBI \bSigma^{-T} (\bx_i - \bmu_k)^T (\bx_i - \bmu_k)
             \bSigma^{-T} 
         \end{equation}
-
 
         Left and right multiplying (on both sides of the equation) by
         $\Sigma^{T}$ we get 
@@ -816,8 +814,17 @@ $\boldX^{-\top} := (\boldX^{\top})^{-1}$
           \Sigma  =   \frac{1}{N}
             \sum_{i=1}^n \sum_{k=1}^c \mBI (\bx_i - \bmu_k)^T (\bx_i - \bmu_k)
             $$
+      Variance is a measure of how "spread out" a dataset is, relative to its
+      mean. Thus it makes sense that the inside term looks like a squared error
+      term, normalized by the total number of datapoints. Covariance measures the
+      spread of multiple datasets and how they relate to each other. If
+      increasing in one dimension often corresponds to an increase in
+      another dimension, the two dimensions are related through a positive
+      covariance matrix. 
+      % todo: what exactly do the two summations do? how does this not just
+      % result in a scalar, but results in a meaningful error term describing
+      % the relationship betweem different dimensions?
       \end{answer}
-
 
 \end{enumerate}
 
@@ -872,6 +879,7 @@ purchased and measured by Iain Murray:
   points assigned to that class, without combining them as in the
   shared case.
 \end{itemize}
+
 You may use anything in  \texttt{numpy} or \texttt{scipy}, except for \texttt{scipy.optimize}. That being said, if you happen to find a function in \texttt{numpy} or \texttt{scipy} that seems like it is doing too much for you, run it by a staff member on Piazza. In general, linear algebra and random variable functions are fine. The controller file is \texttt{problem3.py}, in which you will specify hyperparameters. The actual implementations you will write will be in \texttt{LogisticRegression.py} and \texttt{GaussianGenerativeModel.py}.
 
 
