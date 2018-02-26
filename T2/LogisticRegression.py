@@ -22,7 +22,7 @@ class LogisticRegression:
         self.eta = eta
         self.lambda_parameter = lambda_parameter
         self.weights = np.array(-999) 
-        self.iters = 10
+        self.iters = 50
     
     # Just to show how to make 'private' methods
     def __dummyPrivateMethod(self, input):
@@ -40,28 +40,34 @@ class LogisticRegression:
         array_softmax = array_softmax.T
         return array_softmax 
 
-    def __grad_desc(self, x_input, w_input, truec):
+    def __grad_desc(self, x_input, w_input, true_c):
+        print("--------------------------------------") #running gradient descent")
         # Input:
-        # -- w - vector of weights d.k
-        # -- x - array of parameters per datapoint
+        # -- w - vector of weights k.d
+        # -- x - array of parameters per datapoint -- n.d
         # Output:
-        # - w_new - vector of w' = w - eta*grad(w) - l2 regularization
+        # - w_new - vector of w' = w - eta*grad(w) - l2 regularization -- k.d
         # - loss - ???
+
+        ### TODO PULL OUT --
         x = np.copy(x_input)
         weights = np.copy(w_input)
-        trueclass = np.copy(truec)
+        trueclass = np.copy(true_c)
+
+        n = x.shape[0] # number of datapoints
+        d = x.shape[1] # number of features per datapoint
+        k = 3
+        ### -- 
+        C_hot = np.eye(k)[np.array(true_c).reshape(-1)] #one-hot. hattip to internet
+
         wdotx = np.dot(x, weights.T) # n.k
+        #print(x[1:2,:])
+        #print(weights.T)
+        #print(wdotx[1:2,])
         zscores = 1.0 / (1.0 + np.exp(-wdotx)) # sigmoid fxn Dims: n.k
         softscores = self.__softmax(zscores) # n.k
 
-        ### TODO PULL OUT --
-        n = x.shape[0] # number of datapoints
-        d = x.shape[1] # number of features per datapoint
-        #k = max(C) # number of classes #Nah... what if our training set is missing a class entirely
-        k = 3
-        ### -- 
-
-        diffs = softscores - trueclass # n.k Question: Do we not want the absolute value of y_est - y? 
+        diffs = softscores - C_hot # n.k Question: Do we not want the absolute value of y_est - y? 
         # A: no, this is a value for calculating the slope of the loss, not the loss itself!!
         # WRONG: class_errs = np.sum(errs, axis=0) # 1.k 
         for j in range(k): 
@@ -72,7 +78,16 @@ class LogisticRegression:
             reg = self.lambda_parameter * np.dot(weights[j,:], weights[j,:]) # ?  
             reg = 0
             weights[j,:] = weights[j,:] - (gradj*self.eta + reg) #update step
-        return weights
+            
+        est_hot_weights =  np.array([weights[true,:] for true in true_c]) #weights for data labelled true
+        y_est = np.array([ np.dot(foow, foox) for foow,foox in zip(est_hot_weights,self.X)])
+        # y_est = 
+        # est_weights = C_hot * weights
+        #print(y_est)
+        est_sum = sum(y_est)
+        err = n - est_sum
+        #print("error: ",err)
+        return weights, err 
 
     # todo: document the math behind all of this matrix manipulation
     # Run this before predict to produce a function we can compute on new x
@@ -93,14 +108,16 @@ class LogisticRegression:
         #k = max(C) # number of classes #Nah... what if our training set is missing a class entirely
         k = 3
         w = k*n # number of weights
-
-        C_hot = np.eye(k)[np.array(self.C).reshape(-1)] #one-hot. hattip to internet
         
         weights = np.random.rand( k, d) #init to random
         for z in range(self.iters):
-            weights = self.__grad_desc(self.X, weights,C_hot) 
-            print(weights)
+            weights, loss = self.__grad_desc(self.X, weights, self.C) 
+            #print(weights, loss)
+            print("iter: ", z, "loss: ", loss)
+
         self.weights = weights
+
+        #loss = for the true class k 1 - np.dot(x[n],self.weights[k,:])
         return #predicted weights
 
     # TODO
@@ -108,13 +125,13 @@ class LogisticRegression:
     # y is {0,1,2}
     def predict(self, X_to_predict):
         Y = []
-        for x in X_to_predict:
-            val = 0
-            if x[1] > 4:
-                val += 1
-            if x[1] > 6:
-                val += 1
-            Y.append(val)
+        for rowx in X_to_predict:
+            predicts = []
+            for rowweight in self.weights:
+                predict = np.dot(rowx, rowweight)
+                predicts.append(predict)
+            class_x = np.argmax(predicts)
+            Y.append(class_x)
         return np.array(Y)
 
     # Done.
@@ -137,14 +154,17 @@ class LogisticRegression:
         Y_hat = Y_hat.reshape((xx.shape[0], xx.shape[1]))
         
         cMap = c.ListedColormap(['r','b','g'])
+        cMapScatter = c.ListedColormap(['r','b','g'])
+        #cMapScatter = c.ListedColormap(['m','c','y'])
 
         # Visualize them.
         plt.figure()
         plt.pcolormesh(xx,yy,Y_hat, cmap=cMap)
-        plt.scatter(X[:, 0], X[:, 1], c=self.C, cmap=cMap)
+        plt.scatter(X[:, 0], X[:, 1], c=self.C, cmap=cMapScatter,
+                edgecolors='k')
         plt.savefig(output_file)
         if show_charts:
-            plt.show()
+            plt.show(losloslossss)
 
 
 # This problem was very confusing due to the lack of definitions between
