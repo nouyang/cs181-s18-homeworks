@@ -49,8 +49,11 @@
 \newcommand{\bx}{\mathbf{x}} %%%% WARNING: may cause unexpected behavior
 \newcommand{\bX}{\mathbf{X}} %%%% WARNING: may cause unexpected behavior
 \newcommand{\by}{\mathbf{y}} %%%% WARNING: may cause unexpected behavior
+
 \newcommand{\bw}{\mathbf{w}} %%%% WARNING: may cause unexpected behavior
 \newcommand{\bS}{\mathbf{S}} %%%% WARNING: may cause unexpected behavior
+
+\newcommand{\mBI}{\mathbb{I}_{ik}} %%%% WARNING: may cause unexpected behavior
 %\newcommand{\bpi}{\mathbf{\pi}} %%%% Already built into latex 
 
 %\newcommand{\bmu}{\mathbf{\mu}} %%%% Already built into latex 
@@ -325,14 +328,16 @@ Do so by [1] taking logs
     the likelihood and prior. 
 
     ~~ Note that
-    $$ \mathcal{N}(\boldsymbol x \mid \boldsymbol\mu, \Sigma)
+    \begin{equation}
+     \mathcal{N}(\boldsymbol x \mid \boldsymbol\mu, \Sigma)
              = \frac{1}{\sqrt{(2\pi)^D|\boldsymbol\Sigma|}}  \exp\left(-\frac 1 2 ({\mathbf x}-{\boldsymbol\mu})^\mathrm{T}{\boldsymbol\Sigma}^{-1}({\mathbf x}-{\boldsymbol\mu})\right)
-    $$
+    \end{equation}
 
     And that the natural log is equal to 
-    $$ - \frac{1}{2} \left( ( D \ln(2\pi) + \ln|\bSigma|) + (\bx - \bmu)^T
-    \bSigma^{-1} (\bx-\bmu) \right)
-    $$
+    \begin{equation}
+     - \frac{1}{2} \left( D \ln2\pi + \ln|\bSigma| + (\bx - \bmu)^T
+        \bSigma^{-1} (\bx-\bmu) \right) \label{lnNormal}
+    \end{equation}
    ~~ 
     
     % per [3] 
@@ -369,13 +374,14 @@ Do so by [1] taking logs
     $\boldw\sim\mcN(\boldw|\boldm_n,\boldS_n)$. Doing as before (taking the log
     and expanding), we get that our target equation is... (on third line,
     dropping term without w, and combining two middle terms) 
-    \begin{align*}
+    \begin{align}
         &= - \frac{1}{2} \left( (\bw-\mathbf{m}_n)^T \bS_n^{-1} (\bw-\mathbf{m}_n) \right) \\
         &= - \frac{1}{2} ( \bw^T\bS_n^{-1}\bw - \mathbf{m}_n^T\bS_n^{-1}\bw -
         \bw^T\bS_n^{-1}\mathbf{m}_n 
         + \mathbf{m}_n^T\bS_n^{-1}\mathbf{m}_n ) \\
         &= -\frac{1}{2} (\bw^T\bS_n^{-1}\bw - 2\bw^T\bS_n^{-1}\mathbf{m}_n)  \\ % todo: work out why the middle two terms are equivalent
-        \addtocounter{equation}{1}\tag{2} \label{target2} \end{align*}
+        \label{target2} 
+    \end{align}
 
     Looking above at Equation \ref{target1} we see that it is of similar form
     to Equation \eqref{target2} above, if we define 
@@ -515,16 +521,25 @@ $\boldX^{-\top} := (\boldX^{\top})^{-1}$
         %We need the likelihood of any particlar datapoint belonging to any particular dataset. 
         $$p(D; \bpi) = \prod_{i=1}^n \prod_{k=1}^c \pi_k p(x_i | C_k)$$
        
-        To find the negative log likelihood 
-        \begin{align*}
-            - \ln p(D; \bpi) &= - \sum_{i=1}^n \sum_{k=1}^c \ln(\pi_k) - \ln p(x_i|C_k) \\ 
-                &= - \sum_{i=1}^n \sum_{k=1}^c \ln(\pi_k) - \sum_{i=1}^n
-                \sum_{k=1}^c \ln p(x_i| y_i = C_k) \\
-        \end{align*}
+        To find the negative log likelihood (lnll), we take (as stated) the
+        log of both sides
+
+        (Note that we use a mathematical notation trick to ensure that we can
+        cleanly write the negative lnll. We use $\mathbb{I}\{y_i = k\}$ to indicate that
+       for the likelihood, we only want to evaluate the probability $p( \bx, y)$
+        for $\bx$'s true class, rather than all classes. To clean things up even
+        further, we'll shorten it to $\mBI$ which evaluates to 1 for the $ith$ datapoint's true class k, and zero
+        otherwise.)
+        \begin{align}
+            - \ln p(D; \bpi) &=  \sum_{i=1}^n \sum_{k=1}^c \mBI 
+                 [\ln(\pi_k) - \ln p(x_i|C_k) ]\\
+                &= - \sum_{i=1}^n \sum_{k=1}^c \mBI [
+                    \ln(\pi_k) - \ln p(x_i| y_i = C_k) ]  \label{lnLL}
+        \end{align}
     % FIN.
     \end{answer}
 
-    \item[2.]  Using the hint on Lagrange multipliers below, give the
+    \item[2.1]  Using the hint on Lagrange multipliers below, give the
     expression for the maximum-likelihood estimator for the prior
     class-membership probabilities, i.e.  $\hat \pi_k.$
 
@@ -533,76 +548,277 @@ $\boldX^{-\top} := (\boldX^{\top})^{-1}$
         To find the MLE for $\hat \pi_k$, we take the derivative of the
         likelihood function with respect to $\pi_k$. 
         
-
-        \begin{align*}
+        \begin{align}
             %%
             \arg\max_{\bpi_k} 
             -\ln L(D) 
             &= \arg\max_{\bpi_k} 
-                - \sum_{i=1}^n \sum_{k=1}^c \ln(\pi_k) - \sum_{i=1}^n \sum_{k=1}^c \ln p(x_i|C_k) \\
-            &= \arg\max_{\bpi_k} - \sum_{i=1}^n \sum_{k=1}^c \ln(\pi_k) 
-        \end{align*}
+                 - \sum_{i=1}^n \sum_{k=1}^c \mBI [
+                    \ln(\pi_k) - \ln p(x_i| y_i = C_k) ]\\
+            &= \arg\max_{\bpi_k} 
+                 - \sum_{i=1}^n \sum_{k=1}^c \mBI 
+                    \ln(\pi_k) \label{lnll}
+        \end{align}
         (Note that the class conditional $p(x_i | C_k)$ does \textit{not} depend on
         $\pi_k$, which is a parameter of a completely separate distribution (the
         class prior), and so we have dropped the class conditional term.)
 
         To find the MLE for $\hat \pi_k$, aka the $\arg\max{\bpi_k}$ of the
         likelihood function, we normally set the derivative (with respect to
-        $\bpi_k$) equal to zero and solve for $\bpi_k$, $\pi_k$. However, note
+        $\bpi_k$) equal to zero and solve for $\bpi_k$. However, note
         that as we have multiple $\bpi$ parameters (one for each class), we must
         include the constraint that $\sum_{k=1}^c \pi_k-1=0$.
 
         We will use the method of Lagrange multipliers to handle this extra
         constraint when solving for $\hat \pi_k$.
             
-        Substituing into the equation 
+        Substituting equation \eqref{lnll}, and our constraint, into the
+        following equation (where $g(\bx)$ is the constraint function)
         $$
         Lag(\bx,\lambda) = f(\bx)+\lambda g(\bx) \\
         $$
         we get
         $$
         Lag(\bpi,\lambda) 
-            = - \lsum_{i=1}^n \lsum_{k=1}^c \ln(\pi_k) + \lambda( \sum_{k=1}^c\pi_k-1)
+            = - \lsum_{i=1}^n \lsum_{k=1}^c \mBI \ln(\pi_k) + \lambda( \sum_{k=1}^c\pi_k-1)
         $$
+        $$
+        Lag(\pi_k,\lambda) 
+            = - \lsum_{i=1}^n \mBI \ln(\pi_k) + \lambda( \sum_{k=1}^c\pi_k-1)
+            $$
 
-        To find the optimum, we then solve the system of two equations 
-        $\frac{\partial}{\partial \bpi} Lag(\bpi_k,\lambda)=0$ and
-        $\frac{\partial}{\partial\lambda} Lag(\bpi_k, \lambda)= 0$.
+        To find the optimum, we then solve the system of two equations  
+
+        \begin{equation*}
+            \frac{\partial}{\partial \bpi} Lag(\bpi_k,\lambda)=0 \text{ and }
+        \frac{\partial}{\partial\lambda} Lag(\bpi_k, \lambda)= 0.
+        \end{equation*}
         
         %%% SEE: kroenicker delta
+        Note that we can "remove" the summation over k because we are taking the
+        derivative with respect to all individual $pi_k$'s, as a vector, and the
+        indicator allows us to only care about the $k$th class.
+        % uh, is this really true? it seems reasonable
+
+        $$
+        \frac{\partial}{
+            \partial \pi_k} Lag(\bpi,\lambda) = -\sum_{i=1}^n \frac{1}{\pi_k} - \lambda = 0
+        $$
+
+        The indicator $\mBI$ says that we only care about the points in the $k$
+        class, which we will denote as $N_k$. We may thus pull the $\pi_k$ out
+        of the summation, and get $N_k \pi_k$. Thus we solve and get
+
+        $$ \pi_k = - \frac{\lambda}{N_k} \\ $$
+
+        From the second derivative, we get
+
+        $$
+        \frac{\partial}{
+            \partial \lambda} Lag(\bpi,\lambda) =  \sum_{k=1}^c\pi_k-1 = 0
+        $$
+
+       Combining the two equations, we may write that 
+
+        $$
+        \sum_{k=1}^c - \frac{\lambda}{N_k}= 1
+        $$
+        Note that $\lambda$ is a constant, while the sum across all classes of the
+        number of points in each class is $n$. Simplifying we get that 
         \begin{align*}
-        \frac{\partial}{
-            \partial \pi_k} Lag(\bpi,\lambda) &= -\sum_{i=1}^n \frac{1}{\pi_k} + \lambda = 0 \\
-            \pi_k &= \frac{n}{\lambda} \\
-            \\
-        \frac{\partial}{
-            \partial \lambda} Lag(\bpi,\lambda) &= \sum_{k=1}^c\pi_k-1 = 0 \\
-        \sum_{k=1}^c \pi_k &= 1
+            -\lambda \sum_{k=1}^c \frac{1}{N_k} &= 1\\
+            -\lambda \frac{1}{n} &= 1 \\
+            \lambda &=  -n
         \end{align*}
-        %%(Note that the first term has no dependence on $\lambda$ so we drop it)
 
+        Thus we get that for each class, the prior on $y_k$, or our belief about
+        the distribution of $y_k$, is simply the percent of datapoints in that
+        $k$ class over the total number of datapoints $n$.
 
+        $$ \pi_k = \frac{n}{N_k}
+        $$
+
+        % FIN.
     \end{answer}
-%5% xianzai
+        
 
-    Make sure to write out the intermediary equation you need
-    to solve to obtain this estimator. 
+    Make sure to write out the intermediary equation you need to solve to obtain this estimator. 
 
-    Double-check your answer: the final
-    result should be very intuitive!
+    Double-check your answer: the final result should be very intuitive!
 
+    %\xianzai
   \item[3.] Derive the gradient of the negative log-likelihood with respect to vector $\bmu_k$.
     Write the expression in matrix form as a function of the variables defined
     throughout this exercise. Simplify as much as possible for full credit.
+    
+    \begin{answer}
+        We will use the expression for negative log-likelihood (lnLL) in
+        \eqref{lnLL}. We plug in the class-conditional distribution we were
+        given 
+    $$p(\boldx | \boldy = C_k) = \mathcal{N}(\boldx |  \bmu_k, \bSigma)$$
+        into the equation for the natural log of the normal distribution \eqref{lnNormal}
+        to get our $L_g$ equation
+        \begin{equation}
+            \sum_{i=1}^n \sum_{k=1}^c \mBI \left[ 
+            -\frac{1}{2} (
+                \ln|\bSigma|+(\bx_i-\bmu_k)^T\Sigma^{-1} (\bx_i-\bmu_k) )
+                + \ln\pi_k \right] \label{lnGaussLL}
+        \end{equation}
+        Dropping terms without $\mu_k$ we get 
+        \begin{equation}
+            \sum_{i=1}^n \sum_{k=1}^c \mBI 
+            \left[ -\frac{1}{2} (\bx_i-\bmu_k)^T \Sigma^{-1} (\bx_i-\bmu_k) 
+            \right] + const
+        \end{equation}
+        Using the chain rule, we can say that 
+        $$
+        \frac{\partial L_g}{\partial \bmu_k} = 
+        \frac{\partial L_g}{\partial( \bx_n - \bmu_k)} 
+        \frac{\partial(\bx_n - \bmu_k)}{\partial \bmu_k} 
+        = - \frac{\partial L_g}{\partial( \bx_n - \bmu_k)} 
+        $$
+        Using the formula
+        %$$  \frac{\partial \mathbf{a}^T \bX^{-1} \mathbf{b}}{\partial \bX}  
+        %= - \bX^{-T} \mathbf{a} \mathbf{b}^T \bX^{-T}
+        %$$
+        $$  \frac{\partial \mathbf{a}^T \bX \mathbf{a}}{\partial \bX}  
+             = \frac{\partial \mathbf{a}^T \bX^T \mathbf{a}}{\partial \bX}  
+            = \mathbf{a}^T\mathbf{a}
+        $$
+        %% is this really true? why is a^T X A == a^T X^T a ?
+        we get 
+        $$
+        \frac{\partial L_g}{\partial \bmu_k} = \frac{1}{2} 
+             \sum_{i=1}^n \sum_{k=1}^c \mBI  \left[ 
+             (\bSigma^{-1} + \bSigma^{-T})
+             (\bx_n - \bmu_k) \right]
+        $$
+        For cleanliness the covariances can be pulled out of the summations so that we get 
+        \begin{equation}
+        \frac{\partial L_g}{\partial \bmu_k} = \frac{1}{2} 
+             (\bSigma^{-1} + \bSigma^{-T})
+             \sum_{i=1}^n \sum_{k=1}^c \mBI 
+             (\bx_n - \bmu_k)  \label{MLEmu}
+        \end{equation}
+
+    \end{answer}
 
   \item[4.] Derive the maximum-likelihood estimator for vector $\bmu_k$. Once
     again, your final answer should seem intuitive.
 
+    \begin{answer}
+        To get the MLE for $\bmu_k$ We set the gradient in \eqref{MLEmu} equal to zero and
+        solve for $\bmu_k$.
+        $$
+         0 = \frac{1}{2} 
+             (\bSigma^{-1} + \bSigma^{-T})
+             \sum_{i=1}^n \sum_{k=1}^c \mBI 
+             (\bx_i - \bmu_k) 
+             $$
+             $$
+         0 = \sum_{i=1}^n \sum_{k=1}^c \mBI 
+             (\bx_i - \bmu_k) 
+        $$
+
+        Thinking carefully, we see that the sum of $\mu_k$ across all the
+        points in that class, is equal to $N_k \mu_k$. Thus we can pull the
+        $\mu_k$ out of the indicator and summation to get $N_k \cdot \mu_k$.
+        Furthermore we see that since we are solving with respect to the $k$th
+        class, we can indicate with a $k$ subscript that that is the x we care
+        about and remove the indicator for clarity.
+
+        Thus we get that 
+        $$ 
+        0 = N_k \mu_k - \lsum_{i=1}^n \bx_n
+        $$
+        And therefore we end up with
+        \begin{equation}
+            \bmu_k = \frac{1}{N_k} \lsum_{i=1}^n \bx_n
+        \end{equation}
+
+        In other words, that the mean of the distribution is the sum of the
+        value of all the datapoints in the class, divided by the number of datapoints in the
+        class.
+        % FIN.
+    \end{answer}
+
   \item[5.] Derive the gradient for the negative log-likelihood with respect to the
     covariance matrix $\bSigma$ (i.e., looking to find an MLE for the covariance). 
-    :Since you are differentiating with respect to a \emph{matrix}, the resulting expression should be a matrix!
-%
+    Since you are differentiating with respect to a \emph{matrix}, the resulting expression should be a matrix!
+
+ \begin{answer} 
+     As before we start with our $L_g$ as derived in \eqref{lnGaussLL}.
+        \begin{equation}
+            \sum_{i=1}^n \sum_{k=1}^c \mBI \left[ 
+            -\frac{1}{2} (
+                \ln|\bSigma|+(\bx_i-\bmu_k)^T\Sigma^{-1} (\bx_i-\bmu_k) )
+                + \ln\pi_k \right] 
+        \end{equation}
+        Dropping terms without $\bSigma$ we get
+        \begin{equation}
+            \sum_{i=1}^n \sum_{k=1}^c \mBI \left[ 
+            -\frac{1}{2} (
+                \ln|\bSigma|+(\bx_i-\bmu_k)^T\Sigma^{-1} (\bx_i-\bmu_k) )
+                \right] 
+        \end{equation}
+
+
+        Taking the partial derivative, we get 
+        \begin{equation}
+        \frac{\partial L_g}{\partial \bSigma} = 
+            \sum_{i=1}^n \sum_{k=1}^c \mBI \left[ 
+            -\frac{1}{2} (
+                \ln|\bSigma|+(\bx_i-\bmu_k)^T\Sigma^{-1} (\bx_i-\bmu_k) )
+                \right] 
+        \end{equation}
+
+        Using the equations as given to us
+    \begin{align*}
+      & \frac{\partial \bolda^\top \boldX^{-1} \boldb}{\partial \boldX} = - \boldX^{-\top} \bolda \boldb^\top \boldX^{-\top} \\
+      & \frac{\partial \ln | \det (\boldX) |}{\partial \boldX} = \boldX^{-\top}
+     \end{align*}
+
+     We get 
+        \begin{equation}
+        \frac{\partial L_g}{\partial \bSigma} = 
+            \sum_{i=1}^n \sum_{k=1}^c \mBI \left[ 
+            -\frac{1}{2} (
+            \bSigma^{-T} + \bSigma^{-T} (\bx_i - \bmu_k)^T (\bx_i - \bmu_k)
+            \bSigma^{-T} )
+                \right]  \label{gradsig}
+        \end{equation}
+
+
+        % FIN.
+ \end{answer}
   \item[6.] Derive the maximum likelihood estimator of the covariance matrix.
+
+      \begin{answer}
+      Setting  \eqref{gradsig} equal to 0 and solving we get 
+
+        \begin{equation}
+            \sum_{i=1}^n \sum_{k=1}^c \mBI \bSigma^{-T} =
+            \sum_{i=1}^n \sum_{k=1}^c \mBI \bSigma^{-T} (\bx_i - \bmu_k)^T (\bx_i - \bmu_k)
+            \bSigma^{-T} 
+        \end{equation}
+
+
+        Left and right multiplying (on both sides of the equation) by
+        $\Sigma^{T}$ we get 
+
+        $$
+          N \Sigma ^T =  
+            \sum_{i=1}^n \sum_{k=1}^c \mBI (\bx_i - \bmu_k)^T (\bx_i - \bmu_k)
+            $$
+
+            Taking the transpose of both sides, finally we get that 
+        $$
+          \Sigma  =   \frac{1}{N}
+            \sum_{i=1}^n \sum_{k=1}^c \mBI (\bx_i - \bmu_k)^T (\bx_i - \bmu_k)
+            $$
+      \end{answer}
+
+
 \end{enumerate}
 
 
@@ -691,13 +907,19 @@ for a fruit of width 8.5cm and height 7cm.
 \subsection*{Calibration [1pt]}
 Approximately how long did this homework take you to complete?
 
+Between 60 to 80 hours, depending on if you count pre-readings
+
 \subsection*{Name, Email, and Collaborators}
 
-Name:
+Name: Nao Ouyang
 
-Email:
+Email: nouyang@g.harvard.edu    
 
 Collaborators:
+Eric
+Wilson
+Sharon
 
+They are great
 
 \end{document}
