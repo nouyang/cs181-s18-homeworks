@@ -65,6 +65,7 @@ class GaussianGenerativeModel:
     def predict(self, X_to_predict):
         Y = []
         k = 3
+        errs = []
         for x in X_to_predict:
             #print("now on x : ", x)
             xtemp =  []
@@ -75,6 +76,7 @@ class GaussianGenerativeModel:
                            + np.dot(x,self.means[j]) * covar **-1\
                            - 0.5 * np.sum(np.square(self.means[j])) * covar**-1
                    xtemp.append(logLL)
+                errs.append(max(xtemp))
                 class_x = np.argmax(xtemp)
                 Y.append(class_x)
             else:
@@ -83,7 +85,26 @@ class GaussianGenerativeModel:
                         - 0.5 *(self.covars[j]**-1) * np.sum(np.square(x - self.means[j])) 
                    xtemp.append(logLL)
                 class_x = np.argmax(xtemp)
+                errs.append(max(xtemp))
                 Y.append(class_x)
+            #print(errs)
+
+
+        plt.clf()
+        plt.plot()
+        print(errs)
+        plt.plot(range(len(errs)), errs)
+
+        plt.xlabel('Iterations')
+        plt.ylabel('Losses')
+        astring = "Problem 3 Gauss"  + str(self.isSharedCovariance)
+        plt.title(astring)
+        plt.draw()
+
+        plt.pause(1) # <-------
+        raw_input("<Hit Enter To Close>")
+        plt.clf()
+        plt.close()
         return np.array(Y)
 
     # Do not modify this method!

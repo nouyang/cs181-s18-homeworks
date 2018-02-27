@@ -1,5 +1,5 @@
 import pandas as pd
-eta = .1
+eta = 5 
 lambda_parameter = .001
 df = pd.read_csv("fruit.csv")
 X = df[['width', 'height']].values
@@ -46,23 +46,34 @@ def grad(w):
         for i in range(n):  #rows
             xi = x[i,:] #vector  1.d
             gradj += diffs[i][j] * xi #scalar 1.1 * vector 1.d
-        reg = lambda_parameter * np.dot(weights[j,:], weights[j,:]) # ?  
-        reg = 0
+        reg = lambda_parameter * np.sum(np.square(weights[j,:])) # ?  
         weights[j,:] = weights[j,:] - (gradj*eta + reg) #update step
 
-    est_hot_weights =  np.array([weights[true,:] for true in true_c]) #weights for data labelled true
-    y_est = np.array([ np.dot(foow, foox) for foow,foox in zip(est_hot_weights,X)])
-    est_sum = sum(y_est)
-    err = n - est_sum
+    est_trueonly = softscores * C_hot #pick out errors corresponding to true class
+    err = 1 - np.sum(est_trueonly, axis=1) #flatten and subtract 1 from all entries
+    err = sum(err)
+#    est_hot_weights =  np.array([weights[true,:] for true in true_c]) #weights for data labelled true
+#    est_wdotx = np.array([ np.dot(foow, foox) for foow,foox in zip(est_hot_weights,X)])
+    # est_wdotx = []
+    # for i in range(n):
+        # est_wdotx.append( np.dot(weights[ Y[i],: ], x[i]))
+    # est_wdotx = np.array(est_wdotx)
+    # est_err = X - est_wdotx
+
+    # est_sum = sum(est_softscores)
+    # err = est_sum
     return weights, err 
 
 
-weights = np.random.rand( k, d) #init to random
+weights = np.random.rand( k, d) * 10 #init to random
 print(weights)
 foow, fooloss = grad(weights)
 print(foow)
 print(fooloss)
 
+foow, fooloss = grad(weights)
+print(foow)
+print(fooloss)
 ====================
 for rowweight in self.weights:
     predict = np.dot(rowx, rowweight)

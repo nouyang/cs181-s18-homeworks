@@ -22,7 +22,7 @@ class LogisticRegression:
         self.eta = eta
         self.lambda_parameter = lambda_parameter
         self.weights = np.array(-999) 
-        self.iters = 5
+        self.iters = 200
     
     # Just to show how to make 'private' methods
     def __dummyPrivateMethod(self, input):
@@ -41,7 +41,7 @@ class LogisticRegression:
         return array_softmax 
 
     def __grad_desc(self, x_input, w_input, true_c):
-        print("--------------------------------------") #running gradient descent")
+        #print("--------------------------------------") #running gradient descent")
         # Input:
         # -- w - vector of weights k.d
         # -- x - array of parameters per datapoint -- n.d
@@ -76,7 +76,7 @@ class LogisticRegression:
                 xi = x[i,:] #vector  1.d
                 gradj += diffs[i][j] * xi #scalar 1.1 * vector 1.d
             reg = self.lambda_parameter * np.dot(weights[j,:], weights[j,:]) # ?  
-            reg = 0
+            reg = 0 #comment out
             weights[j,:] = weights[j,:] - (gradj*self.eta + reg) #update step
 
         est_trueonly = softscores * C_hot #pick out errors corresponding to true class
@@ -111,16 +111,18 @@ class LogisticRegression:
             weights, loss = self.__grad_desc(self.X, weights, self.C) 
             #print(weights, loss)
             losses.append(loss)
-            print("iter: ", z, "loss: ", loss)
+            #print("iter: ", z, "loss: ", loss)
         self.weights = weights
 
         plt.plot()
-        plt.scatter(range(self.iters), losses)
+        plt.plot(range(self.iters), losses)
 
         plt.xlabel('Iterations')
         plt.ylabel('Losses')
-        astring = "Problem 3 - Logistic Regression, with eta= %0.2f and lambda=%0.4f" % (self.eta,self.lambda_parameter)
+        astring = "Problem 3 - Logistic Regression, with eta= %0.2f and lambda=%0.6f" % (self.eta,self.lambda_parameter)
         plt.title(astring)
+        plt.xlim(0,200)
+        plt.ylim(30,45)
         plt.draw()
 
         plt.pause(1) # <-------

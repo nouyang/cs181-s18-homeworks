@@ -909,6 +909,162 @@ for a fruit of width 8.5cm and height 7cm.
 \end{problem}
 
 \newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Problem 2 - Worked 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{enumerate}
+    \item[1.] Decision boundaries for Logistic, Gaussian with and without shared
+        covariance
+    \begin{answer}
+            \begin{figure}[H]
+            \centering 
+            \subfloat[]{%
+                \includegraphics[width=0.5\linewidth]{log_tex.png}
+                \label{fig:log}%
+            }\hfil % MUST be right above next figure
+            \subfloat[]{%
+                \includegraphics[width=0.5\linewidth]{gen_covar_tex.png}
+            \label{fig:b}%
+            }
+            \subfloat[]{%
+            \includegraphics[width=0.5\linewidth]{gen_covar_shared_tex.png}%
+            \label{fig:c}%
+            }
+
+                \caption{Log, gen, gen with covar}
+            \label{fig:myfig}
+            \end{figure}
+
+            The logistic regression does a decent job of seperating the greens
+            out, aka the lemons. However, it falters where we have the blue and
+            red (aka oranes and apples) essentially intermised on top of each
+            other. It is unable to distinguish between them and classifies them
+            all as apples.
+
+            The generative model with \textbf{shared} covariances seems to
+            struggle as well. There may be an error in my code, as it appears to
+            have managed to incorrectly classify all reds (apples), calling them
+            all blues (oranges), bug again, with the shared covariance Gaussian,
+            we are only able to have linear decision boundaries and so the model
+            has trouble distinguishing between oranges and apples. If we refer
+            to the section 4 notes, we see that maximizing the posterior results
+            in a linear term instead of a quadratic as in the separate
+            covariance case.
+
+            Most notably, the Generative model using multiple Gaussian
+            distributions with \textbf{separate} covariances, is able to achieve a
+            non-linear fit. This is because with a different covariance per
+            class,  the log likelihood contains a quadratic term and we are able
+            to a decision boundary as pictures in Fig 4 (b).
+    \end{answer}
+
+
+    \item[2.] Logistic regression hyperparameters
+
+    \begin{answer}
+            \begin{figure}[H]
+            \centering 
+            \subfloat[]{%
+                \includegraphics[width=0.4\linewidth]{eta_10_lam_0.png}
+                \label{fig:log}%
+            }
+            \subfloat[]{%
+                \includegraphics[width=0.4\linewidth]{eta_1_lam_0.png}
+            \label{fig:b}%
+            }\hfil % MUST be right above next figure
+            \subfloat[]{%
+            \includegraphics[width=0.4\linewidth]{eta_0-01_lam_0_600.png}%
+            \label{fig:c}%
+            }
+            \subfloat[]{%
+            \includegraphics[width=0.4\linewidth]{eta_10_lam_0-0001.png}%
+            \label{fig:c}%
+            }\hfil % MUST be right above next figure
+            \subfloat[]{%
+            \includegraphics[width=0.4\linewidth]{eta_0-10_lam_0.png}%
+            \label{fig:c}%
+            }
+                \caption{Problem 3: Hyperparameters}
+            \label{fig:myfig}
+            \end{figure}
+
+            figure (e)
+            Briefly, having $\eta$ equal to 0.1 and $\lambda$ kept extremely
+            small (1 e-6) allowed for fast convergence and stable convergence.
+
+            figure (d)
+            With $\lambda$ values any greater than 1 e-6, the logistic
+            regression model fails to converge. I hypothesize that, this is
+            because the apples and oranges are so intermixed, that we must have
+            relatively large weights and can't penalize the model for complexity
+            too much. %does this really make sense ?
+
+            figure (c)
+            If $\eta$ is too small, say 0.01, we see that it takes much longer
+            to converge -- at 200 samples, it has higher error rate than the
+            $\eta$ = 0.1 case.
+
+            figure (a) and (b)
+            If $\eta$ is too big, say 1.0 or 10.0, we see that the model fails
+            to converge on a low error rate.% not too clear on this.
+
+
+    \end{answer}
+
+    \item[3.] Gaussian Log Likelihood 
+    \begin{answer}
+
+        The final log likelihood achieved by the Gaussian with separate
+        covariance:
+        \\
+
+        The final log likelihoods achieved by the Gaussian with shared
+        covariance:
+    \end{answer}
+
+    \item[4.]  Fruit
+    \begin{answer}
+
+        Test fruit predictions for Gaussian Model:
+        width 4 cm and height 11 cm: 1
+        width 8.5 cm and height 7 cm: 1
+        Test fruit predictions for Shared Covariance Gaussian Model:
+        width 4 cm and height 11 cm: 2
+        width 8.5 cm and height 7 cm: 1
+        Test fruit predictions for Linear Regression:
+        width 4 cm and height 11 cm: 2
+        width 8.5 cm and height 7 cm: 1
+
+
+        Manually looking on the chart by eye, we might expect that the 
+        1st fruit should fall in the lemon range and the 
+        second fruit in the apple range.
+
+        Gaussian (shared) thought 1st one was a lemon and the second one an
+        orange. 
+
+        Logistic thought the 1st one was a lemon and the second one a orange.
+
+        Guassian (separate) thought they were both oranges.
+
+        We can see that for all models, more data would have been beneficial.
+        The guassian (covariance separate) couldn't generalize to a massive
+        outlier in the dataset (although, perhaps this fruit is quite
+        unrealistic and so it is correct in assigning a label and then simply
+        returning a high error). None of them ventured into apple territory, and
+        in general seem to be struggling to make a reasonable decisions about
+        what makes apples different from oranges.
+
+
+        (0 = apple) (red)
+        1 = orange (blue)
+        2 = lemon (green)
+
+    \end{answer}
+\end{enumerate}
+
+
+\newpage
 \subsection*{Calibration [1pt]}
 Approximately how long did this homework take you to complete?
 
