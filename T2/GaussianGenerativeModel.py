@@ -20,20 +20,48 @@ class GaussianGenerativeModel:
     def fit(self, X, Y):
         self.X = X
         self.Y = Y
-        return
 
-    # TODO: Implement this method!
+        n = x.shape[0] # number of datapoints
+        d = x.shape[1] # number of features per datapoint
+        k = 3
+        ### -- 
+
+        C_hot = np.eye(k)[np.array(true_c).reshape(-1)] #one-hot. hattip to internet
+        N_k = np.sum(C_hot, axis=0) # get num pts per class, sum col to  
+        priors = N_k / n
+        temp =  # wtf why can i not stack on an array to another vertically
+
+        # okay we have... X's ... and we only want the values to some of them...
+        # each row of X is indexed by k...
+
+        temp = np.hstack((np.array([Y]).T, X)) # ugh shenangians to concatenate a 1d column
+        class_xsums = np.array([])
+        for j in range(k):
+            foo = np.ones(k)
+            for i in range(n):
+                if Y[i] == j:
+                    foo = np.concatenate((foo,X[i]))
+#        class_xsums = np.sum(class_xsums, axis=0) 
+#        means = class_xsums / N_k
+
+
+
+        a = np.random.rand(N,N)
+        b = np.zeros((N,N+1))
+        b[:,:-1] = a
+
+
+
+    return
+
     def predict(self, X_to_predict):
         # The code in this method should be removed and replaced! We included it just so that the distribution code
         # is runnable and produces a (currently meaningless) visualization.
+        for 
         Y = []
         for x in X_to_predict:
-            val = 0
-            if x[1] > 4:
-                val += 1
-            if x[1] > 6:
-                val += 1
-            Y.append(val)
+            Y.append(0)
+
         return np.array(Y)
 
     # Do not modify this method!
