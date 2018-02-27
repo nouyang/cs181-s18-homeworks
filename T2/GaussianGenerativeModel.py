@@ -26,7 +26,7 @@ class GaussianGenerativeModel:
         k = 3
         ### -- 
 
-        C_hot = np.eye(k)[np.array(true_c).reshape(-1)] #one-hot. hattip to internet
+        C_hot = np.eye(k)[np.array(self.Y).reshape(-1)] #one-hot. hattip to internet
         N_k = np.sum(C_hot, axis=0) # get num pts per class, sum col to  
         priors = N_k / n
         temp =  # wtf why can i not stack on an array to another vertically
@@ -34,23 +34,29 @@ class GaussianGenerativeModel:
         # okay we have... X's ... and we only want the values to some of them...
         # each row of X is indexed by k...
 
-        temp = np.hstack((np.array([Y]).T, X)) # ugh shenangians to concatenate a 1d column
-        class_xsums = np.array([])
+        #temp = np.hstack((np.array([true_c]).T, X)) # ugh shenangians to concatenate a 1d column
+        # delete the other rows???
+
+        class_xs = []
+        class_sums = []
         for j in range(k):
-            foo = np.ones(k)
-            for i in range(n):
-                if Y[i] == j:
-                    foo = np.concatenate((foo,X[i]))
-#        class_xsums = np.sum(class_xsums, axis=0) 
-#        means = class_xsums / N_k
-
-
-
-        a = np.random.rand(N,N)
-        b = np.zeros((N,N+1))
-        b[:,:-1] = a
-
-
+            xs = []
+            indices = [i for i, x in enumerate(Y) if x != j]
+        diffs = []
+        for i in range(k):
+            diff = class_xs[i] - means[i]
+            coldiff = np.sum(np.square(diff))
+            diffs.append(coldiff)
+            xs = np.delete(np.array(X), indices, axis=0)
+            class_xs.append(xs)
+            class_sums.append(sum(xs))
+        class_sums = np.array(class_sums)
+        means = np.array(class_sums.T / N_k).T
+        diffs = []
+        for i in range(k):
+            diff = class_xs[i] - means[i]
+            coldiff = np.sum(np.square(diff))
+            diffs.append(coldiff)
 
     return
 
