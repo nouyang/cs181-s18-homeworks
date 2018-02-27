@@ -22,7 +22,7 @@ class LogisticRegression:
         self.eta = eta
         self.lambda_parameter = lambda_parameter
         self.weights = np.array(-999) 
-        self.iters = 50
+        self.iters = 100
     
     # Just to show how to make 'private' methods
     def __dummyPrivateMethod(self, input):

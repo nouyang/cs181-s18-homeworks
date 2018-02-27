@@ -11,6 +11,9 @@ import matplotlib.colors as c
 class GaussianGenerativeModel:
     def __init__(self, isSharedCovariance=False):
         self.isSharedCovariance = isSharedCovariance
+        self.means = [] 
+        self.covars = [] 
+        self.priors = []
 
     # Just to show how to make 'private' methods
     def __dummyPrivateMethod(self, input):
@@ -21,15 +24,14 @@ class GaussianGenerativeModel:
         self.X = X
         self.Y = Y
 
-        n = x.shape[0] # number of datapoints
-        d = x.shape[1] # number of features per datapoint
+        n = X.shape[0] # number of datapoints
+        d = X.shape[1] # number of features per datapoint
         k = 3
         ### -- 
 
         C_hot = np.eye(k)[np.array(self.Y).reshape(-1)] #one-hot. hattip to internet
         N_k = np.sum(C_hot, axis=0) # get num pts per class, sum col to  
         priors = N_k / n
-        temp =  # wtf why can i not stack on an array to another vertically
 
         # okay we have... X's ... and we only want the values to some of them...
         # each row of X is indexed by k...
@@ -37,37 +39,51 @@ class GaussianGenerativeModel:
         #temp = np.hstack((np.array([true_c]).T, X)) # ugh shenangians to concatenate a 1d column
         # delete the other rows???
 
+        print("began train")
         class_xs = []
         class_sums = []
         for j in range(k):
             xs = []
             indices = [i for i, x in enumerate(Y) if x != j]
-        diffs = []
-        for i in range(k):
-            diff = class_xs[i] - means[i]
-            coldiff = np.sum(np.square(diff))
-            diffs.append(coldiff)
             xs = np.delete(np.array(X), indices, axis=0)
             class_xs.append(xs)
             class_sums.append(sum(xs))
         class_sums = np.array(class_sums)
         means = np.array(class_sums.T / N_k).T
-        diffs = []
+        diffs = [] #covar  per class
         for i in range(k):
             diff = class_xs[i] - means[i]
             coldiff = np.sum(np.square(diff))
             diffs.append(coldiff)
-
-    return
+        covars = np.array(diffs) / n 
+        self.means = means
+        self.covars = covars
+        self.priors = priors
+        print("finished train")
+        return
 
     def predict(self, X_to_predict):
-        # The code in this method should be removed and replaced! We included it just so that the distribution code
-        # is runnable and produces a (currently meaningless) visualization.
-        for 
         Y = []
+        k = 3
         for x in X_to_predict:
-            Y.append(0)
-
+            #print("now on x : ", x)
+            xtemp =  []
+            if self.isSharedCovariance:
+                covar = np.sum(self.covars)
+                for j in range(k):
+                   logLL= np.log( self.priors[j]) \
+                           + np.dot(x,self.means[j]) * covar **-1\
+                           - 0.5 * np.sum(np.square(self.means[j])) * covar**-1
+                   xtemp.append(logLL)
+                class_x = np.argmax(xtemp)
+                Y.append(class_x)
+            else:
+                for j in range(k):
+                   logLL= np.log( self.priors[j]) - 0.5*np.log( np.abs(self.covars[j]))\
+                        - 0.5 *(self.covars[j]**-1) * np.sum(np.square(x - self.means[j])) 
+                   xtemp.append(logLL)
+                class_x = np.argmax(xtemp)
+                Y.append(class_x)
         return np.array(Y)
 
     # Do not modify this method!
@@ -78,7 +94,7 @@ class GaussianGenerativeModel:
         x_min, x_max = min(X[:, 0] - width), max(X[:, 0] + width)
         y_min, y_max = min(X[:, 1] - width), max(X[:, 1] + width)
         xx,yy = np.meshgrid(np.arange(x_min, x_max, .05), np.arange(y_min,
-            y_max, .005))
+            y_max, .05))
 
         # Flatten the grid so the values match spec for self.predict
         xx_flat = xx.flatten()
@@ -94,7 +110,9 @@ class GaussianGenerativeModel:
         # Visualize them.
         plt.figure()
         plt.pcolormesh(xx,yy,Y_hat, cmap=cMap)
-        plt.scatter(X[:, 0], X[:, 1], c=self.Y, cmap=cMap)
+        plt.scatter(X[:, 0], X[:, 1], c=self.Y, cmap=cMap,
+                edgecolors='k')
+
         plt.savefig(output_file)
         if show_charts:
             plt.show()
