@@ -22,7 +22,7 @@ class LogisticRegression:
         self.eta = eta
         self.lambda_parameter = lambda_parameter
         self.weights = np.array(-999) 
-        self.iters = 100
+        self.iters = 5
     
     # Just to show how to make 'private' methods
     def __dummyPrivateMethod(self, input):
@@ -78,15 +78,10 @@ class LogisticRegression:
             reg = self.lambda_parameter * np.dot(weights[j,:], weights[j,:]) # ?  
             reg = 0
             weights[j,:] = weights[j,:] - (gradj*self.eta + reg) #update step
-            
-        est_hot_weights =  np.array([weights[true,:] for true in true_c]) #weights for data labelled true
-        y_est = np.array([ np.dot(foow, foox) for foow,foox in zip(est_hot_weights,self.X)])
-        # y_est = 
-        # est_weights = C_hot * weights
-        #print(y_est)
-        est_sum = sum(y_est)
-        err = n - est_sum
-        #print("error: ",err)
+
+        est_trueonly = softscores * C_hot #pick out errors corresponding to true class
+        err = 1 - np.sum(est_trueonly, axis=1) #flatten and subtract 1 from all entries
+        err = sum(err)
         return weights, err 
 
     # todo: document the math behind all of this matrix manipulation
@@ -110,12 +105,29 @@ class LogisticRegression:
         w = k*n # number of weights
         
         weights = np.random.rand( k, d) #init to random
+        #weights = np.ones([k, d]) #init to random
+        losses =[]
         for z in range(self.iters):
             weights, loss = self.__grad_desc(self.X, weights, self.C) 
             #print(weights, loss)
+            losses.append(loss)
             print("iter: ", z, "loss: ", loss)
-
         self.weights = weights
+
+        plt.plot()
+        plt.scatter(range(self.iters), losses)
+
+        plt.xlabel('Iterations')
+        plt.ylabel('Losses')
+        astring = "Problem 3 - Logistic Regression, with eta= %0.2f and lambda=%0.4f" % (self.eta,self.lambda_parameter)
+        plt.title(astring)
+        plt.draw()
+
+        plt.pause(1) # <-------
+        raw_input("<Hit Enter To Close>")
+        plt.close()
+
+
 
         #loss = for the true class k 1 - np.dot(x[n],self.weights[k,:])
         return #predicted weights
