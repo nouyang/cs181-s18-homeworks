@@ -32,6 +32,12 @@
 \usepackage[mmddyyyy,hhmmss]{datetime}
 
 \definecolor{verbgray}{gray}{0.9}
+\definecolor{answergreen}{rgb}{0.09,0.42,0.31}
+
+\newenvironment{answer}{%
+    \color{answergreen}\bf}
+  {%
+  }
 
 \lstnewenvironment{csv}{%
   \lstset{backgroundcolor=\color{verbgray},
@@ -39,6 +45,8 @@
   framerule=0pt,
   basicstyle=\ttfamily,
   columns=fullflexible}}{}
+
+
 
 \begin{document}
 \begin{center}
@@ -238,62 +246,27 @@ item Depth over breadth here!
 \end{problem}
 
 \subsection*{Solution}
-  
+    \begin{answer}
 
+    \end{answer}
 \newpage
 
 \subsection*{Calibration [1pt]}
 Approximately how long did this homework take you to complete?
 
+\subsection*{Name, Email, and Collaborators}
+
+Name: Nao Ouyang
+
+Email: nouyang@g.harvard.edu    
+
+Collaborators:
+Eric
+Wilson
+Sharon
+
+They are great
 
 \end{document}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+\end{document}
