@@ -4,6 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as c
 from Perceptron import Perceptron
+from numpy.core.umath_tests import inner1d
+
 
 # Implement this class
 class KernelPerceptron(Perceptron):
@@ -43,7 +45,10 @@ class KernelPerceptron(Perceptron):
 
         # Implement this!
     def predict(self, X):
-        return np.ones(len(X))
+        Y = inner1d(self.weights,np.array(X))
+        print(Y.shape)
+        return Y
+
         # return array of 1's and -1's for classifying
 
 # Implement this class
@@ -72,7 +77,7 @@ Y = data[:, 2]
 beta = 0
 N = 100
 #numsamples = 20000
-numsamples = 100
+numsamples = 2000
 
 kernel_file_name = 'k.png'
 budget_kernel_file_name = 'bk.png'

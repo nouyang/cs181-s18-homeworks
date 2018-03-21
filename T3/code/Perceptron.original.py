@@ -46,12 +46,7 @@ class Perceptron(object):
 		plt.figure()
 		plt.pcolormesh(xx,yy,Y_hat, cmap=cMap)
 		if include_points:
-			plt.scatter(X[:, 0], X[:, 1], c=self.Y, cmap=cMap,
-                                edgecolors='k')
-                        # surround markers with black edge
-                        #colorbar legend
-			cbar = plt.colorbar()
-			cbar.ax.set_ylabel('redX, blue Y, green Yhat')
+			plt.scatter(X[:, 0], X[:, 1], c=self.Y, cmap=cMap)
 		if save_fig:
 			plt.savefig(output_file)
 		if show_charts:
