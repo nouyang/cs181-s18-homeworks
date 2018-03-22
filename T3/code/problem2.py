@@ -14,25 +14,22 @@ class KernelPerceptron(Perceptron):
         self.alphas =  {} #of len(x)
         self.b = 0.0
         self.SV_indices = []
+        self.X = []
+        self.Y = []
 
     # Implement this!
     def fit(self, X, Y):
-        # as per https://www.cs.cmu.edu/~avrim/ML10/lect0125.pdf
-        self.X = X
-        print('asdfsadf', X.shape)
-        self.Y = Y
         X = np.array(X)
+        self.X = X
+        self.Y = Y
         # K(x,x2 ) = x.T *  x2
         np.random.seed(314159)
         SV_indices = set()
         alphas = {}
+        print('X shape', X.shape)
         
-        #rand_idx = np.random.permutation(self.numsamples)
-         
-        print(X.shape)
         for i in range(self.numsamples):
             t = np.random.randint(X.shape[0])
-            #FIXED: not just permute through all training examples; instead pick ahead of time number of iters, and sample that many times
             xt = X[t]
             y_hat = np.sum(alphas[idx]*inner1d(xt,X[idx]) for idx in SV_indices)
             y_true = Y[t]
@@ -41,33 +38,30 @@ class KernelPerceptron(Perceptron):
                 alphas.update({t:y_true})
         self.alphas = alphas
         self.SV_indices = SV_indices
+        print('indices', SV_indices)
+        print('alphas', alphas)
 
     def predict(self, X):
-        print(X.shape)
         print("========= *** Predicting *** ==========")
+        print('x shape', X.shape)
+        print('x shape', self.X.shape)
         print('support vector indices', self.SV_indices)
+        print('alphas', self.alphas)
+
         y_hats = []
         for xt in X:
-            y_hat = np.sum( [self.alphas[sv_i] * np.dot(xt,X[sv_i]) \
-                    for sv_i in self.SV_indices] )
+            boo =  [self.alphas[sv_i]*np.dot(xt,self.X[sv_i]) for sv_i in self.SV_indices] 
+            print('boo', boo)
+            y_hat = np.sum(boo)
             y_hats.append(y_hat)
         y_hats = np.array(y_hats)
+        y_hats = np.sign(y_hats)
+
         print(y_hats.shape)
-        print(X.shape)
         print('y_hats', y_hats)
         print('alphas', self.alphas)
-        return np.sign(y_hats)
 
-        # X = np.array(X)
-        # print(X.shape)
-        # kern = inner1d(X, X)
-        # # self.weights, and 0 if not in self.weights
-        # n = X.shape[0] 
-        # weights = np.zeros(n)
-        # dict = self.alphas
-        # for k,v in dict.items():
-            # weights[k] = v
-        # y_hat = np.sign(np.multiply(weights, kern))
+        return y_hats 
 
 
 # Implement this class
@@ -104,10 +98,10 @@ X = data[:, :2]
 Y = data[:, 2]
 
 # These are the parameters for the models. Please play with these and note your observations about speed and successful hyperplane formation.
-beta = 0
-N = 100
+beta = 0 #budget
+N = 100 #budget
 #numsamples = 20000
-numsamples = 100
+numsamples = 200
 
 kernel_file_name = 'k.png'
 budget_kernel_file_name = 'bk.png'
@@ -115,7 +109,8 @@ budget_kernel_file_name = 'bk.png'
 # Don't change things below this in your final version. Note that you can use the parameters above to generate multiple graphs if you want to include them in your writeup.
 k = KernelPerceptron(numsamples)
 k.fit(X,Y)
-k.visualize(kernel_file_name, width=0, show_charts=True, save_fig=True, include_points=True)
+k.visualize(kernel_file_name, width=0, show_charts=True, save_fig=True, \
+        include_points=True)
 
 bk = BudgetKernelPerceptron(beta, N, numsamples)
 bk.fit(X, Y)
