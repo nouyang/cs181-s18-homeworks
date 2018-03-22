@@ -117,6 +117,7 @@ class BudgetKernelPerceptron(Perceptron):
 
         y_hats = []
         for xt in X:
+            boo =  [self.alphas[sv_i]*np.dot(xt,self.X[sv_i]) for sv_i in self.SV_indices] 
             y_hat = np.sum(boo)
             if y_hat == 0: #dealing with the meshgrid has zeros at the beginning
                 y_hat = 1
@@ -146,9 +147,11 @@ kernel_file_name = 'k.png'
 budget_kernel_file_name = 'bk.png'
 
 # Don't change things below this in your final version. Note that you can use the parameters above to generate multiple graphs if you want to include them in your writeup.
+
 k = KernelPerceptron(numsamples)
-#k.fit(X,Y)
-#k.visualize(kernel_file_name, width=0, show_charts=True, save_fig=True, include_points=True)
+k.fit(X,Y) 
+str = "Kernel Perceptron, # datapts=%d with %d samples" % (np.array(X).shape[0], numsamples)
+k.visualize(kernel_file_name, width=0, show_charts=True, save_fig=True, include_points=True, text=str)
 
 bk = BudgetKernelPerceptron(beta, N, numsamples)
 bk.fit(X, Y)

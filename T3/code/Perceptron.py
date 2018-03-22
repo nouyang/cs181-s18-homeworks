@@ -22,7 +22,7 @@ class Perceptron(object):
         return (X[:, 0] > .5)
 
     # Do not modify this method!
-    def visualize(self, output_file, width=3, show_charts=False, save_fig=True, include_points=True):
+    def visualize(self, output_file, width=3, show_charts=False, save_fig=True, include_points=True, text=''):
         X = self.X
 
         # Create a grid of points
@@ -47,7 +47,10 @@ class Perceptron(object):
         plt.pcolormesh(xx,yy,Y_hat, cmap=cMap) #this normalizes it! hence if all your data is either 1 or -1, the plot will be all red
         if include_points:
             plt.scatter(X[:, 0], X[:, 1], c=self.Y, cmap=cMap,
-                    edgecolor = 'black', alpha=0.01)
+                    edgecolor = 'black', alpha=0.02)
+            plt.xlabel('X dimension 1\n Red is class 1, Green is class -1')
+            plt.ylabel('X dimension 2')
+            plt.title(text)
             # surround markers with black edge
             #colorbar legend
             #cbar = plt.colorbar()
