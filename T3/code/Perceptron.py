@@ -44,12 +44,12 @@ class Perceptron(object):
 
         # Visualize them.
         plt.figure()
-        plt.pcolormesh(xx,yy,Y_hat, cmap=cMap)
+        plt.pcolormesh(xx,yy,Y_hat, cmap=cMap) #this normalizes it! hence if all your data is either 1 or -1, the plot will be all red
         if include_points:
-            plt.scatter(X[:, 0], X[:, 1], c=self.Y, cmap=cMap,
+            plt.scatter(X[:, 0], X[:, 1], c=self.Y, cmap=cMap, \
                     edgecolors='k')
             # surround markers with black edge
-                #colorbar legend
+            #colorbar legend
             cbar = plt.colorbar()
             cbar.ax.set_ylabel('redX, blue Y, green Yhat')
         if save_fig:
