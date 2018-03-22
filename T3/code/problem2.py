@@ -13,6 +13,7 @@ class KernelPerceptron(Perceptron):
         self.numsamples = numsamples
         self.alphas =  {} #of len(x)
         self.b = 0.0
+        self.SV_indices = []
 
     # Implement this!
     def fit(self, X, Y):
@@ -23,86 +24,73 @@ class KernelPerceptron(Perceptron):
         X = np.array(X)
         # K(x,x2 ) = x.T *  x2
         np.random.seed(314159)
-        SV_indices = []
+        SV_indices = set()
         alphas = {}
         
-        #b = 0
-        rand_idx = np.random.permutation(self.numsamples)
-        for t in rand_idx:
-            # kern = np.inner(X[t], X[i])
-            # # all pairs of this t, with all the SV
-            # print(t)
-            # print(SV_indices)
-            # print(X.shape)
-            # print(X[70])
-            y_hat = np.sum(alphas[i]*inner1d(X[t],X[i]) for i in SV_indices)
+        #rand_idx = np.random.permutation(self.numsamples)
+         
+        print(X.shape)
+        for i in range(self.numsamples):
+            t = np.random.randint(X.shape[0])
+            #FIXED: not just permute through all training examples; instead pick ahead of time number of iters, and sample that many times
+            xt = X[t]
+            y_hat = np.sum(alphas[idx]*inner1d(xt,X[idx]) for idx in SV_indices)
             y_true = Y[t]
             if y_true * y_hat <= 0:
-                SV_indices.append(t)
+                SV_indices.add(t)
                 alphas.update({t:y_true})
         self.alphas = alphas
+        self.SV_indices = SV_indices
 
-
-        # self.weights = np.zeros((1, X.shape[1]))
-        # self.b = 0.0
-        # # normalize X
-        # row_sums = X.sum(axis=1) 
-        # X = X / row_sums[:, np.newaxis]
-        # #rand_idx = np.random.rand(len() # how many random numbers valued b/tw 0 and 1
-        # print(len(X))
-        # print(len(Y))
-        # rand_idx = np.random.permutation(self.numsamples)
-        # for i in rand_idx:
-            # print(X[i])
-            # y_hat = np.dot(self.weights, X[i])
-            # print(y_hat)
-            # print(Y[i])
-            # if Y[i] > y_hat: # 1, -1
-                # self.weights += X[i] 
-            # if Y[i] < y_hat: # -1, 1
-                # self.weights -= X[i]
-            # # use sparse natrices
-            # # e.g. matrix = {(0, 3): 1, (2, 1): 2, (4, 3): 3}
-            # # print(matrix.get((1, 3), 0)) # return 0 if not in dictionary
-
-
-        # Implement this!
     def predict(self, X):
-        print("========= *** Predicting *** ========")
-
-        X = np.array(X)
         print(X.shape)
-        kern = inner1d(X, X)
+        print("========= *** Predicting *** ==========")
+        print('support vector indices', self.SV_indices)
+        y_hats = []
+        for xt in X:
+            y_hat = np.sum( [self.alphas[sv_i] * np.dot(xt,X[sv_i]) \
+                    for sv_i in self.SV_indices] )
+            y_hats.append(y_hat)
+        y_hats = np.array(y_hats)
+        print(y_hats.shape)
         print(X.shape)
-        print(kern.shape)
-        print(self.alphas)
-        # self.weights, and 0 if not in self.weights
-        n = X.shape[0] 
-        weights = np.zeros(n)
-        print('wegiths shape', weights.shape)
-        dict = self.alphas
-        for k,v in dict.items():
-            weights[k] = v
-        print(weights.shape, kern.shape)
-        print(kern[0:12])
-        print(weights[0:12])
-        y_hat = np.multiply(weights, kern)
-        print(kern.shape)
-        print('yhat ', y_hat.shape)
-        return y_hat
+        print('y_hats', y_hats)
+        print('alphas', self.alphas)
+        return np.sign(y_hats)
 
-        # return array of 1's and -1's for classifying
+        # X = np.array(X)
+        # print(X.shape)
+        # kern = inner1d(X, X)
+        # # self.weights, and 0 if not in self.weights
+        # n = X.shape[0] 
+        # weights = np.zeros(n)
+        # dict = self.alphas
+        # for k,v in dict.items():
+            # weights[k] = v
+        # y_hat = np.sign(np.multiply(weights, kern))
+
 
 # Implement this class
 class BudgetKernelPerceptron(Perceptron):
     def __init__(self, beta, N, numsamples):
         self.beta = beta
-        self.N = Nh
+        self.N = N
         self.numsamples = numsamples
 
-        # Implement this!
+    # Implement this!
+    # TODO: after kernel perceptron is fixed, merge into budget perceptron
     def fit(self, X, Y):
-        pass
+        # update step
+        if y_true * y_hat <= self.beta:
+            SV_indices.append(t)
+            alphas.update({t:y_true})
+            # removal step
+            if len(SV_indices) > self.N:
+                foo = [ Y[i] * (y_hat[i] - alphas[i]*np.dot(X[i].T, x[i])) \
+                        for i in SV_indices ]
+                arg_maxmarg = foo.index(max(foo))
+                SV_indices.pop(arg_maxmarg)
+
 
     # Implement this!
     # def predict(self, X):
