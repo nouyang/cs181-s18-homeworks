@@ -28,8 +28,8 @@ class Perceptron(object):
         # Create a grid of points
         x_min, x_max = min(X[:, 0] - width), max(X[:, 0] + width)
         y_min, y_max = min(X[:, 1] - width), max(X[:, 1] + width)
-        xx,yy = np.meshgrid(np.arange(x_min, x_max, .05), np.arange(y_min,
-            y_max, .05))
+        xx,yy = np.meshgrid(np.arange(x_min, x_max, .02), np.arange(y_min,
+            y_max, .02))
 
         # Flatten the grid so the values match spec for self.predict
         xx_flat = xx.flatten()
@@ -39,18 +39,21 @@ class Perceptron(object):
         # Get the class predictions
         Y_hat = self.predict(X_topredict)
         Y_hat = Y_hat.reshape((xx.shape[0], xx.shape[1]))
+        print('we have predictions ', Y_hat.shape)
 
         cMap = c.ListedColormap(['r','b','g'])
 
         # Visualize them.
-        plt.figure()
         plt.pcolormesh(xx,yy,Y_hat, cmap=cMap) #this normalizes it! hence if all your data is either 1 or -1, the plot will be all red
         if include_points:
-            plt.scatter(X[:, 0], X[:, 1], c=self.Y, cmap=cMap,
-                    edgecolor = 'black', alpha=0.02)
+            plt.scatter(X[:, 0], X[:, 1], c=self.Y, cmap=cMap, edgecolor = 'black', alpha=0.1)
             plt.xlabel('X dimension 1\n Red is class 1, Green is class -1')
             plt.ylabel('X dimension 2')
             plt.title(text)
+            fig = plt.gcf()
+            fig.figsize=(4,4)
+            fig.dpi=100
+            fig.tight_layout()
             # surround markers with black edge
             #colorbar legend
             #cbar = plt.colorbar()
@@ -59,3 +62,4 @@ class Perceptron(object):
             plt.savefig(output_file)
         if show_charts:
             plt.show()
+        return plt
