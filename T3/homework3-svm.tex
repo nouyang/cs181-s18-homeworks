@@ -1,15 +1,4 @@
-
 \documentclass[submit]{harvardml}
-
-% Put in your full name and email address.
-\name{Your Name}
-\email{email@fas.harvard.edu}
-
-% List any people you worked with.
-\collaborators{%
-  John Doe,
-  Fred Doe
-}
 
 % You don't need to change these.
 \course{CS181-S18}
@@ -28,6 +17,7 @@
 \usepackage{listings}
 \usepackage{common}
 \usepackage{bm}
+\usepackage{float}
 
 \usepackage[mmddyyyy,hhmmss]{datetime}
 
@@ -46,7 +36,19 @@
   basicstyle=\ttfamily,
   columns=fullflexible}}{}
 
+%\newcommand{\bX}{\mathbf{X}} %%%% WARNING: may cause unexpected behavior
+%\newcommand{\by}{\mathbf{y}} %%%% WARNING: may cause unexpected behavior
 
+%\newcommand{\bw}{\mathbf{w}} %%%% WARNING: may cause unexpected behavior
+%\newcommand{\bS}{\mathbf{S}} %%%% WARNING: may cause unexpected behavior
+
+%\newcommand{\mBI}{\mathbb{I}_{ik}} %%%% WARNING: may cause unexpected behavior
+%%\newcommand{\bpi}{\mathbf{\pi}} %%%% Already built into latex 
+
+%%\newcommand{\bmu}{\mathbf{\mu}} %%%% Already built into latex 
+%\newcommand{\bvar}{\mathbf{\sigma}^2} %%%% WARNING: may cause unexpected behavior
+%\newcommand{\bSig}{\mathbf{\Sigma}} %%%% WARNING: may cause unexpected behavior
+%\newcommand{\lsum}{\mathlarger{\sum}} %%%% WARNING: may cause unexpected behavior
 
 \begin{document}
 \begin{center}
@@ -117,16 +119,134 @@ Write down the discriminant
 function $h(\bphi(x);\boldw,w_0)$.
 
 
-\item What are the support
-vectors of the classifier?
- Confirm that the solution in part~(6.) makes the constraints in~\eqref{eq:dcp} binding
-for support vectors.
+\item What are the support vectors of the classifier?  Confirm that the solution in part~(6.) makes
+    the constraints in~\eqref{eq:dcp} binding for support vectors.
 
 \end{enumerate}
 
 \end{problem}
-\subsection*{Solution}
+\subsection*{Solution 1}
+    \begin{enumerate}
+        \item Plot the training data in $\reals^2$ and draw the decision boundary of the max margin classifer.
 
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=0.5\textwidth]{problem1.png}
+                \caption{}
+                \label{Problem 1, part 1.}
+            \end{figure}
+
+        
+        \item  What is the value of the margin achieved by the optimal decision boundary? 
+
+\begin{answer}
+            Minimum distance from point to boundary is 1.5 % (4-1)/2 
+\end{answer}
+            
+        \item What is a vector that is orthogonal to the decision boundary?
+
+            \begin{answer}
+                Any vertical vector is. e.g. (0,10). Abstractly, $\boldw$.
+            \end{answer}
+
+        \item Considering discriminant $h(\bphi(x);\boldw,w_0)=\boldw^\top\bphi(x) +w_0$, give an
+            expression for {\em all possible} $(\boldw,w_0)$ that define the optimal decision boundary.
+            Justify your answer.
+
+            \begin{answer}
+ 
+                Our decision boundary by visual inspection is at $x^2 = 2.5$.
+                Our decision boundary is $h = \boldw^\top\bphi(x) +w_0$.
+                \begin{align*}
+                    \boldw^T \begin{bmatrix} x \\ x^2 \end{bmatrix} + w_0 = 0 \\ 
+                    \begin{bmatrix} w_1 & w_2 \end{bmatrix}  
+                    \begin{bmatrix} x \\x^2 \end{bmatrix} + w_0= 0 \\
+                    w_1x + w_2x^2 + w_0 = 0 \\
+                    \text{Our decision boundary by visual inspection is $x^2 = 2.5$.}\\
+                    \text{Thus we get that} \\
+                    w_1x=0 \\
+                    x^2 = - \frac{w_0}{w_2} = 2.5\\
+                    \text{Rewriting in terms of $w_2$ we get}\\
+                    w_0  = - 2.5 * w_2  \\
+                    \text{For final answer} \\
+                    w_2x^2 - 2.5 \cdot  w_2 = 0 \\
+                    w_0 = -2.5 \cdot w_2 \\
+                    \text{Equivalently in matrix form, } \\
+                    \begin{bmatrix} 0 & w_2 \end{bmatrix}  
+                    \begin{bmatrix} x \\ x^2 \end{bmatrix} -2.5 \cdot w_2 = 0 %%%should this be > 1????
+                \end{align*}
+
+            \end{answer}
+
+        \item Consider now the training problem~\eqref{eq:dcp}. Using your answers so far, what
+            particular solution to $\boldw$ will be optimal for this optimization problem?
+\begin{answer}
+             \begin{align*}
+                 &\min_{\mathbf{w}, w_0} \|\mathbf{w}\|_2^2 \label{eq:dcp} \\
+                 \quad \text{s.t.} \quad & y_i(\mathbf{w}^\top \bphi(x_i) + w_0) \geq 1,~\forall i \in \{1,\ldots, n\}
+             \end{align*}
+             If we plug in one of the points we can see by visual inspection is a support vector
+             (-2,1) and taking the optimal
+             solution to be where the above expression $ y_i(\mathbf{w}^\top \bphi(x_i) + w_0) =
+             1,~\forall i  $, we get that 
+
+             \begin{align*}
+                 1 (w_2(-2)^2 - w_2 \frac{5}{2} = 1 \\
+                 4 w_2 - 2.5w_2 =1  \\
+                 w_2 = \frac{1}{1.5} = \frac{2}{3} \\
+             \end{align*}
+
+    \end{answer}
+
+        \item Now solve for the corresponding value of $w_0$, using your general expression from
+            part~(4.) for the optimal decision boundary.  Write down the discriminant function
+            $h(\bphi(x);\boldw,w_0)$.
+
+            \begin{answer}
+                Given that $w_2 = 2.5$, we get that
+                \begin{align*}
+                    w_2 &= \frac{2}{3} \\
+                    w_0 &= -\frac{5}{3} \\
+                    h(x) &= (2/3) x^2 - 5/3
+                \end{align*}
+            \end{answer}
+
+        \item What are the support vectors of the classifier?  Confirm that the solution in part~(6.)
+            makes the constraints in~\eqref{eq:dcp} binding for support vectors.
+\begin{answer} 
+    
+    %According to reference.com, ``A binding constraint is a constraint used in linear
+    %programming equations whose value satisfies the optimal solution; any changes in its value
+    %changes the optimal solution."
+
+
+    Plugging in the points directly, we get that 
+
+    \begin{align*}
+        h(-3) &= (2/3)\cdot 9 - (5/3) =  13/3 \\
+        h(-2) &= (8/3) - (5/3) =  1 \\
+        h(-1) &= (2/3) - (5/3) =  -1 \\
+        h(0) &= (0) - (5/3) =  -5/3 \\
+        h(1) &= (2/3) - (5/3) =  -1 \\
+        h(2) &= (8/3) - (5/3) =  1 \\
+        h(3) &= (18/3) - (5/3) =  13/3 \\
+    \end{align*}
+
+    Our support vectors are (-2,1), (1,-1),  (-1,1), and (2,1) in terms of (x,y). These points
+    optimize our constraint that h(x) $\geq$ 1.
+
+    %We can see that if we moved any of the support vectors, they would either stop being support
+    %vectors or our margin would decrease or increase.
+
+    %e.g. if we added a point (1.75, 1), we would need to resolve. The new w's we get would show that
+    %for the original four support vectors, the constraint $>$ holds, but it is this new point that
+    %constrains the minimum, as that point defines where the constraint $y_i(\boldw^T \phi(x_i) +
+    %w_0) = 1.$ 
+
+
+\end{answer}
+
+    \end{enumerate}
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Problem 2
@@ -194,7 +314,61 @@ In addition, provide answers the following reading questions
 
 \end{problem}
 
-\subsection*{Solution}
+\subsection*{Solution 2}
+\begin{enumerate}
+\item In one short sentence, state the main purpose of the paper.
+
+    \begin{answer}
+        This paper describes ways to improve the computational efficiency of SVM classifiers when
+        dealing with large and potentially noisy datasets, including random sampling, removing
+        support vectors and selectively picking training samples.
+    \end{answer}
+\item Describe each of the parameters in Eq.~1 in the paper
+
+    \begin{answer}
+        $$
+        \hat{y}(x) = w'\bPhi(x) + b
+        $$
+
+        $\hat{y}$ is our estimate of the true class, either -1 or 1.
+
+        $\bPhi(x)$ is our feature function, which transforms our data into a space where they are
+        (hopefully) linearly separable. It is often hand-chosen, for instance in the problem set
+        problem above, we were given $f(x) = (x, x^2)$.
+
+        $w$ and $b$ are parameters we find by learning on a set of training examples for which we
+        have the true class (or think we do).
+
+    \end{answer}
+
+\item State, informally, one guarantee about the Kernel perceptron algorithm described in the
+  paper. 
+
+    \begin{answer}
+        If a solution exists, the kernel perceptron will converge to it after a finite number of
+        iterations.
+    \end{answer}
+
+\item What is the main way the budget kernel perceptron algorithm tries to
+  improve on the perceptron algorithm?
+
+    \begin{answer}
+        The budget versions maintains a limit on the number of support vectors, discarding the ones
+        that are the furthest away from the margin as needed. This allows it to maintain sparsity
+        (of support vectors, v.s total number of training examples) and to run on noisy data in a
+        computationally efficient manner.
+    \end{answer}
+\item ({\em if you did the extra credit}) In simple words, what is the theoretical guarantee of LASVM algorithm? How does it compare to its practical performance?
+
+    \begin{answer}
+    LASVM will exactly reach the SVM solution after a sufficient number of epochs. Additionally, the
+    authors found that after just one epoch, the LASVM error rate closely approached LIBSVM
+    accuracy.
+    \end{answer}
+
+\end{enumerate}
+
+
 
 
 \newpage
@@ -225,6 +399,8 @@ Write two or three paragraphs that address the following:
 \item Are there tradeoffs that your algorithm has to balance? [optional] 
 \item Are there any features of data collection, algorithm implementation, or the social world that make you wary of using machine learning in this case? [optional]
 \end{itemize}
+)
+
 
 We expect that:
 \begin{itemize}
@@ -251,8 +427,11 @@ item Depth over breadth here!
     \end{answer}
 \newpage
 
+
 \subsection*{Calibration [1pt]}
 Approximately how long did this homework take you to complete?
+
+25-40 hrs (as usual depending on if you count reading time)
 
 \subsection*{Name, Email, and Collaborators}
 
@@ -264,8 +443,8 @@ Collaborators:
 Eric
 Wilson
 Sharon
-
-They are great
+Buse
+David
 
 \end{document}
 

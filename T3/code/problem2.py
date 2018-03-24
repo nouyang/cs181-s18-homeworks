@@ -138,21 +138,25 @@ class BudgetKernelPerceptron(Perceptron):
         return y_hats
 
 # Do not change these three lines.
-data = np.loadtxt("data.csv", delimiter=',')
-#data = np.loadtxt("data_short.csv", delimiter=',')
-X = data[:, :2]
-Y = data[:, 2]
+#data = np.loadtxt("data.csv", delimiter=',')
+#X = data[:, :2]
+#Y = data[:, 2]
 
 # These are the parameters for the models. Please play with these and note your observations about speed and successful hyperplane formation.
 numsamples = 20000
+beta = 0 #budget
+N = 100 #budget
 
-kernel_file_name = 'k.png'
-budget_kernel_file_name = 'bk.png'
+n_list = [50, 100,200,500, 1000]
+beta_list = [-5, -1, 0, 1, 5]
+#kernel_file_name = 'k.png'
+#budget_kernel_file_name = 'bk.png'
 
-# Don't change things below this in your final version. Note that you can use the parameters above to generate multiple graphs if you want to include them in your writeup.
 
-nsamples_list = [200,100,1000,20000]
-
+# # collect data
+# plt.plot(nsamples, time)
+# plt.plot(nsamples, accuracy)
+# nsamples_list = [200,100,1000,20000]
 # for num in nsamples_list:
     # k = KernelPerceptron(num)
     # k.fit(X,Y) 
@@ -168,74 +172,241 @@ nsamples_list = [200,100,1000,20000]
 # #pp.savefig(aplot)
 
 
-beta = 0 #budget
-N = 100 #budget
-n_list = [50, 100,200,500, 1000]
-beta_list = [-5, -1, 0, 1, 5]
 
-
-for beta in beta_list:
-    bk = BudgetKernelPerceptron(beta, N, numsamples)
-    bk.fit(X, Y)
-    print('predict time', bk.timepredict)
-    print('fit time', bk.timefit)
-    bstr = "Budget Kernel Perceptron, \n%d datapoints with %d samples, %d N, %d beta \nFit: %.02f secs" % \
-            (np.array(X).shape[0], numsamples, N, beta, bk.timefit)
-#    plt2 = bk.visualize(budget_kernel_file_name, width=0, show_charts=False, save_fig=False,
-#            include_points=True, text=bstr)
-    #plt2.savefig('budgetkernel_%dsamples_%dN_%dbeta.png' % (numsamples, N, beta))
-
-for N in n_list:
-    bk = BudgetKernelPerceptron(beta, N, numsamples)
-    bk.fit(X, Y)
-    print('predict time', bk.timepredict)
-    print('fit time', bk.timefit)
-    bstr = "Budget Kernel Perceptron, \n%d datapoints with %d samples, %d N, %d beta \nFit: %.02f secs" % \
-            (np.array(X).shape[0], numsamples, N, beta, bk.timefit)
-    plt2 = bk.visualize(budget_kernel_file_name, width=0, show_charts=False, save_fig=False,
-            include_points=True, text=bstr)
-    #plt2.savefig('budgetkernel_%dsamples_%dN_%dbeta.png' % (numsamples, N, beta))
-
-beta = 0 #budget
-N = 100 #budget
-for num in nsamples_list:
-    bk = BudgetKernelPerceptron(beta, N, num)
-    bk.fit(X, Y)
-    print('predict time', bk.timepredict)
-    print('fit time', bk.timefit)
-    bstr = "Budget Kernel Perceptron, \n%d datapoints with %d samples, %d N, %d beta \nFit: %.02f secs" % \
-            (np.array(X).shape[0], num, N, beta, bk.timefit)
-    plt2 = bk.visualize(budget_kernel_file_name, width=0, show_charts=False, save_fig=False,
-            include_points=True, text=bstr)
-    #plt2.savefig('budgetkernel_%dsamples_%dN_%dbeta.png' % (num, N, beta))
-#pp.savefig(plt2)
-#pp.close()
-
+# for beta in beta_list:
+    # bk = BudgetKernelPerceptron(beta, N, numsamples)
+    # bk.fit(X, Y)
+    # print('predict time', bk.timepredict)
+    # print('fit time', bk.timefit)
+    # bstr = "Budget Kernel Perceptron, \n%d datapoints with %d samples, %d N, %d beta \nFit: %.02f secs" % \
+            # (np.array(X).shape[0], numsamples, N, beta, bk.timefit)
+# #    plt2 = bk.visualize(budget_kernel_file_name, width=0, show_charts=False, save_fig=False,
+# #            include_points=True, text=bstr)
+    # #plt2.savefig('budgetkernel_%dsamples_%dN_%dbeta.png' % (numsamples, N, beta))
 
 ##############
 # Calculate accuracy
 ##############
+pts = 100
+nsamples_list = np.asarray(np.arange(100,25000, (25000-100)/pts), dtype=int)
+print(nsamples_list)
+times = []
+accuracies = []
+
 data = np.loadtxt("data.csv", delimiter=',')
 cval_data = np.loadtxt("val.csv", delimiter=',')
 X = data[:, :2]
-Y = data[:, :2]
+Y = data[:, 2]
 crossvalX = cval_data[:, :2]
 crossvalY = cval_data[:, 2]
 
-numsamples = 20000
-beta = 0 #budget
-N = 100 #budget
-k = KernelPerceptron(num)
-k.fit(X, Y)
-print('fit time', kk.timefit)
-yhats = k.predict(crossvalX)
+for num in nsamples_list:
+    k = KernelPerceptron(num)
+    k.fit(X,Y) 
+    times.append(k.timefit)
+    yhats = k.predict(crossvalX)
+    test = [(y*y_hat>0) for y, y_hat in zip(crossvalY, yhats)]
+    print('test shape',np.array(test).shape)
+    print('num correct', sum(test))
+    print('totaly sampes', len(Y))
+    accuracy = sum([(y*y_hat>0) for y, y_hat in zip(crossvalY, yhats)]) / len(crossvalY)
+    print('accuracy', accuracy)
+    accuracies.append(accuracy)
+#pp.savefig(aplot)
+print(nsamples_list)
+print(times)
+print(accuracies)
 
-accuracy = [(crossvalY*y_hat>0) for y, y_hat in zip(crossvalY, y_hats)] / len(Y) * 1.0
+fig, ax1 = plt.subplots()
+ax1.plot(nsamples_list, times, 'b-')
+ax1.set_ylabel("time (secs)")
+ax1.yaxis.label.set_color("blue")
+ax2 = ax1.twinx()
+ax2.plot(nsamples_list, accuracies, 'r-')
+ax2.yaxis.label.set_color("red")
+ax2.set_ylabel("accuracy (#correct / total#)")
+fig = plt.gcf()
+fig.figsize=(5,5)
+fig.dpi=100
+bstr = "Kernel Perceptron, \n%d datapoints Fit: %.02f secs, accuracy across %d crossval points" % \
+(np.array(X).shape[0], k.timefit, len(crossvalY))
+plt.title(bstr)
+plt.xlabel("# samples")
+fig.tight_layout()
+plt.show()
 
-#print('accuracy of kernel perceptron: ', accuracy)
-#correct of total #
 
-bk = BudgetKernelPerceptron(beta, N, num)
-bk.fit(X, Y)
-print('fit time', bk.timefit)
-yhats = bk.predict(crossvalX)
+
+##############
+# Calculate accuracy for BK, varying beta
+##############
+pts = 100
+nsamples_list = np.asarray(np.arange(100,25000, (25000-100)/pts), dtype=int)
+print(nsamples_list)
+times = []
+accuracies = []
+
+data = np.loadtxt("data.csv", delimiter=',')
+cval_data = np.loadtxt("val.csv", delimiter=',')
+X = data[:, :2]
+Y = data[:, 2]
+crossvalX = cval_data[:, :2]
+crossvalY = cval_data[:, 2]
+
+for num in nsamples_list:
+    k = KernelPerceptron(num)
+    k.fit(X,Y) 
+    times.append(k.timefit)
+    yhats = k.predict(crossvalX)
+    test = [(y*y_hat>0) for y, y_hat in zip(crossvalY, yhats)]
+    print('test shape',np.array(test).shape)
+    print('num correct', sum(test))
+    print('totaly sampes', len(Y))
+    accuracy = sum([(y*y_hat>0) for y, y_hat in zip(crossvalY, yhats)]) / len(crossvalY)
+    print('accuracy', accuracy)
+    accuracies.append(accuracy)
+#pp.savefig(aplot)
+print(nsamples_list)
+print(times)
+print(accuracies)
+
+fig, ax1 = plt.subplots()
+ax1.plot(nsamples_list, times, 'b-')
+ax1.set_ylabel("time (secs)")
+ax1.yaxis.label.set_color("blue")
+ax2 = ax1.twinx()
+ax2.plot(nsamples_list, accuracies, 'r-')
+ax2.yaxis.label.set_color("red")
+ax2.set_ylabel("accuracy (#correct / total#)")
+fig = plt.gcf()
+fig.figsize=(5,5)
+fig.dpi=100
+bstr = "Kernel Perceptron, \n%d datapoints Fit: %.02f secs, accuracy across %d crossval points" % \
+(np.array(X).shape[0], k.timefit, len(crossvalY))
+plt.title(bstr)
+plt.xlabel("# samples")
+fig.tight_layout()
+plt.show()
+
+##############
+# Calculate accuracy for bk, varying N
+##############
+pts = 100
+nsamples_list = np.asarray(np.arange(100,25000, (25000-100)/pts), dtype=int)
+print(nsamples_list)
+times = []
+accuracies = []
+
+data = np.loadtxt("data.csv", delimiter=',')
+cval_data = np.loadtxt("val.csv", delimiter=',')
+X = data[:, :2]
+Y = data[:, 2]
+crossvalX = cval_data[:, :2]
+crossvalY = cval_data[:, 2]
+
+for num in nsamples_list:
+    k = KernelPerceptron(num)
+    k.fit(X,Y) 
+    times.append(k.timefit)
+    yhats = k.predict(crossvalX)
+    test = [(y*y_hat>0) for y, y_hat in zip(crossvalY, yhats)]
+    print('test shape',np.array(test).shape)
+    print('num correct', sum(test))
+    print('totaly sampes', len(Y))
+    accuracy = sum([(y*y_hat>0) for y, y_hat in zip(crossvalY, yhats)]) / len(crossvalY)
+    print('accuracy', accuracy)
+    accuracies.append(accuracy)
+#pp.savefig(aplot)
+print(nsamples_list)
+print(times)
+print(accuracies)
+
+fig, ax1 = plt.subplots()
+ax1.plot(nsamples_list, times, 'b-')
+ax1.set_ylabel("time (secs)")
+ax1.yaxis.label.set_color("blue")
+ax2 = ax1.twinx()
+ax2.plot(nsamples_list, accuracies, 'r-')
+ax2.yaxis.label.set_color("red")
+ax2.set_ylabel("accuracy (#correct / total#)")
+fig = plt.gcf()
+fig.figsize=(5,5)
+fig.dpi=100
+bstr = "Kernel Perceptron, \n%d datapoints Fit: %.02f secs, accuracy across %d crossval points" % \
+(np.array(X).shape[0], k.timefit, len(crossvalY))
+plt.title(bstr)
+plt.xlabel("# samples")
+fig.tight_layout()
+plt.show()
+
+
+##############
+# Calculate accuracy for bk, varying num samples
+##############
+pts = 100
+nsamples_list = np.asarray(np.arange(100,25000, (25000-100)/pts), dtype=int)
+print(nsamples_list)
+times = []
+accuracies = []
+
+data = np.loadtxt("data.csv", delimiter=',')
+cval_data = np.loadtxt("val.csv", delimiter=',')
+X = data[:, :2]
+Y = data[:, 2]
+crossvalX = cval_data[:, :2]
+crossvalY = cval_data[:, 2]
+
+for num in nsamples_list:
+    k = KernelPerceptron(num)
+    k.fit(X,Y) 
+    times.append(k.timefit)
+    yhats = k.predict(crossvalX)
+    test = [(y*y_hat>0) for y, y_hat in zip(crossvalY, yhats)]
+    print('test shape',np.array(test).shape)
+    print('num correct', sum(test))
+    print('totaly sampes', len(Y))
+    accuracy = sum([(y*y_hat>0) for y, y_hat in zip(crossvalY, yhats)]) / len(crossvalY)
+    print('accuracy', accuracy)
+    accuracies.append(accuracy)
+#pp.savefig(aplot)
+print(nsamples_list)
+print(times)
+print(accuracies)
+
+fig, ax1 = plt.subplots()
+ax1.plot(nsamples_list, times, 'b-')
+ax1.set_ylabel("time (secs)")
+ax1.yaxis.label.set_color("blue")
+ax2 = ax1.twinx()
+ax2.plot(nsamples_list, accuracies, 'r-')
+ax2.yaxis.label.set_color("red")
+ax2.set_ylabel("accuracy (#correct / total#)")
+fig = plt.gcf()
+fig.figsize=(5,5)
+fig.dpi=100
+bstr = "Kernel Perceptron, \n%d datapoints Fit: %.02f secs, accuracy across %d crossval points" % \
+(np.array(X).shape[0], k.timefit, len(crossvalY))
+plt.title(bstr)
+plt.xlabel("# samples")
+fig.tight_layout()
+plt.show()
+
+
+
+
+            # plt.xlabel('X dimension 1\n Red is class 1, Green is class -1')
+            # plt.ylabel('X dimension 2')
+            # plt.title(text)
+
+# for beta in beta_list:
+    # bk = BudgetKernelPerceptron(beta, N, numsamples)
+    # bk.fit(X, Y)
+    # print('predict time', bk.timepredict)
+    # print('fit time', bk.timefit)
+    # bstr = "Budget Kernel Perceptron, \n%d datapoints with %d samples, %d N, %d beta \nFit: %.02f secs" % \
+            # (np.array(X).shape[0], numsamples, N, beta, bk.timefit)
+# #    plt2 = bk.visualize(budget_kernel_file_name, width=0, show_charts=False, save_fig=False,
+# #            include_points=True, text=bstr)
+    # #plt2.savefig('budgetkernel_%dsamples_%dN_%dbeta.png' % (numsamples, N, beta))
+
+##############
