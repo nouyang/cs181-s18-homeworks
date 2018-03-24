@@ -316,6 +316,105 @@ In addition, provide answers the following reading questions
 
 \subsection*{Solution 2}
 \begin{enumerate}
+\item Next experiment with the hyperparameters for each of these
+  models. Try seeing if you can identify some patterns by changing
+  $\beta$, $N$ (the maximum number of support vectors), or the number
+  of random training samples taken during the Randomized Search
+  procedure (Section 4.3).  Note the training time, training and
+  validation accuracy, and number of support vectors for various
+  setups.
+  \begin{answer}
+
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=0.7\textwidth]{kernel.png}
+                \caption{It seems that the Kernel Perceptrons does very well even just sampling 100
+                points out of the 90k datapoints.}
+                \label{Problem 1, part 1.}
+            \end{figure}
+
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=0.7\textwidth]{budget.png}
+                \caption{The budget perceptron, we can see, takes 5.6 seconds instead of 8.3 seconds
+                on sampling 20k points (out of 90k), and achieves similar accuracy with only 50
+            support vectors. Additionally it appears to match the kernel perceptron in performance. Please ignore the graphs on the left (which were drawn from a tiny
+        subset of the 90k training data).}
+                \label{Problem 1, part 1.}
+            \end{figure}
+
+
+
+
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=0.5\textwidth]{samplesvstime.png}
+                \caption{Samples vs Time. We can see that (a) the SVM is very sensitive to the
+                initial randomly selected points (the three top graphs are all different) and (b)
+            the budget perceptron does improve on the time required to train -- at 15000 samples, it
+        takes 3 seconds instead of 5 seconds. The data is very noisy, perhaps in part due to being
+    run inside a virtual machine while other processes are running, but in general we see a trend
+toward higher accuracy (against the cross validation set) as number of samples increases. In fact it
+seems like we only need 2500 or so data points, not 20k, out of the original set of 90k, in order to
+potentially have high accuracy.}
+                \label{Problem 1, part 1.}
+            \end{figure}
+
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=0.5\textwidth]{kernel_numsamples.png}
+                \caption{Kernel perceptron, run using a varying number of randomly drawn samples. We
+                can see again that around 2500 samples we already have high accuracy. The number of
+                support vectors and time to train both increase, as expected. The sklearn
+            SVM (with linear kernel) again seems to have perfect accuracy, I suspect there is a bug in my code.}
+                \label{Problem 1, part 1.}
+            \end{figure}
+
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=0.5\textwidth]{budget_vs_beta.png}
+                \caption{Budget version, vs changes in beta. We see that we want beta to be at least
+                zero, or else all examples are misclassified. Zero also appears to be sufficient for
+            accuracy purposes. Not that zero does mean that we have fewer than our max number of
+        support vectors, vs when beta is 1 or higher.}
+                \label{Problem 1, part 1.}
+            \end{figure}
+
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=0.6\textwidth]{budget_N.png}
+                \caption{Budget version, vs changes in N (number of support vectors). At 50 or so
+                support vectors we already have very good accuracy. As number of support vectors
+            allowed goes up, the time to train goes up as well. }
+                \label{Problem 1, part 1.}
+            \end{figure}
+
+
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=0.4\textwidth]{budget_vs_numsamp.png}
+                \caption{Budget version, vs number of randomly drawn training samples, There 
+                is a stray datapoint due to a copy paste error, but overall we can see that again at 2500 samples we
+            have good accuracy, and 100 support vectors is sufficient. The training time remains
+        significantly below that of the kernel. }
+                \label{Problem 1, part 1.}
+            \end{figure}
+            In conclusion: beta = 0, N = 100, and number of samples = 5000 appear to be good
+            (somewhat optimal) choices. The budget version performs just as well with less training
+            time. We note that the SVM appears to perform very well on the
+            cross validated data when fitted against the test data -- this may be to a bug in the
+            hand-written accuracy calculation scoring function.
+
+
+  \end{answer}
+\item Lastly, compare the classification to the naive SVM imported from
+scikit-learn by reporting accuracy on the provided validation
+data. {\em For extra credit, implement the SMO algorithm and implement
+  the LASVM process and do the same as above.}\footnote{Extra credit
+  only makes a difference to your grade at the end of the semester if
+  you are on a grade boundary.}
+
+
 \item In one short sentence, state the main purpose of the paper.
 
     \begin{answer}
@@ -399,8 +498,6 @@ Write two or three paragraphs that address the following:
 \item Are there tradeoffs that your algorithm has to balance? [optional] 
 \item Are there any features of data collection, algorithm implementation, or the social world that make you wary of using machine learning in this case? [optional]
 \end{itemize}
-)
-
 
 We expect that:
 \begin{itemize}
@@ -423,6 +520,46 @@ item Depth over breadth here!
 
 \subsection*{Solution}
     \begin{answer}
+
+In this assignment, we are asked to evaluate the ethical issues in fair hiring practices within
+companies that may use algorithms to predict which employee attributes will result in desired
+outcomes. Possible relevant social good outcomes that were discussed in class include profit for the
+company and equality in employment opportunities for people of different races. In this essay, I
+will focus on the reason why socially good outcomes for the employees are a good fairness criteria.
+In addition, I will show that the two "categories" of outcomes are in fact interlinked -- what is
+good for employees is good for companies.
+
+Good outcomes for the labor market include reducing unemployment and increasing wages
+(relative to living cost), ideally bringing equal outcomes to the table, but if not at least trying
+to ensure equal access to opportunities. With job stability and a stable health insurance, people
+are able to further themselves and their families in social and economic situations. Good outcomes
+for the company include being able to continue to exist and being able to profit and grow the
+company, ideally by producing value to society, as well as being able to contribute to the
+advancement of society. For instance, we are all beneficiaries of companies competing to provide
+smartphones, and the companies make money by exploiting a desire we didn't know we had -- to be
+constantly connected.
+
+How are these two interlinked? Focusing specifically on race, we may observe that companies tend to have a specific target audience, and larger companies can in fact target more and more niches within a specific target
+audience. Thus we can say that, if we had more employees of different races, we would be able to
+expand the target market of the company. This would allow a company increase the
+size of the "potentential market".  Concretely, say that previously we had a clothing line that was
+generic for all races, but not as desirable to either. Now say that we have a clothing line that flatters
+pale skin, and one that flatters brown or black skin. In doing so, we can tailor our clothing lines
+more (optimistically, we might give differnt sizes and cuts of clothing depending on average
+characterics such as height, or, skeptically, simply charge more for superficial changes). By hiring
+employees who are able to help with these decisions and expanding this business, we have not only
+improved outcomes for racial outcomes at large in society, but also improved outcomes for the
+company. Companies that are able to thrive are also able to provide benefits to their employees,
+such as a stable job situation, good health benefits, and other forms of stability.
+
+Thus, the situation is much more complex at the company level than simply "hiring the employees with
+features, such as race, that correlate with increased sales". In doing so we may miss out on an
+extremely profitable opportunity to expand to new markets. I also value the idea of having
+more of a feedback mechanism instead, where the model also depends on -- not a quota per se, but on
+a "minimum standards" in terms of equality in several dimensions, perhaps race to start. This can be
+thought of more theoretically in terms of feedback -- that below a certain percentage of e.g.
+African Americans, it becomes very hard to attract and maintain such employees. Thus, we
+can add that in as a constraint.
 
     \end{answer}
 \newpage
