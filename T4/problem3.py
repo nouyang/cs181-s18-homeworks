@@ -16,7 +16,7 @@ class KMeans(object):
         self.dim = -1
         self.X = []
         self.numImages = -1
-    #np.random.seed(314159)
+        np.random.seed(314159)
 
     def dist(self, a,b):
         return np.linalg.norm(a-b) #l2 norm
@@ -45,8 +45,12 @@ class KMeans(object):
         for k in range(self.K): #retrieve imgs that are for each cluster
             cluster = np.array([imgs[i] for i in range(self.numImages) \
                                 if clusterAssignments[i]==k])
-            print('k=', k, 'cluster\n', cluster)
-            centers.append(np.mean(cluster, axis=0))
+            if cluster.size:
+                print('k=', k, 'cluster\n', cluster)
+                centers.append(np.mean(cluster, axis=0))
+            else:
+                # randomly reinitalize center
+                centers.append( np.random.randint(0,10,(self.dim, self.dim)))
         print('centers\n', centers)
         return np.array(centers)
 
@@ -100,7 +104,7 @@ K = 10
 #KMeansClassifier = KMeans(K=10, useKMeansPP=False)
 imgs = np.array([[num]*9 for num in range(5)]).reshape(5,3,3)
 
-KMeansClassifier = KMeans(K=2)
+KMeansClassifier = KMeans(K=3)
 KMeansClassifier.fit(imgs)
 #KMeansClassifier = KMeans(K=10)
 #KMeansClassifier.fit(pics)
