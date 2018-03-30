@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from datetime import datetime
+import random
 
 class KMeans(object):
     # K is the K in KMeans
@@ -18,6 +19,8 @@ class KMeans(object):
         self.X = []
         self.numImages = -1
         self.centers = []
+        self.distortions = []
+        self.ks = []
         #np.random.seed(314159)
 
     def dist(self, a,b):
@@ -27,6 +30,7 @@ class KMeans(object):
         #print(centers)
         # we shall have something like [0,4,3,5,1,0,0] for each point, their cluster
         imgAssignments = []
+        distortions = []
         for img in imgs: 
             #print('img\n', img)
             minDist, k = 99999999, -999
@@ -37,6 +41,8 @@ class KMeans(object):
                     minDist = distortion
                     k = kIndex
             imgAssignments.append(k)
+            distortions.append(distortion)
+            self.distortions = distortions #a min distortion per img
         return imgAssignments
 
     # we have an array centers = [[gray1, gray2, ... 28^2] ... K]], for mean image of the K clusters
@@ -64,7 +70,8 @@ class KMeans(object):
         K = self.K
         self.numImages = X.shape[0]
         print('self.numImages', self.numImages)
-        self.X = X.reshape(self.numImages, -1) #flatten into 2D N.(28*28) array
+        #self.X = X.reshape(self.numImages, -1) #flatten into 2D N.(28*28) array
+        self.X = np.array(X)
         #currCenters = [np.random.rand(K) for k in range(self.K)]
         currCenters = np.random.randint(0,255,(self.numImages, self.dim, self.dim))
         #print(currCenters)
@@ -74,6 +81,9 @@ class KMeans(object):
             clusterAssignments = self.closestCenters(X, currCenters)
             #print('now calculating new centers!!')
             currCenters = self.newCenters(X, clusterAssignments)
+            objective = np.sum(self.distortions) / (self.dim**2)
+            print('objective', objective)
+        self.ks = np.array(clusterAssignments)
         return clusterAssignments, currCenters
 
     # This should return the arrays for K images. Each image should represent the mean of each of the fitted clusters.
@@ -81,9 +91,24 @@ class KMeans(object):
         print('shape of centers', np.array(self.centers).shape)
         return self.centers
 
+
     # This should return the arrays for D images from each cluster that are representative of the clusters.
     def get_representative_images(self, D):
-        pass
+        reps = []
+        for k in range(self.K-1):
+            alist = self.ks == k
+            indices = [i for i,x in enumerate(alist) if x]
+            print('~~~~k\n', k)
+            if np.array(indices).size:
+                rand = random.sample(indices, D)
+            else:
+                rand = [0]
+            reps.append(np.array([np.array(self.X[ix].reshape(28,28)) for ix in rand]))
+            #reps.append(self.X[0].reshape(28,28))
+            #indexMinDist = images.index(min([images[ix] for ix in indices])) # this code is ...wow
+            #D.append(self.X[indexMinDist])
+        return reps # D is ... two images for now
+
 
     # img_array should be a 2D (square) numpy array.
     # Note, you are welcome to change this function (including its arguments and return values) to suit your needs. 
@@ -91,7 +116,7 @@ class KMeans(object):
     def create_image_from_array(self, img_array, filename='null'):
         fig = plt.figure()
         plt.imshow(img_array, cmap='Greys_r')
-        fig.savefig(filename)
+        #fig.savefig(filename)
         plt.show()
         return
 
@@ -109,14 +134,16 @@ K = 10
 #https://www.rdocumentation.org/packages/pracma/versions/1.5.5/topics/kmeanspp
 #KMeansClassifier = KMeans(K=10, useKMeansPP=False)
 
-#imgs = np.array([[num]*9 for num in range(5)]).reshape(5,3,3)
+numIters = 1
+
+#imgs = np.array([[num]*16 for num in range(5)]).reshape(5,4,4)
 #KMeansClassifier = KMeans(K=3)
-#KMeansClassifier.fit(imgs)
+#KMeansClassifier.fit(imgs, numIters)
 
 KMeansClassifier = KMeans(K=10)
-numIters = 10
 KMeansClassifier.fit(pics, numIters)
 blah = KMeansClassifier.get_mean_images()
+print(blah[0].shape)
 fig = plt.subplots()
 for i, image in enumerate(blah):
     plt.subplot(2,5, i+1)
@@ -128,7 +155,14 @@ plt.suptitle('MNIST Kmeans with %i iters and %i clusters' % (numIters, K))
 time = datetime.now().strftime('%H:%M:%S')
 fname = 'centroid_%i_iters_%i_clusters_' % (numIters, K) + time + '.png'
 plt.savefig(fname)
-plt.show()
+#plt.show()
+
+reps = KMeansClassifier.get_representative_images(2)
+#print( np.array(reps[0].reshape(28,28)).ndim)
+#arep = np.array(reps[0]).reshape(28,28)
+KMeansClassifier.create_image_from_array(reps[0][1])
+KMeansClassifier.create_image_from_array(reps[0][0])
+#plt.create_image_from_array(rep[1][1])
 
 # for k in range(K):
     # fname = 'meanimage_' + str(k) + '.png'
