@@ -86,8 +86,6 @@ class KMeans(object):
 
     # This should return the arrays for D images from each cluster that are representative of the clusters.
     def get_representative_images(self, D):
-        print('selx', self.X[1])
-        print('D', D)
         allReps = {}
         for k in range(self.K):
             reps = []
@@ -99,10 +97,7 @@ class KMeans(object):
             if len(mindists) == 0:
                 repindices = [0]*D
             else:
-                #print('k',k, 'D', D,'len', len(mindists[:D]), 'len mindist', len(mindists))
-                #print(np.array(mindists[:D])[0,:])
                 repindices = [ mindists[1][i] for i in range(D)]
-                #print(repindices)
             print('repindices', repindices)
             reps = self.X[repindices]
             allReps[k] = reps
@@ -133,38 +128,52 @@ K = 10
 #https://www.rdocumentation.org/packages/pracma/versions/1.5.5/topics/kmeanspp
 #KMeansClassifier = KMeans(K=10, useKMeansPP=False)
 
-numIters = 10
+numIters = 1
 
-imgs = np.array([[num]*4 for num in range(5)]).reshape(5,2,2)
-KMeansClassifier = KMeans(K=2)
-KMeansClassifier.fit(imgs, numIters)
+# imgs = np.array([[num]*4 for num in range(5)]).reshape(5,2,2)
+# KMeansClassifier = KMeans(K=2)
+# KMeansClassifier.fit(imgs, numIters)
 
-c =  np.array(KMeansClassifier.centers).reshape(2,2,2)
-print(c)
-print(len(c))
+# c =  np.array(KMeansClassifier.centers).reshape(2,2,2)
+# print(c)
+# print(len(c))
 
-# KMeansClassifier = KMeans(K=10)
-# KMeansClassifier.fit(pics, numIters)
-# blah = KMeansClassifier.get_mean_images()
-# print(blah[0].shape)
-# fig = plt.subplots()
-# for i, image in enumerate(blah):
-    # plt.subplot(2,5, i+1)
-    # plt.axis('off')
-    # plt.imshow(image, cmap='Greys_r')
-    # plt.title('Cluster: %i' % i)
-# plt.tight_layout()
-# plt.suptitle('MNIST Kmeans with %i iters and %i clusters' % (numIters, K))
-# time = datetime.now().strftime('%H:%M:%S')
-# fname = 'centroid_%i_iters_%i_clusters_' % (numIters, K) + time + '.png'
-# #plt.savefig(fname)
-# #plt.show()
+KMeansClassifier = KMeans(K=10)
+KMeansClassifier.fit(pics, numIters)
+blah = KMeansClassifier.get_mean_images()
+print(blah[0].shape)
+fig = plt.subplots()
+for i, image in enumerate(blah):
+    plt.subplot(2,5, i+1)
+    plt.axis('off')
+    plt.imshow(image, cmap='Greys_r')
+    plt.title('Cluster: %i' % i)
+plt.tight_layout()
+plt.suptitle('MNIST Kmeans with %i iters and %i clusters' % (numIters, K))
+time = datetime.now().strftime('%H:%M:%S')
+fname = 'centroid_%i_iters_%i_clusters_' % (numIters, K) + time + '.png'
+#plt.savefig(fname)
+#plt.show()
 
 reps = KMeansClassifier.get_representative_images(1)
 
-print(reps)
-print('REPS', reps)
-print( np.array(reps[0].reshape(2,2)).ndim)
+#print(reps)
+#print('REPS', reps)
+print(reps[0].shape)
+#for i, image in enumerate(reps):
+fig2 = plt.subplots()
+for i, image in reps.items():
+    plt.subplot(2,5, i+1)
+    plt.axis('off')
+    plt.imshow(image.reshape(28,28), cmap='Greys_r')
+    plt.title('Cluster: %i' % i)
+plt.tight_layout()
+plt.suptitle('MNIST Kmeans representative with %i iters and %i clusters' % (numIters, K))
+
+#plt.savefig(fname)
+plt.show()
+#print( np.array(reps[0].reshape(28,28)).ndim)
+
 #arep = np.array(reps[0]).reshape(28,28)
 #KMeansClassifier.create_image_from_array(reps[0][0])
 #KMeansClassifier.create_image_from_array(reps[1][0])
