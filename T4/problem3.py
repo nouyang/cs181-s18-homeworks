@@ -27,13 +27,10 @@ class KMeans(object):
         return np.linalg.norm(a-b) #l2 norm
 
     def closestCenters(self, imgs, centers):
-        #print(centers)
-        # we shall have something like [0,4,3,5,1,0,0] for each point, their cluster
         imgAssignments = []
         distortions = []
         for img in imgs: 
-            #print('img\n', img)
-            minDist, k = 99999999, -999
+            minDist, k = np.inf, np.inf
             for kIndex in range(self.K):
                 center = centers[kIndex]
                 distortion = self.dist(img, center)
@@ -47,21 +44,16 @@ class KMeans(object):
 
     # we have an array centers = [[gray1, gray2, ... 28^2] ... K]], for mean image of the K clusters
     def newCenters(self, imgs, clusterAssignments):
-        #clusters = np.zeros(self.X.shape[0], self.dim**2)
         centers = []
-        #print('clusterAssignments\n', clusterAssignments)
         print('clusterAssignments\n', clusterAssignments[0:10])
         for k in range(self.K): #retrieve imgs that are for each cluster
             cluster = np.array([imgs[i] for i in range(self.numImages) \
                                 if clusterAssignments[i]==k])
             if cluster.size:
-                #print('k=', k, 'cluster\n', cluster)
                 centers.append(np.mean(cluster, axis=0))
             else:
-                # randomly reinitalize center
                 print('WARNING: Had to randomly reinitialize a center!')
                 centers.append( np.random.randint(0,10,(self.dim, self.dim)))
-        #print('centers\n', centers)
         self.centers = centers
         return np.array(centers)
 
@@ -70,18 +62,13 @@ class KMeans(object):
         K = self.K
         self.numImages = X.shape[0]
         print('self.numImages', self.numImages)
-        #self.X = X.reshape(self.numImages, -1) #flatten into 2D N.(28*28) array
         self.X = np.array(X)
-        #currCenters = [np.random.rand(K) for k in range(self.K)]
         currCenters = np.random.randint(0,255,(self.numImages, self.dim, self.dim))
-        #print(currCenters)
         for i in range(numIters):
             print('i_th iteration', i)
-            #print('now assigning points to clusters!!')
             clusterAssignments = self.closestCenters(X, currCenters)
-            #print('now calculating new centers!!')
             currCenters = self.newCenters(X, clusterAssignments)
-            objective = np.sum(self.distortions) / (self.dim**2)
+            objective = np.sum(self.distortions)# / (self.numImages*28**2)
             print('objective', objective)
         self.ks = np.array(clusterAssignments)
         return clusterAssignments, currCenters
@@ -94,20 +81,24 @@ class KMeans(object):
 
     # This should return the arrays for D images from each cluster that are representative of the clusters.
     def get_representative_images(self, D):
-        reps = []
+        allReps = []
         for k in range(self.K-1):
-            alist = self.ks == k
-            indices = [i for i,x in enumerate(alist) if x]
-            print('~~~~k\n', k)
-            if np.array(indices).size:
-                rand = random.sample(indices, D)
+            reps = []
+            onehot = self.distortions * (self.ks==k)
+            classDistorts = [ (i,item) for i, item in enumerate(onehot)]
+            classDistorts = [ i for i in classDistorts if i[1] != 0]
+            mindists = sorted(classDistorts, key=lambda x: x[1]) #sort by distance, retaining index
+            #assert len(mindists)!= 0
+            if len(mindists) == 0:
+                repindices = [0]*D
             else:
-                rand = [0]
-            reps.append(np.array([np.array(self.X[ix].reshape(28,28)) for ix in rand]))
-            #reps.append(self.X[0].reshape(28,28))
-            #indexMinDist = images.index(min([images[ix] for ix in indices])) # this code is ...wow
-            #D.append(self.X[indexMinDist])
-        return reps # D is ... two images for now
+                print('k',k, 'D', D,'len', len(mindists[:D]), 'len mindist', len(mindists))
+                print(np.array(mindists[:D])[0,:])
+                repindices = np.asarray(np.array(mindists[:D])[0,:], dtype=int)
+                print(repindices)
+            reps = self.X[repindices]
+            allReps.append(reps)
+        return allReps # D is ... two images for now
 
 
     # img_array should be a 2D (square) numpy array.
@@ -160,8 +151,8 @@ plt.savefig(fname)
 reps = KMeansClassifier.get_representative_images(2)
 #print( np.array(reps[0].reshape(28,28)).ndim)
 #arep = np.array(reps[0]).reshape(28,28)
-KMeansClassifier.create_image_from_array(reps[0][1])
 KMeansClassifier.create_image_from_array(reps[0][0])
+KMeansClassifier.create_image_from_array(reps[1][0])
 #plt.create_image_from_array(rep[1][1])
 
 # for k in range(K):
