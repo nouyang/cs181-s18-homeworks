@@ -54,25 +54,25 @@ class KMeans(object):
                 centers.append(np.mean(cluster, axis=0))
             else:
                 print('WARNING: Had to randomly reinitialize a center!')
-                centers.append( np.random.randint(0,2,(self.dim, self.dim)))
+                centers.append( np.random.randint(0,100,(self.dim, self.dim)))
         self.centers = centers
-        print('CENTERS\n', [c.tolist() for c in centers])
+        #print('CENTERS\n', [c.tolist() for c in centers])
         return np.array(centers)
 
     def fit(self, X, numIters):
-        print('imgs', X)
+        #print('imgs', X)
         np.set_printoptions(precision=3)
         self.dim = X.shape[1]
         K = self.K
         self.numImages = X.shape[0]
         print('self.numImages', self.numImages)
         self.X = np.array(X)
-        currCenters = np.random.randint(0,2,(K, self.dim, self.dim))
-        print('K received: ', K, '\n Centers: ', currCenters)
+        currCenters = np.random.randint(0,100,(K, self.dim, self.dim))
+        #print('K received: ', K, '\n Centers: ', currCenters)
         for i in range(numIters):
             print('~~~~~ i_th iteration', i, '~~~~~')
             clusterAssignments = self.closestCenters(X, currCenters)
-            objective = np.sum(self.distortions)# / (self.numImages*28**2)
+            objective = np.sum(self.distortions) / (self.numImages*28**2)
             currCenters = self.newCenters(X, clusterAssignments)
             print('--> objective ------->', objective)
         self.ks = np.array(clusterAssignments)
@@ -86,8 +86,10 @@ class KMeans(object):
 
     # This should return the arrays for D images from each cluster that are representative of the clusters.
     def get_representative_images(self, D):
-        allReps = []
-        for k in range(self.K-1):
+        print('selx', self.X[1])
+        print('D', D)
+        allReps = {}
+        for k in range(self.K):
             reps = []
             onehot = self.distortions * (self.ks==k)
             classDistorts = [ (i,item) for i, item in enumerate(onehot)]
@@ -99,10 +101,11 @@ class KMeans(object):
             else:
                 #print('k',k, 'D', D,'len', len(mindists[:D]), 'len mindist', len(mindists))
                 #print(np.array(mindists[:D])[0,:])
-                repindices = np.asarray(np.array(mindists[:D])[0,:], dtype=int)
+                repindices = [ mindists[1][i] for i in range(D)]
                 #print(repindices)
+            print('repindices', repindices)
             reps = self.X[repindices]
-            allReps.append(reps)
+            allReps[k] = reps
         return allReps # D is ... two images for now
 
 
@@ -124,15 +127,15 @@ pics = np.load("images.npy", allow_pickle=False)
 # That being said, keep in mind that you should not change the constructor for the KMeans class, 
 # though you may add more public methods for things like the visualization if you want.
 # Also, you must cluster all of the images in the provided dataset, so your code should be fast enough to do that.
-K = 2
+K = 10
 
 # what is useKMeansPP? let us ignore it for now
 #https://www.rdocumentation.org/packages/pracma/versions/1.5.5/topics/kmeanspp
 #KMeansClassifier = KMeans(K=10, useKMeansPP=False)
 
-numIters = 5
+numIters = 10
 
-imgs = np.array([[num]*4 for num in range(2)]).reshape(2,2,2)
+imgs = np.array([[num]*4 for num in range(5)]).reshape(5,2,2)
 KMeansClassifier = KMeans(K=2)
 KMeansClassifier.fit(imgs, numIters)
 
@@ -154,12 +157,14 @@ print(len(c))
 # plt.suptitle('MNIST Kmeans with %i iters and %i clusters' % (numIters, K))
 # time = datetime.now().strftime('%H:%M:%S')
 # fname = 'centroid_%i_iters_%i_clusters_' % (numIters, K) + time + '.png'
-# plt.savefig(fname)
-# plt.show()
+# #plt.savefig(fname)
+# #plt.show()
 
-# reps = KMeansClassifier.get_representative_images(2)
+reps = KMeansClassifier.get_representative_images(1)
 
-#print( np.array(reps[0].reshape(28,28)).ndim)
+print(reps)
+print('REPS', reps)
+print( np.array(reps[0].reshape(2,2)).ndim)
 #arep = np.array(reps[0]).reshape(28,28)
 #KMeansClassifier.create_image_from_array(reps[0][0])
 #KMeansClassifier.create_image_from_array(reps[1][0])
