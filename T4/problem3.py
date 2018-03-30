@@ -6,6 +6,7 @@
 import numpy as np 
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+from datetime import datetime
 
 class KMeans(object):
     # K is the K in KMeans
@@ -17,7 +18,7 @@ class KMeans(object):
         self.X = []
         self.numImages = -1
         self.centers = []
-        np.random.seed(314159)
+        #np.random.seed(314159)
 
     def dist(self, a,b):
         return np.linalg.norm(a-b) #l2 norm
@@ -58,16 +59,15 @@ class KMeans(object):
         self.centers = centers
         return np.array(centers)
 
-    def fit(self, X):
+    def fit(self, X, numIters):
         self.dim = X.shape[1]
         K = self.K
         self.numImages = X.shape[0]
         print('self.numImages', self.numImages)
         self.X = X.reshape(self.numImages, -1) #flatten into 2D N.(28*28) array
         #currCenters = [np.random.rand(K) for k in range(self.K)]
-        currCenters = np.random.randint(0,10,(self.numImages, self.dim, self.dim))
+        currCenters = np.random.randint(0,255,(self.numImages, self.dim, self.dim))
         #print(currCenters)
-        numIters = 1
         for i in range(numIters):
             print('i_th iteration', i)
             #print('now assigning points to clusters!!')
@@ -88,9 +88,10 @@ class KMeans(object):
     # img_array should be a 2D (square) numpy array.
     # Note, you are welcome to change this function (including its arguments and return values) to suit your needs. 
     # However, we do ask that any images in your writeup be grayscale images, just as in this example.
-    def create_image_from_array(self, img_array):
-        plt.figure()
+    def create_image_from_array(self, img_array, filename='null'):
+        fig = plt.figure()
         plt.imshow(img_array, cmap='Greys_r')
+        fig.savefig(filename)
         plt.show()
         return
 
@@ -113,10 +114,24 @@ K = 10
 #KMeansClassifier.fit(imgs)
 
 KMeansClassifier = KMeans(K=10)
-KMeansClassifier.fit(pics)
+numIters = 10
+KMeansClassifier.fit(pics, numIters)
 blah = KMeansClassifier.get_mean_images()
-KMeansClassifier.create_image_from_array(blah[1])
+fig = plt.subplots()
+for i, image in enumerate(blah):
+    plt.subplot(2,5, i+1)
+    plt.axis('off')
+    plt.imshow(image, cmap='Greys_r')
+    plt.title('Cluster: %i' % i)
+plt.tight_layout()
+plt.suptitle('MNIST Kmeans with %i iters and %i clusters' % (numIters, K))
+time = datetime.now().strftime('%H:%M:%S')
+fname = 'centroid_%i_iters_%i_clusters_' % (numIters, K) + time + '.png'
+plt.savefig(fname)
+plt.show()
 
+# for k in range(K):
+    # fname = 'meanimage_' + str(k) + '.png'
 
 
 
