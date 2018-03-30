@@ -97,10 +97,11 @@ class KMeans(object):
             if len(mindists) == 0:
                 repindices = [0]*D
             else:
-                repindices = [ mindists[1][i] for i in range(D)]
+                repindices = [ mindists[i][0] for i in range(D)]
             print('repindices', repindices)
-            reps = self.X[repindices]
+            reps = np.array([self.X[idx] for idx in repindices])
             allReps[k] = reps
+            print(len(allReps))
         return allReps # D is ... two images for now
 
 
@@ -155,18 +156,26 @@ fname = 'centroid_%i_iters_%i_clusters_' % (numIters, K) + time + '.png'
 #plt.savefig(fname)
 #plt.show()
 
-reps = KMeansClassifier.get_representative_images(1)
+D =4 
+reps = KMeansClassifier.get_representative_images(D)
 
 #print(reps)
 #print('REPS', reps)
 print(reps[0].shape)
+#print(reps[0])
+
 #for i, image in enumerate(reps):
-fig2 = plt.subplots()
-for i, image in reps.items():
-    plt.subplot(2,5, i+1)
-    plt.axis('off')
-    plt.imshow(image.reshape(28,28), cmap='Greys_r')
-    plt.title('Cluster: %i' % i)
+fig = plt.subplots(D, K)
+i = 0
+for k, images in reps.items():
+    print('k',k)
+    print(len(images))
+    for r in range(D):
+        i+=1
+        img = images[r].reshape(28,28)
+        plt.subplot(D, K, i )
+        plt.imshow(img, cmap='Greys_r')
+        plt.axis('off')
 plt.tight_layout()
 plt.suptitle('MNIST Kmeans representative with %i iters and %i clusters' % (numIters, K))
 
