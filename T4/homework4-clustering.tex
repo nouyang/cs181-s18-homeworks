@@ -28,10 +28,22 @@
 \usepackage{listings}
 \usepackage{common}
 \usepackage{bm}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{subfig}
+
+
+% http://www.tablesgenerator.com/#
 
 \usepackage[mmddyyyy,hhmmss]{datetime}
 
 \definecolor{verbgray}{gray}{0.9}
+\definecolor{answergreen}{rgb}{0.09,0.42,0.31}
+
+\newenvironment{answer}{%
+    \color{answergreen}\bf}
 
 \lstnewenvironment{csv}{%
   \lstset{backgroundcolor=\color{verbgray},
@@ -121,7 +133,6 @@ is the center of a cluster $G$):
 \end{problem}
 
 \subsection*{Solution}
-
 \newpage 
 
 \section*{Expectation-Maximization for Gaussian Mixture Models [7pts]}
@@ -262,7 +273,92 @@ to take up multiple pages.)
 
 
 \end{problem}
-\subsection*{Solution}
+\subsection*{Solution: K-Means}
+
+\begin{itemize}
+\item Implement K-means clustering
+from different random initializations 
+and for several values of $K$ using the 
+$\ell_2$ norm as your
+distance metric. (You should feel free to explore other metrics 
+than the $\ell_2$ norm, but this is strictly optional.)  Compare the 
+K-means objective for different values of K and across random
+initializations.
+%
+\begin{answer}
+
+    From the following table \ref{my-label} we may observe that the objective decreases as K increases.
+    Additionally, for each run of K, the final objective (cost) is fairly consistent, without large
+    variations.
+
+    \begin{table}[H]
+        \centering
+        \caption{K-Means l2 objective for different values of K}
+        \label{my-label}
+        \begin{tabular}{@{}lll@{}}
+            \toprule
+            K (\# clusters) & Objective (normalized) & Objective  \\ \midrule
+            2               & 2.2632                 & 10646092.8 \\
+            2               & 2.2631                 & 10645622.4 \\
+            2               & 2.2631                 & 10645622.4 \\
+            5               & 2.1117                 & 9933436.8  \\
+            5               & 2.1191                 & 9968246.4  \\
+            5               & 2.1183                 & 9964483.2  \\
+            10              & 1.99                   & 9360960    \\
+            10              & 1.9888                 & 9355315.2  \\
+            10              & 1.9868                 & 9345907.2  \\
+            15              & 1.9222                 & 9042028.8  \\
+            15              & 1.9212                 & 9037324.8  \\
+            15              & 1.9187                 & 9025564.8  \\ \bottomrule
+        \end{tabular}
+    \end{table}
+
+\end{answer}
+
+\item For three different values of K,
+and a couple of random restarts for each, 
+show the mean images for each cluster (i.e., for
+the cluster prototypes), as well as the images for a 
+few representative images for each cluster. You should explain how you selected
+these representative images. To render an image, use the pyplot \texttt{imshow} function. 
+
+\begin{answer}
+
+In the representative images, each row indicates images from one cluster.
+For each row, the three left images are chosen as the three closest (as defined
+by the objective function) to the centroid, and the three right images are the three worst scoring images.
+
+\captionsetup[figure]{aboveskip=0pt}
+\captionsetup[figure]{belowskip=0pt}
+\hbox{}\kern-\topskip
+\textfloatsep=0px
+\begin{figure}[p]
+        \centering
+        \includegraphics[width=\textwidth,height=0.28\paperheight]{p3_means.png}
+        \caption{Problem 3, Mean images, with a bonus K=15 centroid runs.}
+        \label{P3 Means}
+
+        \includegraphics[width=\textwidth,height=0.5\paperheight]{p3_reps.png}
+        \caption{Problem 3, Representative images, note that K=15 is not depicted here. Left 3 are
+        closest to centroid by l2 norm, right 3 are furthest.}
+        \label{P3 Reps}
+\end{figure}
+
+\end{answer}
+
+
+\item Are the results wildly different for different
+restarts and/or different 
+values of K?
+For one of your runs, plot the K-means objective function as a function of iteration and verify that
+it never increases.
+
+\begin{answer}
+    The results do seem to vary noticeably between runs, aside from the K=2 case.
+\end{answer}
+
+\end{itemize}
+
 
 
 %Figure out how to load it into your environment and turn it into a set of
@@ -283,3 +379,5 @@ Approximately how long did this homework take you to complete?
 
 
 \end{document}
+
+% vim --servername vim test.tex

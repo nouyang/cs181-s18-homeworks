@@ -1,0 +1,198 @@
+2.970801283825729
+2.1593113092850316
+2.053740173112835
+2.028430170271818
+2.020434618936546
+2.014945309442909
+2.009952545073193
+2.0058719436530668
+2.0020712697939245
+1.9991800240967197
+1.9956847391084258
+1.9925334013885792
+1.9902212840037334
+1.9887275711185066
+1.9879460378803453
+1.9874940357430189
+1.9872573609899558
+1.9871233588398067
+1.9869498237054917
+1.9868501233662605
+1.9868079718580767
+1.986795990298887
+1.9867798515068982
+1.986773534909377
+1.986773534909377
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+self.numImages 6000
+~~~~~ i_th iteration 0 ~~~~~
+clusterAssignments
+ [9, 8, 4, 6, 3, 8, 6, 8, 6, 6]
+--> objective -------> 2.970801283825729
+~~~~~ i_th iteration 1 ~~~~~
+clusterAssignments
+ [1, 4, 0, 6, 3, 8, 6, 1, 6, 2]
+--> objective -------> 2.1593113092850316
+~~~~~ i_th iteration 2 ~~~~~
+clusterAssignments
+ [1, 4, 0, 6, 3, 2, 6, 1, 6, 7]
+--> objective -------> 2.053740173112835
+~~~~~ i_th iteration 3 ~~~~~
+clusterAssignments
+ [1, 4, 0, 6, 3, 2, 6, 1, 6, 7]
+--> objective -------> 2.028430170271818
+~~~~~ i_th iteration 4 ~~~~~
+clusterAssignments
+ [1, 4, 0, 6, 3, 2, 6, 1, 6, 7]
+--> objective -------> 2.020434618936546
+~~~~~ i_th iteration 5 ~~~~~
+clusterAssignments
+ [1, 4, 0, 6, 3, 2, 6, 1, 6, 7]
+--> objective -------> 2.014945309442909
+~~~~~ i_th iteration 6 ~~~~~
+clusterAssignments
+ [1, 4, 0, 6, 3, 2, 5, 1, 6, 7]
+--> objective -------> 2.009952545073193
+~~~~~ i_th iteration 7 ~~~~~
+clusterAssignments
+ [1, 4, 0, 6, 3, 2, 5, 1, 6, 7]
+--> objective -------> 2.0058719436530668
+~~~~~ i_th iteration 8 ~~~~~
+clusterAssignments
+ [1, 4, 0, 6, 3, 2, 5, 1, 5, 7]
+--> objective -------> 2.0020712697939245
+~~~~~ i_th iteration 9 ~~~~~
+clusterAssignments
+ [1, 4, 0, 6, 3, 2, 5, 1, 5, 7]
+--> objective -------> 1.9991800240967197
+~~~~~ i_th iteration 10 ~~~~~
+clusterAssignments
+ [1, 4, 0, 6, 3, 2, 5, 1, 5, 7]
+--> objective -------> 1.9956847391084258
+~~~~~ i_th iteration 11 ~~~~~
+clusterAssignments
+ [1, 4, 0, 6, 3, 2, 5, 1, 5, 7]
+--> objective -------> 1.9925334013885792
+~~~~~ i_th iteration 12 ~~~~~
+clusterAssignments
+ [1, 4, 0, 6, 3, 2, 5, 1, 5, 7]
+--> objective -------> 1.9902212840037334
+~~~~~ i_th iteration 13 ~~~~~
+clusterAssignments
+ [1, 4, 0, 6, 3, 2, 5, 1, 5, 7]
+--> objective -------> 1.9887275711185066
+~~~~~ i_th iteration 14 ~~~~~
+clusterAssignments
+ [1, 4, 0, 6, 3, 2, 5, 1, 5, 7]
+--> objective -------> 1.9879460378803453
+~~~~~ i_th iteration 15 ~~~~~
+clusterAssignments
+ [1, 4, 0, 6, 3, 2, 5, 1, 5, 7]
+--> objective -------> 1.9874940357430189
+~~~~~ i_th iteration 16 ~~~~~
+clusterAssignments
+ [1, 4, 0, 6, 3, 2, 5, 1, 5, 7]
+--> objective -------> 1.9872573609899558
+~~~~~ i_th iteration 17 ~~~~~
+clusterAssignments
+ [1, 4, 0, 6, 3, 2, 5, 1, 5, 7]
+--> objective -------> 1.9871233588398067
+~~~~~ i_th iteration 18 ~~~~~
+clusterAssignments
+ [1, 4, 0, 6, 3, 2, 5, 1, 5, 7]
+--> objective -------> 1.9869498237054917
+~~~~~ i_th iteration 19 ~~~~~
+clusterAssignments
+ [1, 4, 0, 6, 3, 2, 5, 1, 5, 7]
+--> objective -------> 1.9868501233662605
+~~~~~ i_th iteration 20 ~~~~~
+clusterAssignments
+ [1, 4, 0, 6, 3, 2, 5, 1, 5, 7]
+--> objective -------> 1.9868079718580767
+~~~~~ i_th iteration 21 ~~~~~
+clusterAssignments
+ [1, 4, 0, 6, 3, 2, 5, 1, 5, 7]
+--> objective -------> 1.986795990298887
+~~~~~ i_th iteration 22 ~~~~~
+clusterAssignments
+ [1, 4, 0, 6, 3, 2, 5, 1, 5, 7]
+--> objective -------> 1.9867798515068982
+~~~~~ i_th iteration 23 ~~~~~
+clusterAssignments
+ [1, 4, 0, 6, 3, 2, 5, 1, 5, 7]
+--> objective -------> 1.986773534909377
+~~~~~ i_th iteration 24 ~~~~~
+clusterAssignments
+ [1, 4, 0, 6, 3, 2, 5, 1, 5, 7]
+--> objective -------> 1.986773534909377
+(28, 28)
+class 0 contains 573 datapoints
+repindices [2060, 2176, 322, 1466, 3370, 4727]
+1
+class 1 contains 654 datapoints
+repindices [5781, 5775, 1783, 756, 1319, 4862]
+2
+class 2 contains 418 datapoints
+repindices [3333, 4371, 3339, 4360, 3362, 2748]
+3
+class 3 contains 732 datapoints
+repindices [1733, 2041, 2331, 1618, 1215, 2835]
+4
+class 4 contains 479 datapoints
+repindices [2996, 5266, 4159, 872, 4773, 670]
+5
+class 5 contains 833 datapoints
+repindices [454, 3900, 310, 1947, 360, 1047]
+6
+class 6 contains 454 datapoints
+repindices [4089, 2695, 2719, 2634, 3830, 5293]
+7
+class 7 contains 619 datapoints
+repindices [853, 3249, 3463, 1480, 28, 4927]
+8
+class 8 contains 507 datapoints
+repindices [1456, 431, 421, 2019, 4741, 4188]
+9
+class 9 contains 731 datapoints
+repindices [1130, 4490, 98, 5972, 2268, 4820]
+10
+(6, 28, 28)
+k 0
+6
+k 1
+6
+k 2
+6
+k 3
+6
+k 4
+6
+k 5
+6
+k 6
+6
+k 7
+6
+k 8
+6
+k 9
+6
+(venv) 
+
+
