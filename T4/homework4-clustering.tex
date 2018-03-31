@@ -1,15 +1,6 @@
 
 \documentclass[submit]{harvardml}
 
-% Put in your full name and email address.
-\name{Your Name}
-\email{email@fas.harvard.edu}
-
-% List any people you worked with.
-\collaborators{%
-  John Doe,
-  Fred Doe
-}
 
 % You don't need to change these.
 \course{CS181-S18}
@@ -328,11 +319,7 @@ In the representative images, each row indicates images from one cluster.
 For each row, the three left images are chosen as the three closest (as defined
 by the objective function) to the centroid, and the three right images are the three worst scoring images.
 
-\captionsetup[figure]{aboveskip=0pt}
-\captionsetup[figure]{belowskip=0pt}
-\hbox{}\kern-\topskip
-\textfloatsep=0px
-\begin{figure}[p]
+\begin{figure}[]
         \centering
         \includegraphics[width=\textwidth,height=0.28\paperheight]{p3_means.png}
         \caption{Problem 3, Mean images, with a bonus K=15 centroid runs.}
@@ -354,12 +341,25 @@ For one of your runs, plot the K-means objective function as a function of itera
 it never increases.
 
 \begin{answer}
-    The results do seem to vary noticeably between runs, aside from the K=2 case.
+        The results do seem to vary noticeably between runs, aside from the K=2 case, which exhibits
+        little variation. 
+        The results do vary even more for different values of K; for K=10, the mean images will
+        sometimes miss entire numbers, while for k=15 we will get repeats of a few of the values
+        even if we get most of the digits. 
+
+        For the following, we graph a run of the KMeans algorithm for K=10 clusters. The run
+        converged after 24 iterations (where by converge I set it to mean that the previous and
+        current objective value did not change). Although a bit hard to see, 
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.5\textwidth]{p3_costvsiter.png}
+        \caption{Problem 3: Verification that K-means objective function decreases as a function of
+        iteration}
+        \label{cost}
+    \end{figure}
 \end{answer}
 
 \end{itemize}
-
-
 
 %Figure out how to load it into your environment and turn it into a set of
 %vectors.  Run K-Means on it for a few different~$K$ and show some results from
@@ -376,6 +376,18 @@ it never increases.
 \begin{problem}[Calibration, 1pt]
 Approximately how long did this homework take you to complete?
 \end{problem}
+
+~20-30 hours
+\subsection*{Name, Email, and Collaborators}
+
+Name: Nao Ouyang
+
+Email: nouyang@g.harvard.edu    
+
+Collaborators:
+Eric
+Buse
+Philip
 
 
 \end{document}
