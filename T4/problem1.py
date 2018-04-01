@@ -53,7 +53,7 @@ def dist_avg(cluster_1, cluster_2,norm):
 
 ## Example code below does the L2 norm for min distance.
 ##List of norms (this currently only has l2 norm)
-norms_list = [np.linalg.norm, lambda x: np.linalg.norm(x, ord=1), lambda x: np.linalg.norm(x,
+norms_list = [lambda x: np.linalg.norm(x, ord=1), np.linalg.norm, lambda x: np.linalg.norm(x,
                                                                                            ord=np.inf)]
 norm_names = ["l1 norm", "l2 norm", "l∞ norm"]
 

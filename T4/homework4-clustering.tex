@@ -25,6 +25,7 @@
 \usepackage{float}
 \usepackage{subfig}
 \usepackage{cleveref}
+\usepackage{adjustbox}
 
 
 % http://www.tablesgenerator.com/#
@@ -43,6 +44,22 @@
   framerule=0pt,
   basicstyle=\ttfamily,
   columns=fullflexible}}{}
+
+
+\newcommand{\bx}{\mathbf{x}} %%%% WARNING: may cause unexpected behavior
+\newcommand{\by}{\mathbf{y}} %%%% WARNING: may cause unexpected behavior
+
+%\newcommand{\bw}{\mathbf{w}} %%%% WARNING: may cause unexpected behavior
+%\newcommand{\bS}{\mathbf{S}} %%%% WARNING: may cause unexpected behavior
+
+%\newcommand{\mBI}{\mathbb{I}_{ik}} %%%% WARNING: may cause unexpected behavior
+%%\newcommand{\bpi}{\mathbf{\pi}} %%%% Already built into latex 
+
+%%\newcommand{\bmu}{\mathbf{\mu}} %%%% Already built into latex 
+%\newcommand{\bvar}{\mathbf{\sigma}^2} %%%% WARNING: may cause unexpected behavior
+\newcommand{\bSig}{\mathbf{\Sigma}} %%%% WARNING: may cause unexpected behavior
+%\newcommand{\lsum}{\mathlarger{\sum}} %%%% WARNING: may cause unexpected behavior
+
 
 \begin{document}
 \begin{center}
@@ -124,8 +141,8 @@ is the center of a cluster $G$):
 
 \end{problem}
 
-\subsection*{Solution: Hierarchical Clustering Clustering}
 \newpage 
+\subsection*{Solution: Hierarchical Clustering Clustering}
 
 \begin{enumerate}
     \item Draw the 2D unit sphere for each norm,
@@ -159,7 +176,7 @@ is the center of a cluster $G$):
                     & L1 norm     & L2 norm     & L$\infty$ norm     &  \\ \midrule
                     \multicolumn{1}{l|}{Min dist}      & black, blue & black, blue & red, blue   &
                     \\
-                    \multicolumn{1}{l|}{Max dist}      & red, blue   & black, blue & red, blue   &
+                    \multicolumn{1}{l|}{Max dist}      & black, blue & red, blue & red, blue   &
                     \\
                     \multicolumn{1}{l|}{Avg dist}      & red, blue   & red, blue   & red, blue   &
                     \\
@@ -173,7 +190,6 @@ is the center of a cluster $G$):
         and each of the clustering distances. We have provided some code to make this easier for
         you. You are not required to use it.
 
-        \begin{answer}
 
         \begin{answer}
             \begin{figure}
@@ -185,7 +201,33 @@ is the center of a cluster $G$):
             \end{figure}
 
         See \cref{p1 dendo}
-        \end{answer}
+
+
+        For reference on distances used, see \cref{p1 dendo dist}
+
+		\begin{table}
+			\centering
+			\begin{adjustbox}{max width=\textwidth}
+
+				\begin{tabular}{@{}l|ll|ll|ll@{}}
+					& \textbf{L1 norm} &              & \textbf{L2 norm} &              & \textbf{L∞ norm} &              \\ \midrule
+					\textbf{min dist}      &                  & (merge dist) &                  & (merge dist) &                  & (merge dist) \\
+					First merge            & black, blue      & 0.61         & black, blue      & 0.436        & red, blue        & 0.34         \\
+					Second merge           & all              & 0.62         & all              & 0.440        & all              & 0.35         \\ \midrule
+					\textbf{max dist}      &                  &              &                  &              &                  &              \\
+					First merge            & black, blue      & 0.61         & red, blue        & 0.440        & red, blue        & 0.34         \\
+					Second merge           & all              & 1.03         & all              & 0.869        & all              & 0.34         \\ \midrule
+					\textbf{avg dist}      &                  &              &                  &              &                  &              \\
+					First merge            & red, blue        & 0.62         & red, blue        & 0.440        & red, blue        & 0.34         \\
+					Second merge           & all              & 11.68        & all              & 9.715        & all              & 9.24         \\ \midrule
+					\textbf{centroid dist} &                  &              &                  &              &                  &              \\
+					First merge            & black, blue      & 0.25         & black, blue      & 0.210        & black, blue      & 0.205        \\
+					Second merge           & all              & 1.09         & all              & 0.657        & all              & 0.515       
+				\end{tabular}
+\end{adjustbox}
+			\caption{Problem 1. Not asked for, but here are actual merge distances as output by python script for each combination of norms (distances) and clustering criteria}
+			\label{p1 dendo dist}
+		\end{table}
         \end{answer}
 
 \end{enumerate}
@@ -214,14 +256,10 @@ from~$N(\mu_{z_i}, \Sigma_{z_i})$. Formally documents are generated in two steps
 
 
 \begin{problem}
+      ~
 
   \begin{enumerate}
 
-    % FDV mostly at Mark Goldstein, delete once read: changed to be
-    % intractability of the data likelihood because we don't have
-    % priors over the mus and Sigmas in this problem.  We could change
-    % the whole problem to add priors, but that might be too hard/a
-    % better problem for 281... 
   \item \textbf{Intractability of the Data Likelihood} Let $\phi_k$
     represent all the parameters associated with a component
     $(\mu_k,\Sigma_k)$.  We are generally interested in finding a set
@@ -266,7 +304,106 @@ Different?
   
 \end{problem}
 
-\subsection*{Solution}
+\subsection*{Solution EM for Gaussian Mixture Models}
+
+
+\begin{enumerate}
+
+    \item \textbf{Intractability of the Data Likelihood} 
+        
+        Let $\phi_k$ represent all the parameters associated with a component $(\mu_k,\Sigma_k)$.
+        We are generally interested in finding a set of parameters $\phi_k$ that maximize the data
+        likelihood $\log p(\{x_i\}|\{phi_k\})$.  Expand the data likelihood to include the necessary
+		sums over observations $x_i$ and latents $z_i$.  Why is optimizing this
+		loss directly intractable?
+
+		\begin{answer}
+
+    \begin{equation}
+     \mathcal{N}(\bx \mid \bmu, \Sigma)
+             = \frac{1}{\sqrt{(2\pi)^D|\bSigma|}}  \exp\left(-\frac 1 2 ({\mathbf x}-{\boldsymbol\mu})^\mathrm{T}{\boldsymbol\Sigma}^{-1}({\mathbf x}-{\boldsymbol\mu})\right)
+    \end{equation}
+
+        \begin{equation}
+            \sum_{i=1}^n \sum_{k=1}^c \mu
+            \left[ 
+            \right] + const
+        \end{equation}
+
+        \begin{equation}
+        \frac{\partial L_g}{\partial \bmu_k} = 
+        \end{equation}
+		\end{answer}
+
+    \item \textbf{Complete-Data Log Likelihood} 
+
+        Define the complete data for this problem to be $D = \{(\boldx_i, \boldz_i)\}_{i=1}^n$.
+        Write out the complete-data (negative) log likelihood.  \[\mcL(\btheta,
+        \{\mu_k,\Sigma_k\}^c_{k=1}) =  -\ln p(D \given\btheta, \{\mu_k,\Sigma_k\}^c_{k=1}).\] 
+
+		\begin{answer}
+
+		\end{answer}
+
+    \item \textbf{Expectation Step}
+        Our next step is to introduce a mathematical expression for $\boldq_i$, the posterior over
+        the hidden topic variables~$\boldz_i$ conditioned on the observed data $\boldx_i$ with fixed
+        parameters, i.e $p(\boldz_i | \boldx_i; \btheta, \{ \mu_k,\Sigma_k \}^c_{k=1})$.
+
+        \begin{itemize}
+            \item  Write down and simplify the expression for $\boldq_i$. 
+
+				\begin{answer}
+
+				\end{answer}
+
+            \item  Give an algorithm for calculating $\boldq_i$ for all $i$, given the observed
+                data~$\{\boldx_i\}^n_{i=1}$ and settings of the parameters~$\btheta$ and~$\{
+                \mu_k,\Sigma_k  \}^c_{k=1}$.
+
+				\begin{answer}
+
+				\end{answer}
+
+		\end{itemize}
+
+	\item \textbf{Maximization Step}
+		Using the~$\boldq_i$ estimates from the Expectation Step, derive an update for maximizing
+		the expected complete data log likelihood in terms of~$\btheta$ and~$\{ \mu_k,\Sigma_k
+		\}^c_{k=1}$.
+
+		\begin{itemize} 
+			\item Derive an expression for the expected complete-data log likelihood in
+				terms of $\boldq_i$.
+
+				\begin{answer}
+
+				\end{answer}
+
+			\item Find an expression for $\btheta$ that maximizes this expected complete-data log
+				likelihood. You may find it helpful to use Lagrange multipliers in order to force
+				the constraint $\sum \theta_k = 1$. Why does this optimized $\btheta$ make intuitive
+				sense?
+
+				\begin{answer}
+
+				\end{answer}
+			\item Apply a similar argument to find the value of the $(\mu_k,\Sigma_k)$'s that
+				maximizes the expected complete-data log likelihood.  
+				\begin{answer}
+
+				\end{answer}
+
+		\end{itemize}
+
+	\item Finally, compare this EM approach to the generative model for classification in Homework
+		2.  How are the computations similar?  Different? 
+
+		\begin{answer}
+
+		\end{answer}
+
+\end{enumerate}
 
 
 \newpage
@@ -289,7 +426,7 @@ images, each of which are $28\times28$ greyscale handwritten digits. Your job is
 K-means clustering on MNIST, and to test whether this relatively simple algorithm can cluster
 similar-looking images together.
 
-
+~
 \begin{problem}
 The given code loads the images into your environment as a 6000x28x28 array.
 
