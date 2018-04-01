@@ -1,0 +1,213 @@
+-----------------------------------------------------
+ ***  l1 norm *** 
+-----------------------------------------------------
+------------------------
+ ** min dist ** 
+------------------------
+     -----------    
+BEGIN Clusters at step 1
+[array([0.1, 0.5]), array([0.35, 0.75])]
+[array([0.28, 1.35])]
+[array([0.  , 1.01])]
+Most recent merge distance 0.4360045871318328
+     -----------    
+BEGIN Clusters at step 2
+[array([0.1, 0.5]), array([0.35, 0.75]), array([0.  , 1.01])]
+[array([0.28, 1.35])]
+Most recent merge distance 0.44045431091090487
+     -----------    
+FINAL Clusters at step3
+[array([0.1, 0.5]), array([0.35, 0.75]), array([0.  , 1.01]), array([0.28, 1.35])]
+------------------------
+ ** max dist ** 
+------------------------
+     -----------    
+BEGIN Clusters at step 1
+[array([0.1, 0.5]), array([0.35, 0.75])]
+[array([0.28, 1.35])]
+[array([0.  , 1.01])]
+Most recent merge distance 0.44045431091090487
+     -----------    
+BEGIN Clusters at step 2
+[array([0.1, 0.5]), array([0.35, 0.75])]
+[array([0.28, 1.35]), array([0.  , 1.01])]
+Most recent merge distance 0.8688498144098323
+     -----------    
+FINAL Clusters at step3
+[array([0.1, 0.5]), array([0.35, 0.75]), array([0.28, 1.35]), array([0.  , 1.01])]
+------------------------
+ ** avg dist ** 
+------------------------
+     -----------    
+BEGIN Clusters at step 1
+[array([0.1, 0.5]), array([0.35, 0.75])]
+[array([0.28, 1.35])]
+[array([0.  , 1.01])]
+Most recent merge distance 0.44045431091090487
+     -----------    
+BEGIN Clusters at step 2
+[array([0.1, 0.5]), array([0.35, 0.75])]
+[array([0.28, 1.35]), array([0.  , 1.01])]
+Most recent merge distance 9.7145415694827
+     -----------    
+FINAL Clusters at step3
+[array([0.1, 0.5]), array([0.35, 0.75]), array([0.28, 1.35]), array([0.  , 1.01])]
+------------------------
+ ** centroid dist ** 
+------------------------
+     -----------    
+BEGIN Clusters at step 1
+[array([0.1, 0.5]), array([0.35, 0.75])]
+[array([0.28, 1.35])]
+[array([0.  , 1.01])]
+Most recent merge distance 0.20988091861815358
+     -----------    
+BEGIN Clusters at step 2
+[array([0.1, 0.5]), array([0.35, 0.75]), array([0.  , 1.01])]
+[array([0.28, 1.35])]
+Most recent merge distance 0.6569246532137458
+     -----------    
+FINAL Clusters at step3
+[array([0.1, 0.5]), array([0.35, 0.75]), array([0.  , 1.01]), array([0.28, 1.35])]
+-----------------------------------------------------
+ ***  l2 norm *** 
+-----------------------------------------------------
+------------------------
+ ** min dist ** 
+------------------------
+     -----------    
+BEGIN Clusters at step 1
+[array([0.1, 0.5]), array([0.35, 0.75])]
+[array([0.28, 1.35])]
+[array([0.  , 1.01])]
+Most recent merge distance 0.61
+     -----------    
+BEGIN Clusters at step 2
+[array([0.1, 0.5]), array([0.35, 0.75]), array([0.  , 1.01])]
+[array([0.28, 1.35])]
+Most recent merge distance 0.6200000000000001
+     -----------    
+FINAL Clusters at step3
+[array([0.1, 0.5]), array([0.35, 0.75]), array([0.  , 1.01]), array([0.28, 1.35])]
+------------------------
+ ** max dist ** 
+------------------------
+     -----------    
+BEGIN Clusters at step 1
+[array([0.1, 0.5]), array([0.35, 0.75])]
+[array([0.28, 1.35])]
+[array([0.  , 1.01])]
+Most recent merge distance 0.61
+     -----------    
+BEGIN Clusters at step 2
+[array([0.1, 0.5]), array([0.35, 0.75]), array([0.  , 1.01])]
+[array([0.28, 1.35])]
+Most recent merge distance 1.03
+     -----------    
+FINAL Clusters at step3
+[array([0.1, 0.5]), array([0.35, 0.75]), array([0.  , 1.01]), array([0.28, 1.35])]
+------------------------
+ ** avg dist ** 
+------------------------
+     -----------    
+BEGIN Clusters at step 1
+[array([0.1, 0.5]), array([0.35, 0.75])]
+[array([0.28, 1.35])]
+[array([0.  , 1.01])]
+Most recent merge distance 0.6200000000000001
+     -----------    
+BEGIN Clusters at step 2
+[array([0.1, 0.5]), array([0.35, 0.75])]
+[array([0.28, 1.35]), array([0.  , 1.01])]
+Most recent merge distance 11.68
+     -----------    
+FINAL Clusters at step3
+[array([0.1, 0.5]), array([0.35, 0.75]), array([0.28, 1.35]), array([0.  , 1.01])]
+------------------------
+ ** centroid dist ** 
+------------------------
+     -----------    
+BEGIN Clusters at step 1
+[array([0.1, 0.5]), array([0.35, 0.75])]
+[array([0.28, 1.35])]
+[array([0.  , 1.01])]
+Most recent merge distance 0.25000000000000006
+     -----------    
+BEGIN Clusters at step 2
+[array([0.1, 0.5]), array([0.35, 0.75]), array([0.  , 1.01])]
+[array([0.28, 1.35])]
+Most recent merge distance 1.0900000000000003
+     -----------    
+FINAL Clusters at step3
+[array([0.1, 0.5]), array([0.35, 0.75]), array([0.  , 1.01]), array([0.28, 1.35])]
+-----------------------------------------------------
+ ***  l∞ norm *** 
+-----------------------------------------------------
+------------------------
+ ** min dist ** 
+------------------------
+     -----------    
+BEGIN Clusters at step 1
+[array([0.1, 0.5]), array([0.35, 0.75])]
+[array([0.28, 1.35])]
+[array([0.  , 1.01])]
+Most recent merge distance 0.3400000000000001
+     -----------    
+BEGIN Clusters at step 2
+[array([0.1, 0.5]), array([0.35, 0.75])]
+[array([0.28, 1.35]), array([0.  , 1.01])]
+Most recent merge distance 0.35
+     -----------    
+FINAL Clusters at step3
+[array([0.1, 0.5]), array([0.35, 0.75]), array([0.28, 1.35]), array([0.  , 1.01])]
+------------------------
+ ** max dist ** 
+------------------------
+     -----------    
+BEGIN Clusters at step 1
+[array([0.1, 0.5]), array([0.35, 0.75])]
+[array([0.28, 1.35])]
+[array([0.  , 1.01])]
+Most recent merge distance 0.3400000000000001
+     -----------    
+BEGIN Clusters at step 2
+[array([0.1, 0.5]), array([0.35, 0.75])]
+[array([0.28, 1.35]), array([0.  , 1.01])]
+Most recent merge distance 0.8500000000000001
+     -----------    
+FINAL Clusters at step3
+[array([0.1, 0.5]), array([0.35, 0.75]), array([0.28, 1.35]), array([0.  , 1.01])]
+------------------------
+ ** avg dist ** 
+------------------------
+     -----------    
+BEGIN Clusters at step 1
+[array([0.1, 0.5]), array([0.35, 0.75])]
+[array([0.28, 1.35])]
+[array([0.  , 1.01])]
+Most recent merge distance 0.3400000000000001
+     -----------    
+BEGIN Clusters at step 2
+[array([0.1, 0.5]), array([0.35, 0.75])]
+[array([0.28, 1.35]), array([0.  , 1.01])]
+Most recent merge distance 9.24
+     -----------    
+FINAL Clusters at step3
+[array([0.1, 0.5]), array([0.35, 0.75]), array([0.28, 1.35]), array([0.  , 1.01])]
+------------------------
+ ** centroid dist ** 
+------------------------
+     -----------    
+BEGIN Clusters at step 1
+[array([0.1, 0.5]), array([0.35, 0.75])]
+[array([0.28, 1.35])]
+[array([0.  , 1.01])]
+Most recent merge distance 0.20500000000000002
+     -----------    
+BEGIN Clusters at step 2
+[array([0.1, 0.5]), array([0.35, 0.75]), array([0.  , 1.01])]
+[array([0.28, 1.35])]
+Most recent merge distance 0.5150000000000001
+     -----------    
+FINAL Clusters at step3
+[array([0.1, 0.5]), array([0.35, 0.75]), array([0.  , 1.01]), array([0.28, 1.35])]

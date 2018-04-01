@@ -24,6 +24,7 @@
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{subfig}
+\usepackage{cleveref}
 
 
 % http://www.tablesgenerator.com/#
@@ -123,9 +124,71 @@ is the center of a cluster $G$):
 
 \end{problem}
 
-\subsection*{Solution}
+\subsection*{Solution: Hierarchical Clustering Clustering}
 \newpage 
 
+\begin{enumerate}
+    \item Draw the 2D unit sphere for each norm,
+        defined as $\mathcal{S} = \{\boldx \in \mathbb{R}^2: \|\boldx\| = 1 \}$. Feel free to do
+        it by hand, take a picture and include it in your pdf.
+
+        \begin{answer}
+            \begin{figure}
+                \centering
+                \includegraphics[width=0.25\textwidth]{p1_norms.jpg}
+                \caption{Problem 1, 2d unit ball for l1, l2, and l$\infty$ norms}
+                \label{p1}
+            \end{figure}
+        \label{P3 Means}
+
+        See \cref{p1}
+        \end{answer}
+
+    \item  For each norm ($\ell_1, \ell_2, \ell_\infty$) and each clustering distance, specify which
+        two clusters would be the first to merge.
+
+        \begin{answer}
+            See \cref{firstmerge}.
+
+            \begin{table}[h]
+                \centering
+                \caption{First clusters to merge}
+                \label{firstmerge}
+                \begin{tabular}{@{}lllll@{}}
+                    \toprule
+                    & L1 norm     & L2 norm     & L$\infty$ norm     &  \\ \midrule
+                    \multicolumn{1}{l|}{Min dist}      & black, blue & black, blue & red, blue   &
+                    \\
+                    \multicolumn{1}{l|}{Max dist}      & red, blue   & black, blue & red, blue   &
+                    \\
+                    \multicolumn{1}{l|}{Avg dist}      & red, blue   & red, blue   & red, blue   &
+                    \\
+                    \multicolumn{1}{l|}{Centroid dist} & black, blue & black, blue & black, blue &
+                    \\ \bottomrule
+                \end{tabular}
+            \end{table}
+        \end{answer}
+
+    \item Draw the complete dendrograms showing the order of agglomerations for the $\ell_2$ norm
+        and each of the clustering distances. We have provided some code to make this easier for
+        you. You are not required to use it.
+
+        \begin{answer}
+
+        \begin{answer}
+            \begin{figure}
+                \centering
+                \includegraphics[width=\textwidth]{p1_dendograms.jpg}
+                \caption{Problem 1, dendogram for clustering with l2 norm and each of the clustering
+                distances.}
+                \label{p1 dendo}
+            \end{figure}
+
+        See \cref{p1 dendo}
+        \end{answer}
+        \end{answer}
+
+\end{enumerate}
 \section*{Expectation-Maximization for Gaussian Mixture Models [7pts]}
 
 
@@ -151,7 +214,6 @@ from~$N(\mu_{z_i}, \Sigma_{z_i})$. Formally documents are generated in two steps
 
 
 \begin{problem}
-  ~
 
   \begin{enumerate}
 
@@ -168,8 +230,13 @@ from~$N(\mu_{z_i}, \Sigma_{z_i})$. Formally documents are generated in two steps
     necessary sums over observations $x_i$ and latents $z_i$.  Why is
     optimizing this loss directly intractable?
     
-\item \textbf{Complete-Data Log Likelihood} Define the complete data for this problem to be $D = \{(\boldx_i, \boldz_i)\}_{i=1}^n$. Write out the complete-data (negative) log likelihood. \[\mcL(\btheta, \{\mu_k,\Sigma_k\}^c_{k=1}) =  -\ln p(D \given\btheta, \{\mu_k,\Sigma_k\}^c_{k=1}).\] 
-    
+\item \textbf{Complete-Data Log Likelihood} 
+
+    Define the complete data for this problem to be $D =
+    \{(\boldx_i, \boldz_i)\}_{i=1}^n$. Write out the complete-data (negative) log likelihood.
+    \[\mcL(\btheta, \{\mu_k,\Sigma_k\}^c_{k=1}) =  -\ln p(D \given\btheta,
+    \{\mu_k,\Sigma_k\}^c_{k=1}).\] 
+
 
 \item \textbf{Expectation Step}
 Our next step is to introduce a mathematical expression for $\boldq_i$, the posterior over the hidden topic variables~$\boldz_i$ conditioned on the observed data $\boldx_i$ with fixed parameters, i.e $p(\boldz_i | \boldx_i; \btheta, \{ \mu_k,\Sigma_k \}^c_{k=1})$.
@@ -206,52 +273,42 @@ Different?
 
 \section*{K-Means [15 pts]} % FDV: Any more interesting data sets?  
 
-For this problem you will implement  K-Means clustering from scratch. Using \texttt{numpy} is fine, but don't use a
-third-party machine learning implementation like \texttt{scikit-learn}. You will then apply this approach to clustering of image data.  
+For this problem you will implement  K-Means clustering from scratch. Using \texttt{numpy} is fine,
+but don't use a third-party machine learning implementation like \texttt{scikit-learn}. You will
+then apply this approach to clustering of image data.  
 
 
 
-We have provided you with the MNIST dataset, a collection of handwritten digits used as a benchmark of image recogntion (you  can
-learn more about the data set at  \url{http://yann.lecun.com/exdb/mnist/}). The MNIST task
-is widely used in supervised learning, and modern algorithms with neural
-networks do very well on this task. 
+We have provided you with the MNIST dataset, a collection of handwritten digits used as a benchmark
+of image recogntion (you  can learn more about the data set at
+\url{http://yann.lecun.com/exdb/mnist/}). The MNIST task is widely used in supervised learning, and
+modern algorithms with neural networks do very well on this task. 
 
-Here we will use MNIST unsupervised learning. You have been given
-representations of 6000 MNIST images, each of which are $28\times28$
-greyscale handwritten digits. Your job is to implement K-means
-clustering on MNIST, and to test whether this relatively simple algorithm can
-cluster similar-looking images together.
+Here we will use MNIST unsupervised learning. You have been given representations of 6000 MNIST
+images, each of which are $28\times28$ greyscale handwritten digits. Your job is to implement
+K-means clustering on MNIST, and to test whether this relatively simple algorithm can cluster
+similar-looking images together.
 
-~
 
 \begin{problem}
 The given code loads the images into your environment as a 6000x28x28 array.
 
 \begin{itemize}
-\item Implement K-means clustering
-from different random initializations 
-and for several values of $K$ using the 
-$\ell_2$ norm as your
-distance metric. (You should feel free to explore other metrics 
-than the $\ell_2$ norm, but this is strictly optional.)  Compare the 
-K-means objective for different values of K and across random
-initializations.
+    \item Implement K-means clustering
+        from different random initializations and for several values of $K$ using the $\ell_2$ norm
+        as your distance metric. (You should feel free to explore other metrics than the $\ell_2$
+        norm, but this is strictly optional.)  Compare the K-means objective for different values of
+        K and across random initializations.
 %
 \item For three different values of K,
-and a couple of random restarts for each, 
-show the mean images for each cluster (i.e., for
-the cluster prototypes), as well as the images for a 
-few representative images for each cluster. You should explain how you selected
-these representative images. To render an image, use the pyplot \texttt{imshow} function. 
+    and a couple of random restarts for each, show the mean images for each cluster (i.e., for the
+    cluster prototypes), as well as the images for a few representative images for each cluster. You
+    should explain how you selected these representative images. To render an image, use the pyplot
+    \texttt{imshow} function. 
 
-\item Are the results wildly different for different
-restarts and/or different 
-values of K?
-For one of your runs, plot the K-means objective function as a function of iteration and verify that
-it never increases.
-
-%\item Finally, implement K-means++ and see if gives you more satisfying
-%initializations (and final results) for K-means. Explain your findings.
+\item Are the results wildly different for different restarts and/or different values of K?  For one
+    of your runs, plot the K-means objective function as a function of iteration and verify that it
+    never increases.
 
 \end{itemize}
 
@@ -280,11 +337,12 @@ initializations.
 
     From the following table \ref{my-label} we may observe that the objective decreases as K increases.
     Additionally, for each run of K, the final objective (cost) is fairly consistent, without large
-    variations.
+    variations, compared to the changes in final cost between different K values.
 
     \begin{table}[H]
         \centering
-        \caption{K-Means l2 objective for different values of K}
+        \caption{K-Means l2 objective for different values of K. Normalized = divided by 6000*28*28,
+        for readability.}
         \label{my-label}
         \begin{tabular}{@{}lll@{}}
             \toprule
@@ -306,12 +364,10 @@ initializations.
 
 \end{answer}
 
-\item For three different values of K,
-and a couple of random restarts for each, 
-show the mean images for each cluster (i.e., for
-the cluster prototypes), as well as the images for a 
-few representative images for each cluster. You should explain how you selected
-these representative images. To render an image, use the pyplot \texttt{imshow} function. 
+\item For three different values of K, and a couple of random restarts for each, show the mean
+    images for each cluster (i.e., for the cluster prototypes), as well as the images for a few
+    representative images for each cluster. You should explain how you selected these representative
+    images. To render an image, use the pyplot \texttt{imshow} function. 
 
 \begin{answer}
 
@@ -319,17 +375,18 @@ In the representative images, each row indicates images from one cluster.
 For each row, the three left images are chosen as the three closest (as defined
 by the objective function) to the centroid, and the three right images are the three worst scoring images.
 
-\begin{figure}[]
-        \centering
-        \includegraphics[width=\textwidth,height=0.28\paperheight]{p3_means.png}
-        \caption{Problem 3, Mean images, with a bonus K=15 centroid runs.}
-        \label{P3 Means}
+~~~~~~~~~~~~~~~~~ TODO REMEMBER to comment out images below for final submission!!
+%\begin{figure}[h]
+        %\centering
+        %\includegraphics[width=\textwidth,height=0.28\paperheight]{p3_means.png}
+        %\caption{Problem 3, Mean images, with a bonus K=15 centroid runs.}
+        %\label{P3 Means}
 
-        \includegraphics[width=\textwidth,height=0.5\paperheight]{p3_reps.png}
-        \caption{Problem 3, Representative images, note that K=15 is not depicted here. Left 3 are
-        closest to centroid by l2 norm, right 3 are furthest.}
-        \label{P3 Reps}
-\end{figure}
+        %\includegraphics[width=\textwidth,height=0.5\paperheight]{p3_reps.png}
+        %\caption{Problem 3, Representative images, note that K=15 is not depicted here. Left 3 are
+        %closest to centroid by l2 norm, right 3 are furthest.}
+        %\label{P3 Reps}
+%\end{figure}
 
 \end{answer}
 
@@ -341,16 +398,17 @@ For one of your runs, plot the K-means objective function as a function of itera
 it never increases.
 
 \begin{answer}
-        The results do seem to vary noticeably between runs, aside from the K=2 case, which exhibits
-        little variation. 
-        The results do vary even more for different values of K; for K=10, the mean images will
-        sometimes miss entire numbers, while for k=15 we will get repeats of a few of the values
+        Compared to the k-means objective (as answered in part 1), The representative images /
+        cluster results do seem to vary noticeably between runs, aside from the K=2 case, which
+        exhibits little variation.  The results do vary even more for different values of K; for
+        K=10, the mean images will sometimes miss entire numbers, while for k=15 we will get repeats
+        of a few of the values
         even if we get most of the digits. 
 
         For the following, we graph a run of the KMeans algorithm for K=10 clusters. The run
         converged after 24 iterations (where by converge I set it to mean that the previous and
         current objective value did not change). Although a bit hard to see, 
-    \begin{figure}[h]
+    \begin{figure}[ht]
         \centering
         \includegraphics[width=0.5\textwidth]{p3_costvsiter.png}
         \caption{Problem 3: Verification that K-means objective function decreases as a function of
@@ -388,6 +446,7 @@ Collaborators:
 Eric
 Buse
 Philip
+David
 
 
 \end{document}
