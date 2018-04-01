@@ -1,13 +1,16 @@
 
 \documentclass[submit]{harvardml}
 
-
 % You don't need to change these.
 \course{CS181-S18}
 \assignment{Assignment \#4}
 \duedate{11:59pm March 30, 2018} % FDV: Update due date 
 
 \usepackage[OT1]{fontenc}
+\usepackage[T1]{fontenc}  %get rid of textbackslash warming?
+\usepackage{textcomp} % get rid of font for textbullet warning?
+\usepackage{lmodern}% http://ctan.org/pkg/lm (Allows arbitrary font sizes)
+
 \usepackage[colorlinks,citecolor=blue,urlcolor=blue]{hyperref}
 \usepackage[pdftex]{graphicx}
 \usepackage{subfig}
@@ -26,6 +29,7 @@
 \usepackage{subfig}
 \usepackage{cleveref}
 \usepackage{adjustbox}
+\usepackage{listings}% for code highlighting
 
 
 % http://www.tablesgenerator.com/#
@@ -36,7 +40,10 @@
 \definecolor{answergreen}{rgb}{0.09,0.42,0.31}
 
 \newenvironment{answer}{%
-    \color{answergreen}\bf}
+\color{answergreen}\sffamily\large}{}
+% \bfseries
+% https://www.sharelatex.com/learn/Font_sizes,_families,_and_styles
+
 
 \lstnewenvironment{csv}{%
   \lstset{backgroundcolor=\color{verbgray},
@@ -46,8 +53,11 @@
   columns=fullflexible}}{}
 
 
+
 \newcommand{\bx}{\mathbf{x}} %%%% WARNING: may cause unexpected behavior
 \newcommand{\by}{\mathbf{y}} %%%% WARNING: may cause unexpected behavior
+\newcommand{\bz}{\mathbf{z}} %%%% WARNING: may cause unexpected behavior
+\newcommand{\bq}{\mathbf{q}} %%%% WARNING: may cause unexpected behavior
 
 %\newcommand{\bw}{\mathbf{w}} %%%% WARNING: may cause unexpected behavior
 %\newcommand{\bS}{\mathbf{S}} %%%% WARNING: may cause unexpected behavior
@@ -57,7 +67,6 @@
 
 %%\newcommand{\bmu}{\mathbf{\mu}} %%%% Already built into latex 
 %\newcommand{\bvar}{\mathbf{\sigma}^2} %%%% WARNING: may cause unexpected behavior
-\newcommand{\bSig}{\mathbf{\Sigma}} %%%% WARNING: may cause unexpected behavior
 %\newcommand{\lsum}{\mathlarger{\sum}} %%%% WARNING: may cause unexpected behavior
 
 
@@ -260,13 +269,12 @@ from~$N(\mu_{z_i}, \Sigma_{z_i})$. Formally documents are generated in two steps
 
   \begin{enumerate}
 
-  \item \textbf{Intractability of the Data Likelihood} Let $\phi_k$
-    represent all the parameters associated with a component
-    $(\mu_k,\Sigma_k)$.  We are generally interested in finding a set
-    of parameters $\phi_k$ that maximize the data likelihood $\log
-    p(\{x_i\}|\{phi_k\})$.  Expand the data likelihood to include the
-    necessary sums over observations $x_i$ and latents $z_i$.  Why is
-    optimizing this loss directly intractable?
+  \item \textbf{Intractability of the Data Likelihood}
+     Let $\phi_k$ represent all the parameters associated with a component $(\mu_k,\Sigma_k)$.  We
+     are generally interested in finding a set of parameters $\phi_k$ that maximize the data
+     likelihood $\log p(\{x_i\}|\{\phi_k\})$.  Expand the data likelihood to include the %remember to escape curlies
+    necessary sums over observations $x_i$ and latents $z_i$.  Why is optimizing this loss directly
+    intractable?
     
 \item \textbf{Complete-Data Log Likelihood} 
 
@@ -295,8 +303,8 @@ Using the~$\boldq_i$ estimates from the Expectation Step, derive an update for m
 \end{itemize}
 
 \item Finally, compare this EM approach to the generative model for
-classification in Homework 2.  How are the computations similar?
-Different? 
+	classification in Homework 2.  How are the computations similar?
+	Different? 
 
 \end{enumerate}
 
@@ -313,27 +321,60 @@ Different?
         
         Let $\phi_k$ represent all the parameters associated with a component $(\mu_k,\Sigma_k)$.
         We are generally interested in finding a set of parameters $\phi_k$ that maximize the data
-        likelihood $\log p(\{x_i\}|\{phi_k\})$.  Expand the data likelihood to include the necessary
-		sums over observations $x_i$ and latents $z_i$.  Why is optimizing this
-		loss directly intractable?
+        likelihood $\log p(x_i|\phi_k)$. Expand the data likelihood to include the necessary
+		sums over observations $x_i$ and latents $z_i$. 
 
 		\begin{answer}
 
-    \begin{equation}
-     \mathcal{N}(\bx \mid \bmu, \Sigma)
-             = \frac{1}{\sqrt{(2\pi)^D|\bSigma|}}  \exp\left(-\frac 1 2 ({\mathbf x}-{\boldsymbol\mu})^\mathrm{T}{\boldsymbol\Sigma}^{-1}({\mathbf x}-{\boldsymbol\mu})\right)
-    \end{equation}
+            Suppose we observe some data and we would like to calculate the likelihood of observing
+            such data. 
 
-        \begin{equation}
-            \sum_{i=1}^n \sum_{k=1}^c \mu
-            \left[ 
-            \right] + const
-        \end{equation}
+            Let $\phi_k$ be our model parameters.
+            If we assume a mixture of Gaussians model, $\phi_k$ consists of the $\mu_k$ and $\Sigma_k$ for
+            each component (aka class).  
 
-        \begin{equation}
-        \frac{\partial L_g}{\partial \bmu_k} = 
-        \end{equation}
-		\end{answer}
+            \textit{Note: The "complete-data" case is if we knew the true class labels, in which
+            case we cold directly calculate $p(\bx,\bz |\phi)$. However, as $\bz$ is a latent
+            (unobservable) variable, we may only calculate $p(\bx|\phi).$}
+
+            \begin{enumerate}
+
+                \item Let $\theta_k$ indicate the \textbf{class} distribution for our latent variable
+                    $\bz$'s.
+                    \begin{align}
+                        p(\bz = C_k) = \theta_k, \text{for } k \in \{1,...,c\}
+                    \end{align}
+
+                    For this problem we assume $z_i$ to be identically distributed, so that $\theta_k$ is
+                    the same for each. 
+                    %TODO: I did not use z_i at all! https://piazza.com/class/jc3xylsz3wf1n7?cid=421
+
+                \item Let our class conditional distribution be 
+                    \begin{align}
+                        p(\bx| \bz = C_k) = \mathcal{N}(\bx|\bmu_k,\bSigma_k)
+                    \end{align}
+
+            \end{enumerate}
+            As per the s17 lecture 14 slides, the log likelihood of observed data $\bx$ may thus be written 
+            \begin{align}
+                \ln p( \bx_i | \phi) = \ln \sum_{k=1}^c \theta_k \mathcal{N}(\bx_i | \bmu_k, \bSigma_k) 
+                \
+            \end{align}
+
+            That is, the probability of our $\bx$'s given our model parameters is equal to the sum,
+            across all possible classes, of the probability $\theta_k$ of $\bx_k$ being from each
+            class times the normal distribution from where x would be drawn if it was of class $k$. 
+            % this equation written by appealing to logic, not working out math
+
+        \end{answer}
+        \color{black}Question: Why is optimizing this loss directly intractable?
+        \begin{answer}
+
+            We cannot find a closed solution for this, as the log of the sum prevents us from being
+            able to decompose it by $\phi$. In general, it is hard to simplify the log of a sum of
+            expressions (unliked decomposing a log of a product of expressions).
+
+        \end{answer}
 
     \item \textbf{Complete-Data Log Likelihood} 
 
@@ -342,6 +383,48 @@ Different?
         \{\mu_k,\Sigma_k\}^c_{k=1}) =  -\ln p(D \given\btheta, \{\mu_k,\Sigma_k\}^c_{k=1}).\] 
 
 		\begin{answer}
+
+    As before:
+    \begin{enumerate}
+        \item Let $D$ be the data $\bx, \bz$.
+        \item Let $\phi$ be the parameters $\theta$ (class distribution) as well as $\{\mu_k,
+            \Sigma_k\}_{k=1}^c$ (parameters for class conditional distribution.)
+
+            Per the definition of a joint probability distribution, the probability of both $x_i$ and
+            $z_i$ happening is equal to the probability of $z_i$ happening, times the probability of
+            $x_i$ happening given that $z_i$ happened.
+            \begin{align}
+                p( D ) = p(\bx_i, \bz_i) = p(\bz_i) p(\bx_i | \bz_i)
+            \end{align}
+
+            Let $z_{ik}$ be the indicator variable, which is 1 only when $x_i$ is of true class $k$, and
+            zero otherwise.
+
+    \end{enumerate}
+
+            We can now write out the negative log of the complete-data log likelihood:
+            \begin{align}
+                -\ln p( D | \phi) =  -\ln p(\bx | \phi) - \ln p( z | \phi) \\
+                p(\bz_i) = \prod_{k=1}^c \theta_z^{z_{ik}} \\ 
+                p(\bx_i | \bz_i ) = \prod_{k=1}^c \mathcal{N}(\bx|\bmu_k,\bSigma_k)^{z_{ik}} \\
+                p(\bz_i) p(\bx_i | \bz_i) = \prod_{k=1}^c \theta_k^{z_{ik}}\mathcal{N}(\bx|\bmu_k,\bSigma_k)^{z_{ik}} 
+                \label{eq:5}
+            \end{align}
+
+            Note by thinking carefully that in the product series case, we use the indicator variable as
+            an exponent (think through what raising something to the power of 1 or 0 does). In a product
+            series, multiplying by one "does nothing", while in a summation series, summing a zero "does
+            nothing".
+
+            Taking the log of \cref{eq:5} we get that 
+
+            \begin{align}
+                \ln p(\bx_i, \bz_i | \phi) = 
+                    - \sum_{k=1}^c z_{ik} \ln \theta_k
+                    - \sum_{k=1}^c  z_{ik} \ln \mathcal{N}(\bx|\bmu_k,\bSigma_k)^{z_{ik}}
+            \end{align}
+
+
 
 		\end{answer}
 
@@ -354,6 +437,14 @@ Different?
             \item  Write down and simplify the expression for $\boldq_i$. 
 
 				\begin{answer}
+                    As per section 8 notes, problem 3.4 :
+                    \begin{align}
+                        \bq_i &= p(\bz_i = C_k | \bx_i, \phi)  \\ \label{eq:q}
+                              &\propto p(\bz_i, \phi) p(\bx_i | \bz_i, \phi) \\ 
+                              &\propto \theta_k^{z_{ik}}\mathcal{N}(\bx|\bmu_k,\bSigma_k)^{z_{ik}} 
+                    \end{align}
+
+
 
 				\end{answer}
 
@@ -362,44 +453,251 @@ Different?
                 \mu_k,\Sigma_k  \}^c_{k=1}$.
 
 				\begin{answer}
+                    We have settings for $\btheta$ and $\{\bmu_k,\bSigma_k\}$
+                    (specifically: if it's
+                    the first iteration, these are chosen randomly, otherwise these are output from
+                    the previous iteration); and that we have observed data $\bx$. We see that our
+                    posterior belief is our belief about our  the distribution of our class
+                    variables $z$ given our observed data $x$ (In k--means, the posterior would be
+                    our belief about the location of our centroids given our unlabeled data).
+                    
+                    Above, we wrote down how to calculate $q_i$ for one datapoint (implicitly,
+                    \ref{eq:q} may be denoted more accurately as ($q_i)_k$. That is to say, we will
+                    have $i$ number of vectors $q_i$, where each vector is of length $k$:
+                    
+\begin{lstlisting}[frame=single, language=python]
+def gaussian(x, mu, sigma):
+    g = 1/(sigma * sqrt(2*pi) * exp(-.05*((x-mu)/sigma)**2
+    return g
+
+for each datapoint x_i from i=(1 to n)
+    q_i_per_i = []
+    For each class k from k=(1 to c)
+        q_i[k] = ( thetas[k] * 
+            gaussian(x_i, current_mean_estimates[k], 
+                    current_sigma_estimates[k]) )
+    q_i_per_i[x_i] = q_i[k]
+\end{lstlisting}
 
 				\end{answer}
 
 		\end{itemize}
 
-	\item \textbf{Maximization Step}
-		Using the~$\boldq_i$ estimates from the Expectation Step, derive an update for maximizing
-		the expected complete data log likelihood in terms of~$\btheta$ and~$\{ \mu_k,\Sigma_k
-		\}^c_{k=1}$.
+    \item \textbf{Maximization Step}
+        Using the~$\boldq_i$ estimates from the Expectation Step, derive an update for maximizing
+        the expected complete data log likelihood in terms of~$\btheta$ and~$\{ \mu_k,\Sigma_k
+        \}^c_{k=1}$.
 
-		\begin{itemize} 
-			\item Derive an expression for the expected complete-data log likelihood in
-				terms of $\boldq_i$.
+        \begin{itemize} 
+            \item Derive an expression for the expected complete-data log likelihood in
+                terms of $\boldq_i$.
 
-				\begin{answer}
+                \begin{answer}
 
-				\end{answer}
+                    Now we have the true class labels (well, our estimate of them) from the
+                    expectation step. We can now calculate, as per slide 19, sp17 lec14, the
+                    expected (positive) complete-data log likelihood (which we will next try to
+                    maximize):
+                    \begin{align}
+                        \mathbb{E}_Z[\mathcal{L}(\phi)] &= \mathbb{E}_Z \left[ \sum_{i=1}^n \ln(p(\bx_i,
+                        \bz_i | \phi) \right]  \\
+                        &= \sum_{i=1}^n \sum_{k=1}^c q_{ik} \ln\theta_k + 
+                        \sum_{i=1}^n \sum_{k=1}^c q_{ik} \ln \mathcal{N}(\bx_i | \bmu_k,
+                        \bSigma_k) \\
+                        &= \sum_{i=1}^n \sum_{k=1}^c q_{ik} \left(\ln\theta_k + 
+                    \ln \mathcal{N}(\bx_i | \bmu_k, \bSigma_k ) \right) \\ \tag{\ref{eq:exp} revisited}
+                    %\sum_{i=1}^n 
+                    %\sum_{k=1}^c 
+                    %\mathcal{N}(\bx_i | \bmu_k, \bSigma_k)
+                \end{align}
 
-			\item Find an expression for $\btheta$ that maximizes this expected complete-data log
-				likelihood. You may find it helpful to use Lagrange multipliers in order to force
-				the constraint $\sum \theta_k = 1$. Why does this optimized $\btheta$ make intuitive
-				sense?
+            \end{answer}
 
-				\begin{answer}
+        \item Find an expression for $\btheta$ that maximizes this expected complete-data log
+            likelihood. You may find it helpful to use Lagrange multipliers in order to force
+            the constraint $\sum \theta_k = 1$. Why does this optimized $\btheta$ make intuitive
+            sense?
 
-				\end{answer}
-			\item Apply a similar argument to find the value of the $(\mu_k,\Sigma_k)$'s that
-				maximizes the expected complete-data log likelihood.  
-				\begin{answer}
+            To maximize given a constraint, we will use the method of Lagrangian multipliers. As
+            we are maximizing with respect to $\theta_k$, we may also drop the terms (on the
+            right) not including $\theta$. Previously, in homework 2, we had $z_{ik}$ as our
+            indicator variable. However, we now treat $z$ as a latent variable, and instead we
+            have a "soft estimate" $q$ variable.
 
-				\end{answer}
+            \begin{answer}
 
-		\end{itemize}
+                \begin{align}
+                    \mathcal{L(\mathbf{\theta_k, \lambda}}) = \sum_{i=1}^n \sum_{k=1}^c q_{ik}
+                    \ln\theta_k + \lambda (\sum_{k=1}^c \theta_k - 1) \label{eq:lag}
+                \end{align}
+
+                Take the partial derivative of $\mathcal{L}$ with respect to $\theta_k$ and set
+                it equal to zero, and noting that 
+                \begin{align}
+                    \sum_i q_{ik} = n_k \label{eq:sumq}
+                \end{align}
+                (see homework 2 problem 2.2 for more details)
+
+                \begin{align}
+                    0 &= \sum_{i=1}^n \frac{q_{ik}}{\theta_k} - \lambda \\ \label{eq:latheta}
+                    \theta_k &= \frac{n_k }{\lambda}
+                \end{align}
+
+                Take the partial derivative with respect to $\lambda$ and set it equal to zero
+                to get
+
+                \begin{align}
+                    0 &= \sum_{k=1}^c \theta_k - 1\\ \label{eq:lalambda}
+                \end{align}
+
+                Now let's solve from lambda by combining \cref{eq:latheta} and \cref{eq:lalambda}
+                \begin{align}
+                    0 &= \sum_{k=1}^c \frac{n_k}{\lambda} - 1 \\
+                    \lambda &= n_k
+                \end{align}
+
+                Returning to \cref{eq:latheta} we now see that
+                \begin{align}
+                    \theta_k = \frac{n_k}{n}     
+                \end{align}
+
+                (Note that since we are actually estimating $\theta_k$, it would be clearer to
+                write $\hat{\theta_k}$)
+
+                This solution for $\hat{\theta_k} $makes sense: the optimal (prior) probability
+                of a given $x_i$ belong to a class $k$ is equal to the proportion of
+                observations (we've estimated in this iteration) that come from class $k$.
+                %(This agrees with slide 20).
+
+            \end{answer}
+
+            %\sum_{i=1}^n 
+            %\sum_{k=1}^c 
+            %\mathcal{N}(\bx_i | \bmu_k, \bSigma_k)
+
+        \item Apply a similar argument to find the value of the $(\mu_k,\Sigma_k)$'s that
+            maximizes the expected complete-data log likelihood. For  $\bmu_k$ case.
+
+            \begin{answer}
+                As in homework 2:
+                \begin{align}
+                    &= \sum_{i=1}^n \sum_{k=1}^c q_{ik} \left(\ln\theta_k + 
+                \ln \mathcal{N}(\bx_i | \bmu_k, \bSigma_k ) \right)  \label{eq:exp}
+            \end{align}
+
+            To solve for optimal $\bmu_k$, taking the derivative of \cref{eq:exp} with respect
+            to $\bmu_k$ and set to zero. Note that the left hand terms drop out. Furthermore, we
+            remove terms in the log gaussian without $\bmu_k$ 
+
+            \begin{align*}
+                &= \sum_{i=1}^n \sum_{k=1}^c q_{ik} \left(\ln\theta_k + 
+            \ln \mathcal{N}(\bx_i | \bmu_k, \bSigma_k )\right) \\ \tag{\ref{eq:exp} revisited}
+            &= \sum_{i=1}^n \sum_{k=1}^c q_{ik} \ln \mathcal{N}(\bx_i | \bmu_k, \bSigma_k)
+        \end{align*}
+
+        The natural log of the Gaussian is equal to 
+        \begin{align}
+            &= - \frac{1}{2} \left( D \ln2\pi + \ln|\bSigma| + (\bx_i - \bmu_k)^T
+        \bSigma^{-1} (\bx_i-\bmu_k) \right)\label{eq:lngauss} \\
+        &= - \frac{1}{2} (\bx_i - \bmu_k)^T \bSigma^{-1} (\bx_i-\bmu_k)
+    \end{align}
+
+
+    Thus we get that we are solving for $\bmu_k$ s.t.
+    \begin{align}
+        \frac{\partial L}{\partial \bmu_k} &=  - \frac{1}{2} \sum_{i=1}^n \sum_{k=1}^c q_{ik} 
+        (\bx_i - \bmu_k)^T \bSigma^{-1} (\bx_i-\bmu_k) + const \\
+        &= 0
+    \end{align}
+
+    Carrying the derivative out:  % not rewriting, because tired
+    \begin{align}
+        0  &=  - \frac{1}{2} (\bSigma^{-1}  + \bSigma^{-T} )
+        \sum_{i=1}^n \sum_{k=1}^c q_{ik} (\bx_i - \bmu_k) \\
+        0 &= \sum_{i=1}^n \sum_{k=1}^c q_{ik} (\bx_i - \bmu_k) \\
+        0 &= \sum_{i=1}^n \sum_{k=1}^c q_{ik} \bx_i - q_{ik} \bmu_k \\
+        \sum_{i=1}^n \sum_{k=1}^c q_{ik} \bmu_k  &= \sum_{i=1}^n \sum_{k=1}^c q_{ik} \bx_i \\
+        % why *can* we take q_ik out of the \mu_k side??
+    \end{align}
+
+    As the $\mu_k$ is the same for all points in the class, $\sum_{k=1}^c q_{ik} \bmu_k$
+    is simply $n_k \bmu_k$. Thus we get that 
+    \begin{align}
+        \bmu_k  &= \frac{1}{n_k}\sum_{i=1}^n q_{ik} \bx_i 
+    \end{align}
+    % According to slides we should get We should get  
+    %\begin{align}
+    %\hat{\mu_k} = \frac{1}{n_k} \sum_{i=1}^n  q_{ik} \bx_i
+    %\end{align}
+
+\end{answer}
+
+            \item Apply a similar argument to find the value of the $(\mu_k,\Sigma_k)$'s that
+                maximizes the expected complete-data log likelihood. $\bSigma_k$ case.  
+
+                As before for $\bmu_k$
+
+                \begin{answer}
+                    % According to slides we should get We should get  
+                    \begin{align}
+                        \hat{\bSigma_k} &= \frac{1}{n_k} \sum_{i=1}^n  q_{ik} (x_i-\hat{\bmu_k})(x_i-\hat{\bmu_k})^T
+                    \end{align}
+
+                    Dropping terms without $\bSigma$
+                    \begin{align}
+                        \mathcal{L} &= \sum_{i=1}^n \sum_{k=1}^c q_{ik} \left[ 
+                            -\frac{1}{2} ( \ln|\bSigma|+(\bx_i-\bmu_k)^T\Sigma^{-1} (\bx_i-\bmu_k) )
+                        \right] 
+                    \end{align}
+
+
+                    Taking the partial derivative and collapsing sums, we get 
+                    \begin{align}
+                        \frac{\partial \mathcal{L}}{\partial \bSigma_k} &=  
+                        \frac{n_k}{2}\bSigma_k - \frac{1}{2}\sum_{i=1}^n 
+                        q_{ik} (x_i-\hat{\bmu_k})(x_i-\hat{\bmu_k})^T \\
+                    \end{align}
+
+                    For our final answer
+                    \begin{align}
+                        \bSigma_k &= \frac{1}{n_k} \sum_{i=1}^n  q_{ik} (x_i-\bmu_k)(x_i-\bmu_k)^T
+                    \end{align}
+                \end{answer}
+        \end{itemize}
 
 	\item Finally, compare this EM approach to the generative model for classification in Homework
 		2.  How are the computations similar?  Different? 
 
 		\begin{answer}
+
+            In homework 2, classification with generative models, we view the data $x$ that we
+            observe as being generated by a random variable $y$. We estimate the joint probability
+            model $p(x,y)$ to create predications about $y$ given future observations of $x$.
+
+            [y] $\to$ [x] 
+
+            In the EM approach, we similarly consider the data to come from a generative *process*,
+            and apply Baye's rule to model the posterior distribution aka our estimate of the class
+            label given a particular datapoint $x$ and parameters for the distribution from which $z$
+            is drawn. But we consider that this process involves an unknown and unobservable random
+            variable $z$. Thus, we do not know which sample came from which class, and we must use
+            EM as a way to maximize the likelihoods we are solving for.
+
+            [z] $\to$ [x]
+
+
+            In short, homework 2 was supervised learning, and the EM approach is unsupervised
+            learning. We are looking at the discrete model in both homework 2 and this homework.
+
+            %In this approach, we are backing out the generative model where we sample a class, and
+            %then conditioned on the class, generate features. Then, if we have some estimate of the
+            %parameters $\phi$, we can predicat a class via Baye's rule. (see s17 lecture 14 slides).
+
+ %           \begin{align}
+                %p(\bx,\bz| \phi) = p(\bz | \phi) p(\bx | \bz, \phi) \\
+                 %\text{by Baye's rule, } 
+                %p(\bz | \bx, \phi) \propto p(\bx|\bz,\phi) p(\bz|\phi)
+            %\end{align}
 
 		\end{answer}
 
@@ -552,6 +850,7 @@ it never increases.
         iteration}
         \label{cost}
     \end{figure}
+    puts 'Hellow World'
 \end{answer}
 
 \end{itemize}
@@ -572,7 +871,7 @@ it never increases.
 Approximately how long did this homework take you to complete?
 \end{problem}
 
-~20-30 hours
+~30-40 hours
 \subsection*{Name, Email, and Collaborators}
 
 Name: Nao Ouyang
@@ -589,3 +888,9 @@ David
 \end{document}
 
 % vim --servername vim test.tex
+%https://blog.carbonfive.com/2011/10/17/vim-text-objects-the-definitive-guide/
+% ci} {asdf}
+% cit <h2></h2> 
+% dac \boldface\mu ->  \mu (command)
+% cse  change surrounding environment
+% neovim split terminal

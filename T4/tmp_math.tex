@@ -1,0 +1,202 @@
+% in this document, I use live tex to write math equations 
+\documentclass[a4paper, 12pt]{article}
+
+
+\renewcommand{\familydefault}{\sfdefault} %san serif
+\usepackage{fullpage} %less margin
+
+\usepackage[OT1]{fontenc} 
+\usepackage[T1]{fontenc} 
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+%\usepackage{parskip} %don't indent paragraphs
+\usepackage{lmodern}% http://ctan.org/pkg/lm (Allows arbitrary font sizes)
+\usepackage{cleveref} %allows us to avoid writing the "equation" part of eq1
+\usepackage{common} % allow use of \bold_x
+
+\newcommand{\bx}{\mathbf{x}} %%%% WARNING: may cause unexpected behavior
+\newcommand{\by}{\mathbf{y}} %%%% WARNING: may cause unexpected behavior
+\newcommand{\bz}{\mathbf{z}} %%%% WARNING: may cause unexpected behavior
+\newcommand{\bq}{\mathbf{q}} %%%% WARNING: may cause unexpected behavior
+\usepackage{listings}
+\usepackage{textcomp} % get rid of font for textbullet warning?
+
+\vspace{0.1cm}
+
+\begin{document}
+
+--------------------
+
+        Define the complete data for this problem to be $D = \{(\boldx_i, \boldz_i)\}_{i=1}^n$.
+        Write out the complete-data (negative) log likelihood.  \[\mcL(\btheta,
+        \{\mu_k,\Sigma_k\}^c_{k=1}) =  -\ln p(D \given\btheta, \{\mu_k,\Sigma_k\}^c_{k=1}).\] 
+
+        \begin{itemize}
+   \item \textbf{Expectation Step}
+        Our next step is to introduce a mathematical expression for $\boldq_i$, the posterior over
+        the hidden topic variables~$\boldz_i$ conditioned on the observed data $\boldx_i$ with fixed
+        parameters, i.e $p(\boldz_i | \boldx_i; \btheta, \{ \mu_k,\Sigma_k \}^c_{k=1})$.
+
+        \begin{itemize}
+            \item  Write down and simplify the expression for $\boldq_i$. 
+
+--------------------
+
+			\item Find an expression for $\btheta$ that maximizes this expected complete-data log
+				likelihood. You may find it helpful to use Lagrange multipliers in order to force
+				the constraint $\sum \theta_k = 1$. Why does this optimized $\btheta$ make intuitive
+				sense?
+
+            -------------------
+
+                To maximize given a constraint, we will use the method of Lagrangian multipliers. As
+                we are maximizing with respect to $\theta_k$, we may also drop the terms (on the
+                right) not including $\theta$. Previously, in homework 2, we had $z_{ik}$ as our
+                indicator variable. However, we now treat $z$ as a latent variable, and instead we
+                have a "soft estimate" $q$ variable.
+
+                    \begin{align}
+                        \mathcal{L(\mathbf{\theta_k, \lambda}}) = \sum_{i=1}^n \sum_{k=1}^c q_{ik}
+                        \ln\theta_k + \lambda (\sum_{k=1}^c \theta_k - 1) \label{eq:lag}
+                    \end{align}
+
+                    Take the partial derivative of $\mathcal{L}$ with respect to $\theta_k$ and set
+                    it equal to zero, and noting that 
+                    \begin{align}
+                        \sum_i q_{ik} = n_k \label{eq:sumq}
+                    \end{align}
+                     (see homework 2 problem 2.2 for more details)
+
+                    \begin{align}
+                        0 &= \sum_{i=1}^n \frac{q_{ik}}{\theta_k} - \lambda \\ \label{eq:latheta}
+                    \theta_k &= \frac{n_k }{\lambda}
+                    \end{align}
+
+                    Take the partial derivative with respect to $\lambda$ and set it equal to zero
+                    to get
+
+                    \begin{align}
+                        0 &= \sum_{k=1}^c \theta_k - 1\\ \label{eq:lalambda}
+                    \end{align}
+
+                    Now let's solve from lambda by combining \cref{eq:latheta} and \cref{eq:lalambda}
+                    \begin{align}
+                        0 &= \sum_{k=1}^c \frac{n_k}{\lambda} - 1 \\
+                        \lambda &= n_k
+                    \end{align}
+
+                    Returning to \cref{eq:latheta} we now see that
+                    \begin{align}
+                        \theta_k = \frac{n_k}{n}     
+                    \end{align}
+
+                    (Note that since we are actually estimating $\theta_k$, it would be clearer to
+                    write $\hat{\theta_k}$)
+
+                    This solution for $\hat{\theta_k} $makes sense: the optimal (prior) probability
+                    of a given $x_i$ belong to a class $k$ is equal to the proportion of
+                    observations (we've estimated in this iteration) that come from class $k$.
+                    %(This agrees with slide 20).
+
+
+%\sum_{i=1}^n 
+%\sum_{k=1}^c 
+%\mathcal{N}(\bx_i | \bmu_k, \bSigma_k)
+
+			\item Apply a similar argument to find the value of the $(\mu_k,\Sigma_k)$'s that
+				maximizes the expected complete-data log likelihood. For  $\bmu_k$ case.
+                \begin{align}
+                        &= \sum_{i=1}^n \sum_{k=1}^c q_{ik} \left(\ln\theta_k + 
+                \ln \mathcal{N}(\bx_i | \bmu_k, \bSigma_k ) \right)  \label{eq:exp}
+                \end{align}
+
+                To solve for optimal $\bmu_k$, taking the derivative of \cref{eq:exp} with respect
+                to $\bmu_k$ and set to zero. Note that the left hand terms drop out. Furthermore, we
+                remove terms in the log gaussian without $\bmu_k$ 
+
+                \begin{align*}
+                    &= \sum_{i=1}^n \sum_{k=1}^c q_{ik} \left(\ln\theta_k + 
+                \ln \mathcal{N}(\bx_i | \bmu_k, \bSigma_k )\right) \\ \tag{\ref{eq:exp} revisited}
+                    &= \sum_{i=1}^n \sum_{k=1}^c q_{ik} \ln \mathcal{N}(\bx_i | \bmu_k, \bSigma_k)
+               \end{align*}
+
+                The natural log of the Gaussian is equal to 
+                \begin{align}
+                 &= - \frac{1}{2} \left( D \ln2\pi + \ln|\bSigma| + (\bx_i - \bmu_k)^T
+                 \bSigma^{-1} (\bx_i-\bmu_k) \right)\label{eq:lngauss} \\
+                 &= - \frac{1}{2} (\bx_i - \bmu_k)^T \bSigma^{-1} (\bx_i-\bmu_k)
+                \end{align}
+
+
+                Thus we get that we are solving for $\bmu_k$ s.t.
+                \begin{align}
+                    \frac{\partial L}{\partial \bmu_k} &=  - \frac{1}{2} \sum_{i=1}^n \sum_{k=1}^c q_{ik} 
+                     (\bx_i - \bmu_k)^T \bSigma^{-1} (\bx_i-\bmu_k) + const \\
+                     &= 0
+                \end{align}
+
+                Carrying the derivative out:  % not rewriting, because tired
+                \begin{align}
+                    0  &=  - \frac{1}{2} (\bSigma^{-1}  + \bSigma^{-T} )
+                    \sum_{i=1}^n \sum_{k=1}^c q_{ik} (\bx_i - \bmu_k) \\
+                    0 &= \sum_{i=1}^n \sum_{k=1}^c q_{ik} (\bx_i - \bmu_k) \\
+                    0 &= \sum_{i=1}^n \sum_{k=1}^c q_{ik} \bx_i - q_{ik} \bmu_k \\
+                    \sum_{i=1}^n \sum_{k=1}^c q_{ik} \bmu_k  &= \sum_{i=1}^n \sum_{k=1}^c q_{ik} \bx_i \\
+                    % why *can* we take q_ik out of the \mu_k side??
+                \end{align}
+
+                As the $\mu_k$ is the same for all points in the class, $\sum_{k=1}^c q_{ik} \bmu_k$
+                is simply $n_k \bmu_k$. Thus we get that 
+                \begin{align}
+                    \bmu_k  &= \frac{1}{n_k}\sum_{i=1}^n q_{ik} \bx_i 
+                \end{align}
+                % According to slides we should get We should get  
+                %\begin{align}
+                    %\hat{\mu_k} = \frac{1}{n_k} \sum_{i=1}^n  q_{ik} \bx_i
+                %\end{align}
+
+
+			\item Apply a similar argument to find the value of the $(\mu_k,\Sigma_k)$'s that
+				maximizes the expected complete-data log likelihood. $\bSigma_k$ case.  
+
+
+                % According to slides we should get We should get  
+                \begin{align}
+                    \hat{\bSigma_k} &= \frac{1}{n_k} \sum_{i=1}^n  q_{ik} (x_i-\hat{\bmu_k})(x_i-\hat{\bmu_k})^T
+                \end{align}
+
+                Dropping terms without $\bSigma$
+                \begin{align}
+                    \mathcal{L} &= \sum_{i=1}^n \sum_{k=1}^c \mBI \left[ 
+                    -\frac{1}{2} ( \ln|\bSigma|+(\bx_i-\bmu_k)^T\Sigma^{-1} (\bx_i-\bmu_k) )
+                        \right] 
+                \end{align}
+
+
+                Taking the partial derivative and collapsing sums, we get 
+                \begin{align}
+                    \frac{\partial \mathcal{L}}{\partial \bSigma_k} &=  
+                    \frac{n_k}{\bSigma2} - \frac{1}{2}\sum_{i=1}^n 
+                    q_{ik} (x_i-\hat{\bmu_k})(x_i-\hat{\bmu_k})^T \\
+                    \bSigma_k &= \frac{1}{n_k} \sum_{i=1}^n  q_{ik} (x_i-\bmu_k)(x_i-\bmu_k)^T
+                \end{align}
+                \end{align}
+
+
+
+
+
+% http://piazza.com/class/jc3xylsz3wf1n7?cid=422 
+
+%belong 
+                    %Posterior $P(a|b) \propto$ likelihood $P(b|a)$ times prior $P(a)$
+
+                    %% P(cause| effect) = P(effect| cause) P(cause) / P(effect)
+                
+
+		\end{itemize}
+
+		\end{itemize}
+
+    \end{document}
