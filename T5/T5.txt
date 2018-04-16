@@ -1,0 +1,14 @@
+Intuitive explanations
+
+X is independent of Y given Z
+We want to estimate X. If we know Y, it doesn't matter whether we know Z or not.
+
+Is Sunburn independent of bumps if we know we got an insect bite?
+4: Does our estimate of P(sunburn) change given that we know P(bumps), if we also learn P(insect bites)?
+
+4. YES, Given that we got an insect bite, do we care about whether we have a bump or not, in order to estimate if we are sunburned or not? No! (thus YES, they are independent).
+3. NO, Not independent. The likelihood of us getting sunburned impacts our estimate of being outside, which in turn impacts our estimate of getting an insect bite and potentially having a bump on our skin.
+2. NO, If we know whether or not we we have acne, does also knowing whether our skin is red or not impact our estimate of of whether we were outside? If we know we have red skin, and knowing we had acne would "explain away" some of our certainty about being outside or not. Thus, having observed R, O and A are no longer independent.
+1. YES, Yes, having acne is independent of going outside. Whether we go outside or not doesn't affect whether we get acne (at least according to this model).
+Also, having acne doesn't affect whether we go outside or not (according to this model).
+
