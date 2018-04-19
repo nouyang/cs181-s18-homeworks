@@ -35,6 +35,8 @@
 \usepackage[mmddyyyy,hhmmss]{datetime}
 
 \definecolor{verbgray}{gray}{0.9}
+\definecolor{answergreen}{rgb}{0.09,0.42,0.31}
+
 
 \lstnewenvironment{csv}{%
   \lstset{backgroundcolor=\color{verbgray},
@@ -51,6 +53,13 @@
 \newcommand{\sigzp}{\sigma_{p}}
 \newcommand{\gauss}[3]{\frac{1}{2\pi#3}e^{-\frac{(#1-#2)^2}{2#3}}}
 
+\newenvironment{answer}{%
+\color{answergreen}\sffamily\large}{}
+
+\newcommand{\bx}{\mathbf{x}} %%%% WARNING: may cause unexpected behavior
+\newcommand{\by}{\mathbf{y}} %%%% WARNING: may cause unexpected behavior
+\newcommand{\bz}{\mathbf{z}} %%%% WARNING: may cause unexpected behavior
+\newcommand{\bq}{\mathbf{q}} %%%% WARNING: may cause unexpected behavior
 
 \begin{document}
 \begin{center}
@@ -122,6 +131,60 @@ intuition for why.
 
 \newpage
 
+\subsection*{Solution Bayesian Networks}
+    \textbf{Solution: Please see figure for showing d-separation work.}
+\begin{itemize}
+    \item Is $I(\attr{Have Acne},\attr{Was Outside})$? If NO, give
+    intuition for why.
+
+        \begin{answer}
+        YES, Yes, having acne is independent of going outside. Whether we go outside or not doesn't
+        affect whether we get acne (at least according to this model).
+        Also, having acne doesn't affect whether we go outside or not (according to this model).
+        \end{answer}
+
+    \item Is $I(\attr{Have Acne},\attr{Was Outside}\given \attr{Skin Red})$? If NO, give
+    intuition for why.
+
+        \begin{answer}
+            NO, If we know whether or not we we have acne, does also knowing whether our skin is red
+            or not impact our estimate of of whether we were outside? If we know we have red skin,
+            and knowing we had acne would "explain away" some of our certainty about being outside
+            or not. Thus, having observed R, O and A are no longer independent.
+        \end{answer}
+
+    \item Is $I(\attr{Get Sunburn},\attr{Bump on Skin})$? If NO, give
+    intuition for why.
+
+        \begin{answer}
+             NO, Not independent. The likelihood of us getting sunburned impacts our estimate of being
+             outside, which in turn impacts our estimate of getting an insect bite and potentially
+             having a bump on our skin. 
+        \end{answer}
+
+    \item Is $I(\attr{Get Sunburn},\attr{Bump on Skin}\given \attr{Get Insect Bite})$? If NO, give intuition for why.
+        \begin{answer}
+            YES, Given that we got an insect bite, do we care about whether we have a bump or not, in order to
+            estimate if we are sunburned or not? No! (thus YES, they are independent).
+        \end{answer}
+
+    \item Suppose the person has taken a medicine to suppress their
+      response to insect bites: they get red skin, but no bumps.  Draw the
+      modified network.  
+
+    \item For this modified network, is $I(\attr{Get Sunburn},\attr{Bump
+      on Skin})$? If NO, give an intuition why.  If YES, describe what
+      observations (if any) would cause them to no longer be independent.    
+
+		\begin{answer}
+            \begin{align}
+                sdf = 1
+            \end{align}
+		\end{answer}
+\end{itemize}
+
+
+
 \section*{Kalman Filters [7 pts]}
 
 \begin{problem}
@@ -151,72 +214,6 @@ intuition for why.
 
        \item[(b)] Implement this update and apply it to the observed data
          above (do not use the hidden data to find these updates). Provide a plot of $\mu_t$ over time as well as a
-         $2\sigma_t$ interval around $\mu_t$ (that is $\mu_t \pm
-         2\sigma_t$).  Does the Kalman filter ``catch up'' to the true
-         hidden object?
-
-       \item[(c)] Repeat the same process but change the observation
-         at time $t=10$ to $x_{t=10}=10.2$ (an extreme outlier
-         measurement).  How does the Kalman filter respond to this
-         outlier?  
-
-       \item[(d)] Comment on the misspecification of dynamical system
-         model for these data.  Based on the previous two parts, how
-         does this misspecification affect the predictions?
-
-\end{itemize}    
-\end{problem}
-
-\newpage
-
-\section*{Markov Decision Processes [7 pts]}
-\begin{problem}
-  ~
-
-  
-  \noindent In this problem we will explore the calculation of the \emph{MDP value function} $V$  in a 2D exploration setting, without time discounting and
-for a finite time horizon. 
-%
-Consider a robot navigating the following grid:\\
-  \begin{center}
-\begin{tikzpicture}[darkstyle/.style={circle,draw,fill=gray!40,minimum size=20}]
-  \foreach \x in {0,...,2}
-    \foreach \y in {0,...,2} 
-       {\node [darkstyle]  (\x\y) at (1.5*\x,1.5*\y) {\ifthenelse{\x=2 \AND \y=0}{A}{\ifthenelse{\x=1\AND\y=1}{B}{}}};} 
-
-       \draw (00)--(01);
-       \draw (01)--(02);
-
-       \draw (10)--(11);
-       \draw (11)--(12);
-
-       \draw (10)--(11);
-       \draw (11)--(21);
-
-       \draw (20)--(21);
-       \draw (11)--(21);
-
-       \draw (21)--(22);
-       \draw (01)--(11);
-       \draw (00)--(10);
-       \draw (12)--(22);
-
-       \draw (10)--(20);
-
-\end{tikzpicture}
-\end{center}
-The robot moves in exactly one direction each turn (and must move). The robot's goal is to maximize its score in the game after $T$ steps. The
-score is defined in the following way:
-%
-\begin{itemize}
-  \item If the robot's movement attempts to move it off the grid, then
-    the robot loses a point (-1) and stays where it is.
-  \item If the robot ends its motion on node A, it receives 10 points,
-    and if it moves onto node B, it receives -100 points. Otherwise, it
-    receives 0 points.  
-\end{itemize}
-
-  \begin{enumerate}
     \item Model this as a Markov decision process: define the states $S$, actions $A$, reward function $r:S\times A\mapsto \mathbb{R}$, and transition model $p(s'\given s, a)$ for $s', s\in S$ and $a\in A$.  For now, assume that the robot's actions execute perfectly: if the robot tries to move in a particular direction, it always succeeds in doing so.
 
     \item Consider a \emph{random policy} $\pi$, where
@@ -244,7 +241,7 @@ Give the corresponding
 MDP value functions $V^\pi_t: S\mapsto 
 \mathbb{R}$, for this policy in this partial control world, for $t=2, 1$ steps left
 to go. Is the policy still optimal?
-  \end{enumerate}
+  \end{itemize}
 \end{problem}
 %\subsection*{Solution}
 
