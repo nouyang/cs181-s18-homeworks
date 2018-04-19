@@ -1,0 +1,6 @@
+!!!!!!!!!!! running gradient descent ~~~~~~~~~~~~~
+[[8.  6.8]]
+('iter: ', 0, 'loss: ', -683.4425441736506, '\n')
+Test fruit predictions for Linear Regression:
+width 4 cm and height 11 cm: 1
+width 8.5 cm and height 7 cm: 1

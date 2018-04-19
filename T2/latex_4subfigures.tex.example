@@ -1,0 +1,24 @@
+\begin{figure}[htbp]
+\centering 
+\subfloat[LASSO $\lambda$ search. With LASSO, the RMSE was high regardless of the $\lambda$. This may be because our features were already selected via LASSO, so further dimension reduction/shrinkage did not help very much.]{%
+\includegraphics[width=0.35\linewidth]{Writeup/output/lasso_lambda.pdf}%
+\label{fig:a}%
+}\hfil % MUST be right above next figure
+\subfloat[Ridge $\lambda$ search.  With Ridge, the RMSE was better, and there seems to be an optimal $\lambda$. Nevertheless, $\lambda$ seems to make very little difference in actual performance...]{%
+\includegraphics[width=0.35\linewidth]{Writeup/output/ridge_lambda.pdf}%
+\label{fig:b}%
+}
+
+\subfloat[XGBoost depth search. With XGBoost, increasing depth seems to help the cross-validation error until we get to depth = 10 or so. The RMSE is also the lowest, so this is what we submitted to Camelot.ai. ]{%
+\includegraphics[width=0.35\textwidth]{Writeup/output/xgb_depth.pdf}%
+\label{fig:c}%
+}\hfil 
+\subfloat[Random Forest n\_estimators search. With random forest, increasing the number of the estimators always improved the RMSE sublinearly. However, the computation time increases linearly with the numbers of estimators. In our case, we used the default number of estimators because of computational time constraints, knowing that we could potentially improve our score. ]{% 
+\includegraphics[width=0.35\textwidth]{Writeup/nesimators.png}% 
+\label{fig:d}%
+}
+
+\caption{Cross validation graphs for each model.`The results here were generated with 3-fold cross-validation.}
+\label{fig:myfig}
+\end{figure}
+

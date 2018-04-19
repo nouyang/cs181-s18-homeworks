@@ -1,0 +1,59 @@
+Hello, I had several questions about the section 5 notes.
+
+ 
+
+#1
+
+Based on the lecture notes it seems like the 3rd equation would be
+
+xprojected+rw||w||=x
+
+ 
+
+instead of
+
+xperpendicular+rw||w||=x.
+
+ 
+
+Would this be a typo? It seems like the notation is opposite that of lecture, which is confusing.
+
+ 
+
+ 
+
+#2
+
+Why are we calculating wT(x1−x2) and how does the fact is equal to zero indicate that w is orthogonal to wTx+w0? Is it specific to picking two points?
+
+(I assume this is a property of vectors that I've forgotten)
+
+ 
+
+#3
+
+Why, in the hard margin case, can the margin not be ≥0 instead of just >0?
+
+(edit: nvm, this is by definition. If the margin=0, then points of either class could lie on the hyperplane, and we would not be able to distinguish the two)
+
+ 
+
+#4
+
+I don't follow the "without loss of generality" part. I get that the margin must be greater than zero, where in this case we mean the "unsigned normalized r". And I think I get that the margin parameterized by $w, w_0$ is equal to the one parameterized by βw,βw00 for any constant β. But how does that allow us to turn the min into a s.t. and the >0 into ≥1?
+
+ 
+
+$5
+
+What does it mean for a constraint to be binding?
+
+ 
+
+Edit:
+
+I solved #5 by searching online *shrug*
+
+I have a further question: how does the hard margin training problem, after defining the Lagrangian of it, become equivalent to taking the argmin w.r.t. w & w0, against the maximum of the lagrangian given that α>0?
+
+As we are subtracting the alphas, why would this not be the argmin, of the mininum of the Lagrangian?

@@ -1,0 +1,60 @@
+The relevant socially good outcomes for workers are a stable living, health insurance, ability to
+get ahead in life, social security.
+
+
+In this assignment, we are asked to evaluate the ethical issues in fair hiring practices within
+companies that may use algorithms to predict which employee attributes will result in desired
+outcomes. Possible relevant social good outcomes that were discussed in class include profit for the
+company and equality in employment opportunities for people of different races. In this essay, I
+will focus on the reason why socially good outcomes for the employees are a good fairness criteria.
+In addition, I will show that the two "categories" of outcomes are in fact interlinked -- what is
+good for employees is good for companies.
+
+Good outcomes for the labor market include reducing unemployment and increasing wages
+(relative to living cost), ideally bringing equal outcomes to the table, but if not at least trying
+to ensure equal access to opportunities. With job stability and a stable health insurance, people
+are able to further themselves and their families in social and economic situations. Good outcomes
+for the company include being able to continue to exist and being able to profit and grow the
+company, ideally by producing value to society, as well as being able to contribute to the
+advancement of society. For instance, we are all beneficiaries of companies competing to provide
+smartphones, and the companies make money by exploiting a desire we didn't know we had -- to be
+constantly connected.
+
+How are these two interlinked? Focusing specifically on race, we may observe that companies tend to have a specific target audience, and larger companies can in fact target more and more niches within a specific target
+audience. Thus we can say that, if we had more employees of different races, we would be able to
+expand the target market of the company. This would allow a company increase the
+size of the "potentential market".  Concretely, say that previously we had a clothing line that was
+generic for all races, but not as desirable to either. Now say that we have a clothing line that flatters
+pale skin, and one that flatters brown or black skin. In doing so, we can tailor our clothing lines
+more (optimistically, we might give differnt sizes and cuts of clothing depending on average
+characterics such as height, or, skeptically, simply charge more for superficial changes). By hiring
+employees who are able to help with these decisions and expanding this business, we have not only
+improved outcomes for racial outcomes at large in society, but also improved outcomes for the
+company. Companies that are able to thrive are also able to provide benefits to their employees,
+such as a stable job situation, good health benefits, and other forms of stability.
+
+Thus, the situation is much more complex at the company level than simply "hiring the employees with
+features, such as race, that correlate with increased sales". In doing so we may miss out on an
+extremely profitable opportunity to expand to new markets. I also value the idea of having
+more of a feedback mechanism instead, where the model also depends on -- not a quota per se, but on
+a "minimum standards" in terms of equality in several dimensions, perhaps race to start. This can be
+thought of more theoretically in terms of feedback -- that below a certain percentage of e.g.
+African Americans, it becomes very hard to attract and maintain such employees. Thus, we
+can add that in as a constraint.
+
+Properities
+
+# model for fair hiring practies that will reduce disparate impact
+# what would happen if we allowed consumer preferences to vary
+
+The relevant socially good outcomes for companies are continuing to stay in business, ability to
+invest in employees, ability to invest in communities and society,
+
+Fairness criterion:
+part 2 assume socially good results and proide algorithmic details
+
+
+Assuming that equality in 
+
+Proivde support:w
+Why is this the right ocial goal in part 1

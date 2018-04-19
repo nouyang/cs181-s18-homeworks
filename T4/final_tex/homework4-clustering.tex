@@ -1,0 +1,892 @@
+
+\documentclass[submit]{harvardml}
+
+% You don't need to change these.
+\course{CS181-S18}
+\assignment{Assignment \#4}
+\duedate{11:59pm March 30, 2018} % FDV: Update due date 
+
+\usepackage[OT1]{fontenc}
+\usepackage[T1]{fontenc}  %get rid of textbackslash warming?
+\usepackage{textcomp} % get rid of font for textbullet warning?
+\usepackage{lmodern}% http://ctan.org/pkg/lm (Allows arbitrary font sizes)
+
+\usepackage[colorlinks,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage[pdftex]{graphicx}
+\usepackage{subfig}
+\usepackage{fullpage}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{color}
+\usepackage{todonotes}
+\usepackage{listings}
+\usepackage{common}
+\usepackage{bm}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{subfig}
+\usepackage{cleveref}
+\usepackage{adjustbox}
+\usepackage{listings}% for code highlighting
+
+
+% http://www.tablesgenerator.com/#
+
+\usepackage[mmddyyyy,hhmmss]{datetime}
+
+\definecolor{verbgray}{gray}{0.9}
+\definecolor{answergreen}{rgb}{0.09,0.42,0.31}
+
+\newenvironment{answer}{%
+\color{answergreen}\sffamily\large}{}
+% \bfseries
+% https://www.sharelatex.com/learn/Font_sizes,_families,_and_styles
+
+
+\lstnewenvironment{csv}{%
+  \lstset{backgroundcolor=\color{verbgray},
+  frame=single,
+  framerule=0pt,
+  basicstyle=\ttfamily,
+  columns=fullflexible}}{}
+
+
+
+\newcommand{\bx}{\mathbf{x}} %%%% WARNING: may cause unexpected behavior
+\newcommand{\by}{\mathbf{y}} %%%% WARNING: may cause unexpected behavior
+\newcommand{\bz}{\mathbf{z}} %%%% WARNING: may cause unexpected behavior
+\newcommand{\bq}{\mathbf{q}} %%%% WARNING: may cause unexpected behavior
+
+%\newcommand{\bw}{\mathbf{w}} %%%% WARNING: may cause unexpected behavior
+%\newcommand{\bS}{\mathbf{S}} %%%% WARNING: may cause unexpected behavior
+
+%\newcommand{\mBI}{\mathbb{I}_{ik}} %%%% WARNING: may cause unexpected behavior
+%%\newcommand{\bpi}{\mathbf{\pi}} %%%% Already built into latex 
+
+%%\newcommand{\bmu}{\mathbf{\mu}} %%%% Already built into latex 
+%\newcommand{\bvar}{\mathbf{\sigma}^2} %%%% WARNING: may cause unexpected behavior
+%\newcommand{\lsum}{\mathlarger{\sum}} %%%% WARNING: may cause unexpected behavior
+
+
+\begin{document}
+\begin{center}
+{\Large Homework 4: Clustering and EM}\\
+\end{center}
+
+
+This homework assignment focuses on different unsupervised learning
+methods from a theoretical and practical standpoint.  In Problem 1,
+you will explore Hierarchical Clustering and experiment with how the
+choice of distance metrics can alter the behavior of the algorithm. In
+Problem 2, you will derive from scratch the full
+expectation-maximization algorithm for fitting a Gaussian mixture
+model. In Problem 3, you will implement K-Means clustering on a
+dataset of handwritten images and analyze the latent structure learned
+by this algorithm.
+
+There is a mathematical component and a programming component to this
+homework.  Please submit your PDF and Python files to Canvas, and push
+all of your work to your GitHub repository. If a question requires you
+to make any plots, please include those in the writeup.
+
+
+
+\newpage
+\section*{Hierarchical Clustering [7 pts]}
+
+At each step of hierarchical clustering, the two most similar clusters
+are merged together. This step is repeated until there is one single
+group. We saw in class that hierarchical clustering will return a
+different result based on the pointwise-distance and cluster-distance
+that is is used. In this problem you will examine different choices of
+pointwise distance (specified through choice of norm) and cluster
+distance, and explore how these choices change how the HAC algorithm
+runs on a toy data set.
+
+
+\vspace{0.25cm}
+
+\begin{problem}
+~
+
+ Consider the following four data points in $\reals^2$, belonging to three clusters: the
+  black cluster consisting of $\boldx_1 = (0.1, 0.5) $ and $\boldx_2 = (0.35, 0.75))$,
+  the red cluster consisting of $\boldx_3 = (0.28, 1.35)$, and the blue cluster
+  consisting of $\boldx_4 = (0, 1.01)$.
+
+  \begin{center} \includegraphics[scale=.3]{scatterplot.png} \end{center}
+
+
+  Different pointwise distances $d(\boldx, \boldx') = \|\boldx - \boldx'\|_p$
+  can be used.  Recall the definition of the
+  $\ell_1$, $\ell_2$, and $\ell_{\infty}$ norm:
+  \begin{eqnarray*}
+     \| \mathbf{x} \|_1 = \sum_{j = 1}^m |x_i| \quad \quad\quad \| \mathbf{x} \|_2 = \sqrt{\sum_{j = 1}^m x_i^2 } \quad\quad\quad
+     \| \mathbf{x} \|_{\infty} = \max_{j \in \{1, \ldots, m\}} |x_j|\\
+  \end{eqnarray*}
+  
+  Also recall the definition of min-distance, max-distance,
+  centroid-distance, and average-distance between two clusters (where $\bmu_{G}$
+is the center of a cluster $G$):
+%
+\begin{eqnarray*}
+    d_{\text{min}}(G, G') &=& \min_{\boldx  \in G, \boldx' \in G'} d(\boldx, \boldx')\\
+    d_{\text{max}}(G, G') &=& \max_{\boldx  \in G, \boldx' \in G'} d(\boldx, \boldx')\\
+    d_{\text{centroid}}(G, G') &=&  d(\bmu_{G}, \bmu_{G'})\\
+    d_{\text{avg}}(G, G') &=&\frac{1}{|G| |G'|} \sum_{\boldx \in G}\sum_{\boldx'  \in G'} d(\boldx, \boldx')\\
+  \end{eqnarray*}
+
+  \begin{enumerate}
+  \item Draw the 2D unit sphere for each norm,
+  defined as $\mathcal{S} = \{\boldx \in \mathbb{R}^2: \|\boldx\| = 1 \}$. Feel free to do
+  it by hand, take a picture and include it in your pdf.
+\item  For each norm ($\ell_1, \ell_2, \ell_\infty$) and each clustering distance, specify which two clusters would
+  be the first to merge.
+\item Draw the complete dendrograms showing the order of agglomerations for the $\ell_2$ norm and each of the clustering distances. We have provided some code to make this easier for you. You are not required to use it.
+  \end{enumerate}
+
+
+\end{problem}
+
+\newpage 
+\subsection*{Solution: Hierarchical Clustering Clustering}
+
+\begin{enumerate}
+    \item Draw the 2D unit sphere for each norm,
+        defined as $\mathcal{S} = \{\boldx \in \mathbb{R}^2: \|\boldx\| = 1 \}$. Feel free to do
+        it by hand, take a picture and include it in your pdf.
+
+        \begin{answer}
+            \begin{figure}
+                \centering
+                \includegraphics[width=0.25\textwidth]{p1_norms.jpg}
+                \caption{Problem 1, 2d unit ball for l1, l2, and l$\infty$ norms}
+                \label{p1}
+            \end{figure}
+        See \cref{p1}
+        \end{answer}
+
+    \item  For each norm ($\ell_1, \ell_2, \ell_\infty$) and each clustering distance, specify which
+        two clusters would be the first to merge.
+
+        \begin{answer}
+            See \cref{firstmerge}.
+
+            \begin{table}[h]
+                \centering
+                \caption{First clusters to merge}
+                \label{firstmerge}
+                \begin{tabular}{@{}lllll@{}}
+                    \toprule
+                    & L1 norm     & L2 norm     & L$\infty$ norm     &  \\ \midrule
+                    \multicolumn{1}{l|}{Min dist}      & black, blue & black, blue & red, blue   &
+                    \\
+                    \multicolumn{1}{l|}{Max dist}      & black, blue & red, blue & red, blue   &
+                    \\
+                    \multicolumn{1}{l|}{Avg dist}      & red, blue   & red, blue   & red, blue   &
+                    \\
+                    \multicolumn{1}{l|}{Centroid dist} & black, blue & black, blue & black, blue &
+                    \\ \bottomrule
+                \end{tabular}
+            \end{table}
+        \end{answer}
+
+    \item Draw the complete dendrograms showing the order of agglomerations for the $\ell_2$ norm
+        and each of the clustering distances. We have provided some code to make this easier for
+        you. You are not required to use it.
+
+
+        \begin{answer}
+            \begin{figure}
+                \centering
+                \includegraphics[width=\textwidth]{p1_dendograms.jpg}
+                \caption{Problem 1, dendogram for clustering with l2 norm and each of the clustering
+                distances.}
+                \label{p1 dendo}
+            \end{figure}
+
+        See \cref{p1 dendo}
+
+
+        For reference on distances used, see \cref{p1 dendo dist}
+
+		\begin{table}
+			\centering
+			\begin{adjustbox}{max width=\textwidth}
+
+				\begin{tabular}{@{}l|ll|ll|ll@{}}
+					& \textbf{L1 norm} &              & \textbf{L2 norm} &              & \textbf{L∞ norm} &              \\ \midrule
+					\textbf{min dist}      &                  & (merge dist) &                  & (merge dist) &                  & (merge dist) \\
+					First merge            & black, blue      & 0.61         & black, blue      & 0.436        & red, blue        & 0.34         \\
+					Second merge           & all              & 0.62         & all              & 0.440        & all              & 0.35         \\ \midrule
+					\textbf{max dist}      &                  &              &                  &              &                  &              \\
+					First merge            & black, blue      & 0.61         & red, blue        & 0.440        & red, blue        & 0.34         \\
+					Second merge           & all              & 1.03         & all              & 0.869        & all              & 0.34         \\ \midrule
+					\textbf{avg dist}      &                  &              &                  &              &                  &              \\
+					First merge            & red, blue        & 0.62         & red, blue        & 0.440        & red, blue        & 0.34         \\
+					Second merge           & all              & 11.68        & all              & 9.715        & all              & 9.24         \\ \midrule
+					\textbf{centroid dist} &                  &              &                  &              &                  &              \\
+					First merge            & black, blue      & 0.25         & black, blue      & 0.210        & black, blue      & 0.205        \\
+					Second merge           & all              & 1.09         & all              & 0.657        & all              & 0.515       
+				\end{tabular}
+\end{adjustbox}
+			\caption{Problem 1. Not asked for, but here are actual merge distances as output by python script for each combination of norms (distances) and clustering criteria}
+			\label{p1 dendo dist}
+		\end{table}
+        \end{answer}
+
+\end{enumerate}
+\section*{Expectation-Maximization for Gaussian Mixture Models [7pts]}
+
+
+In this problem we will explore expectation-maximization for the
+Gaussian Mixture model.  Each observation $\boldx_i$ is a vector in
+$\mathbb{R}^{D}$.  We posit that each observation comes from
+\emph{one} mixture component.  For this problem, we will assume there
+are $c$~components. Each component $k \in \{1, \ldots, c\}$ will be
+associated with a mean vector $\mu_k \in R^{D}$ and a covariance
+$\Sigma_k$.  Finally let the (unknown) overall mixing proportion of
+the components be~$\btheta \in [0,1]^c$, where~${\sum_{k=1}^c
+  \theta_k=1}$.
+
+Our generative model is that each of the~$n$ observations comes from a
+single component.  We encode observation $i$'s component-assignment as
+a one-hot vector~${\boldz_i \in \{0,1\}^c}$ over components. This
+one-hot vector is drawn from~$\btheta$; then, $\boldx_i$ is drawn
+from~$N(\mu_{z_i}, \Sigma_{z_i})$. Formally documents are generated in two steps:
+\begin{eqnarray*}
+ \boldz_i &\sim& \text{Categorical}(\btheta) \\
+ \boldx_i &\sim& N(\mu_{z_i}, \Sigma_{z_i})
+\end{eqnarray*}
+
+
+\begin{problem}
+      ~
+
+  \begin{enumerate}
+
+  \item \textbf{Intractability of the Data Likelihood}
+     Let $\phi_k$ represent all the parameters associated with a component $(\mu_k,\Sigma_k)$.  We
+     are generally interested in finding a set of parameters $\phi_k$ that maximize the data
+     likelihood $\log p(\{x_i\}|\{\phi_k\})$.  Expand the data likelihood to include the %remember to escape curlies
+    necessary sums over observations $x_i$ and latents $z_i$.  Why is optimizing this loss directly
+    intractable?
+    
+\item \textbf{Complete-Data Log Likelihood} 
+
+    Define the complete data for this problem to be $D =
+    \{(\boldx_i, \boldz_i)\}_{i=1}^n$. Write out the complete-data (negative) log likelihood.
+    \[\mcL(\btheta, \{\mu_k,\Sigma_k\}^c_{k=1}) =  -\ln p(D \given\btheta,
+    \{\mu_k,\Sigma_k\}^c_{k=1}).\] 
+
+
+\item \textbf{Expectation Step}
+Our next step is to introduce a mathematical expression for $\boldq_i$, the posterior over the hidden topic variables~$\boldz_i$ conditioned on the observed data $\boldx_i$ with fixed parameters, i.e $p(\boldz_i | \boldx_i; \btheta, \{ \mu_k,\Sigma_k \}^c_{k=1})$.
+
+\begin{itemize}
+\item  Write down and simplify the expression for $\boldq_i$. 
+\item  Give an algorithm for calculating $\boldq_i$ for all $i$, given the observed data~$\{\boldx_i\}^n_{i=1}$ and settings of the parameters~$\btheta$ and~$\{ \mu_k,\Sigma_k  \}^c_{k=1}$.
+
+\end{itemize}
+
+\item \textbf{Maximization Step}
+Using the~$\boldq_i$ estimates from the Expectation Step, derive an update for maximizing the expected complete data log likelihood in terms of~$\btheta$ and~$\{ \mu_k,\Sigma_k \}^c_{k=1}$.
+
+\begin{itemize}
+    \item Derive an expression for the expected complete-data log likelihood in terms of $\boldq_i$.
+    \item Find an expression for $\btheta$ that maximizes this expected complete-data log likelihood. You may find it helpful to use Lagrange multipliers in order to force the constraint $\sum \theta_k = 1$. Why does this optimized $\btheta$ make intuitive sense?
+    \item Apply a similar argument to find the value of the $(\mu_k,\Sigma_k)$'s that maximizes the expected complete-data log likelihood. 
+\end{itemize}
+
+\item Finally, compare this EM approach to the generative model for
+	classification in Homework 2.  How are the computations similar?
+	Different? 
+
+\end{enumerate}
+
+
+  
+\end{problem}
+
+\subsection*{Solution EM for Gaussian Mixture Models}
+
+
+\begin{enumerate}
+
+    \item \textbf{Intractability of the Data Likelihood} 
+        
+        Let $\phi_k$ represent all the parameters associated with a component $(\mu_k,\Sigma_k)$.
+        We are generally interested in finding a set of parameters $\phi_k$ that maximize the data
+        likelihood $\log p(x_i|\phi_k)$. Expand the data likelihood to include the necessary
+		sums over observations $x_i$ and latents $z_i$. 
+
+		\begin{answer}
+
+            Suppose we observe some data and we would like to calculate the likelihood of observing
+            such data. 
+
+            Let $\phi_k$ be our model parameters.
+            If we assume a mixture of Gaussians model, $\phi_k$ consists of the $\mu_k$ and $\Sigma_k$ for
+            each component (aka class).  
+
+            \textit{Note: The "complete-data" case is if we knew the true class labels, in which
+            case we cold directly calculate $p(\bx,\bz |\phi)$. However, as $\bz$ is a latent
+            (unobservable) variable, we may only calculate $p(\bx|\phi).$}
+
+            \begin{enumerate}
+
+                \item Let $\theta_k$ indicate the \textbf{class} distribution for our latent variable
+                    $\bz$'s.
+                    \begin{align}
+                        p(\bz = C_k) = \theta_k, \text{for } k \in \{1,...,c\}
+                    \end{align}
+
+                    For this problem we assume $z_i$ to be identically distributed, so that $\theta_k$ is
+                    the same for each. 
+                    %TODO: I did not use z_i at all! https://piazza.com/class/jc3xylsz3wf1n7?cid=421
+
+                \item Let our class conditional distribution be 
+                    \begin{align}
+                        p(\bx| \bz = C_k) = \mathcal{N}(\bx|\bmu_k,\bSigma_k)
+                    \end{align}
+
+            \end{enumerate}
+            As per the s17 lecture 14 slides, the log likelihood of observed data $\bx$ may thus be written 
+            \begin{align}
+                \ln p( \bx_i | \phi) = \ln \sum_{k=1}^c \theta_k \mathcal{N}(\bx_i | \bmu_k, \bSigma_k) 
+                \
+            \end{align}
+
+            That is, the probability of our $\bx$'s given our model parameters is equal to the sum,
+            across all possible classes, of the probability $\theta_k$ of $\bx_k$ being from each
+            class times the normal distribution from where x would be drawn if it was of class $k$. 
+            % this equation written by appealing to logic, not working out math
+
+        \end{answer}
+        \color{black}Question: Why is optimizing this loss directly intractable?
+        \begin{answer}
+
+            We cannot find a closed solution for this, as the log of the sum prevents us from being
+            able to decompose it by $\phi$. In general, it is hard to simplify the log of a sum of
+            expressions (unliked decomposing a log of a product of expressions).
+
+        \end{answer}
+
+    \item \textbf{Complete-Data Log Likelihood} 
+
+        Define the complete data for this problem to be $D = \{(\boldx_i, \boldz_i)\}_{i=1}^n$.
+        Write out the complete-data (negative) log likelihood.  \[\mcL(\btheta,
+        \{\mu_k,\Sigma_k\}^c_{k=1}) =  -\ln p(D \given\btheta, \{\mu_k,\Sigma_k\}^c_{k=1}).\] 
+
+		\begin{answer}
+
+    As before:
+    \begin{enumerate}
+        \item Let $D$ be the data $\bx, \bz$.
+        \item Let $\phi$ be the parameters $\theta$ (class distribution) as well as $\{\mu_k,
+            \Sigma_k\}_{k=1}^c$ (parameters for class conditional distribution.)
+
+            Per the definition of a joint probability distribution, the probability of both $x_i$ and
+            $z_i$ happening is equal to the probability of $z_i$ happening, times the probability of
+            $x_i$ happening given that $z_i$ happened.
+            \begin{align}
+                p( D ) = p(\bx_i, \bz_i) = p(\bz_i) p(\bx_i | \bz_i)
+            \end{align}
+
+            Let $z_{ik}$ be the indicator variable, which is 1 only when $x_i$ is of true class $k$, and
+            zero otherwise.
+
+    \end{enumerate}
+
+            We can now write out the negative log of the complete-data log likelihood:
+            \begin{align}
+                -\ln p( D | \phi) =  -\ln p(\bx | \phi) - \ln p( z | \phi) \\
+                p(\bz_i) = \prod_{k=1}^c \theta_z^{z_{ik}} \\ 
+                p(\bx_i | \bz_i ) = \prod_{k=1}^c \mathcal{N}(\bx|\bmu_k,\bSigma_k)^{z_{ik}} \\
+                p(\bz_i) p(\bx_i | \bz_i) = \prod_{k=1}^c \theta_k^{z_{ik}}\mathcal{N}(\bx|\bmu_k,\bSigma_k)^{z_{ik}} 
+                \label{eq:5}
+            \end{align}
+
+            Note by thinking carefully that in the product series case, we use the indicator variable as
+            an exponent (think through what raising something to the power of 1 or 0 does). In a product
+            series, multiplying by one "does nothing", while in a summation series, summing a zero "does
+            nothing".
+
+            Taking the log of \cref{eq:5} we get that 
+
+            \begin{align}
+                \ln p(\bx_i, \bz_i | \phi) = 
+                    - \sum_{k=1}^c z_{ik} \ln \theta_k
+                    - \sum_{k=1}^c  z_{ik} \ln \mathcal{N}(\bx|\bmu_k,\bSigma_k)^{z_{ik}}
+            \end{align}
+
+
+
+		\end{answer}
+
+    \item \textbf{Expectation Step}
+        Our next step is to introduce a mathematical expression for $\boldq_i$, the posterior over
+        the hidden topic variables~$\boldz_i$ conditioned on the observed data $\boldx_i$ with fixed
+        parameters, i.e $p(\boldz_i | \boldx_i; \btheta, \{ \mu_k,\Sigma_k \}^c_{k=1})$.
+
+        \begin{itemize}
+            \item  Write down and simplify the expression for $\boldq_i$. 
+
+				\begin{answer}
+                    As per section 8 notes, problem 3.4 :
+                    \begin{align}
+                        \bq_i &= p(\bz_i = C_k | \bx_i, \phi)  \\ \label{eq:q}
+                              &\propto p(\bz_i, \phi) p(\bx_i | \bz_i, \phi) \\ 
+                              &\propto \theta_k^{z_{ik}}\mathcal{N}(\bx|\bmu_k,\bSigma_k)^{z_{ik}} 
+                    \end{align}
+
+
+
+				\end{answer}
+
+            \item  Give an algorithm for calculating $\boldq_i$ for all $i$, given the observed
+                data~$\{\boldx_i\}^n_{i=1}$ and settings of the parameters~$\btheta$ and~$\{
+                \mu_k,\Sigma_k  \}^c_{k=1}$.
+
+				\begin{answer}
+                    We have settings for $\btheta$ and $\{\bmu_k,\bSigma_k\}$
+                    (specifically: if it's
+                    the first iteration, these are chosen randomly, otherwise these are output from
+                    the previous iteration); and that we have observed data $\bx$. We see that our
+                    posterior belief is our belief about our  the distribution of our class
+                    variables $z$ given our observed data $x$ (In k--means, the posterior would be
+                    our belief about the location of our centroids given our unlabeled data).
+                    
+                    Above, we wrote down how to calculate $q_i$ for one datapoint (implicitly,
+                    \ref{eq:q} may be denoted more accurately as ($q_i)_k$. That is to say, we will
+                    have $i$ number of vectors $q_i$, where each vector is of length $k$:
+                    
+\begin{lstlisting}[frame=single, language=python]
+def gaussian(x, mu, sigma):
+    g = 1/(sigma * sqrt(2*pi) * exp(-.05*((x-mu)/sigma)**2
+    return g
+
+for each datapoint x_i from i=(1 to n)
+    q_i_per_i = []
+    For each class k from k=(1 to c)
+        q_i[k] = ( thetas[k] * 
+            gaussian(x_i, current_mean_estimates[k], 
+                    current_sigma_estimates[k]) )
+    q_i_per_i[x_i] = q_i[k]
+\end{lstlisting}
+
+				\end{answer}
+
+		\end{itemize}
+
+    \item \textbf{Maximization Step}
+        Using the~$\boldq_i$ estimates from the Expectation Step, derive an update for maximizing
+        the expected complete data log likelihood in terms of~$\btheta$ and~$\{ \mu_k,\Sigma_k
+        \}^c_{k=1}$.
+
+        \begin{itemize} 
+            \item Derive an expression for the expected complete-data log likelihood in
+                terms of $\boldq_i$.
+
+                \begin{answer}
+
+                    Now we have the true class labels (well, our estimate of them) from the
+                    expectation step. We can now calculate, as per slide 19, sp17 lec14, the
+                    expected (positive) complete-data log likelihood (which we will next try to
+                    maximize):
+                    \begin{align}
+                        \mathbb{E}_Z[\mathcal{L}(\phi)] &= \mathbb{E}_Z \left[ \sum_{i=1}^n \ln(p(\bx_i,
+                        \bz_i | \phi) \right]  \\
+                        &= \sum_{i=1}^n \sum_{k=1}^c q_{ik} \ln\theta_k + 
+                        \sum_{i=1}^n \sum_{k=1}^c q_{ik} \ln \mathcal{N}(\bx_i | \bmu_k,
+                        \bSigma_k) \\
+                        &= \sum_{i=1}^n \sum_{k=1}^c q_{ik} \left(\ln\theta_k + 
+                    \ln \mathcal{N}(\bx_i | \bmu_k, \bSigma_k ) \right) \\ \tag{\ref{eq:exp} revisited}
+                    %\sum_{i=1}^n 
+                    %\sum_{k=1}^c 
+                    %\mathcal{N}(\bx_i | \bmu_k, \bSigma_k)
+                \end{align}
+
+            \end{answer}
+
+        \item Find an expression for $\btheta$ that maximizes this expected complete-data log
+            likelihood. You may find it helpful to use Lagrange multipliers in order to force
+            the constraint $\sum \theta_k = 1$. Why does this optimized $\btheta$ make intuitive
+            sense?
+
+            To maximize given a constraint, we will use the method of Lagrangian multipliers. As
+            we are maximizing with respect to $\theta_k$, we may also drop the terms (on the
+            right) not including $\theta$. Previously, in homework 2, we had $z_{ik}$ as our
+            indicator variable. However, we now treat $z$ as a latent variable, and instead we
+            have a "soft estimate" $q$ variable.
+
+            \begin{answer}
+
+                \begin{align}
+                    \mathcal{L(\mathbf{\theta_k, \lambda}}) = \sum_{i=1}^n \sum_{k=1}^c q_{ik}
+                    \ln\theta_k + \lambda (\sum_{k=1}^c \theta_k - 1) \label{eq:lag}
+                \end{align}
+
+                Take the partial derivative of $\mathcal{L}$ with respect to $\theta_k$ and set
+                it equal to zero, and noting that 
+                \begin{align}
+                    \sum_i q_{ik} = n_k \label{eq:sumq}
+                \end{align}
+                (see homework 2 problem 2.2 for more details)
+
+                \begin{align}
+                    0 &= \sum_{i=1}^n \frac{q_{ik}}{\theta_k} - \lambda \\ \label{eq:latheta}
+                    \theta_k &= \frac{n_k }{\lambda}
+                \end{align}
+
+                Take the partial derivative with respect to $\lambda$ and set it equal to zero
+                to get
+
+                \begin{align}
+                    0 &= \sum_{k=1}^c \theta_k - 1\\ \label{eq:lalambda}
+                \end{align}
+
+                Now let's solve from lambda by combining \cref{eq:latheta} and \cref{eq:lalambda}
+                \begin{align}
+                    0 &= \sum_{k=1}^c \frac{n_k}{\lambda} - 1 \\
+                    \lambda &= n_k
+                \end{align}
+
+                Returning to \cref{eq:latheta} we now see that
+                \begin{align}
+                    \theta_k = \frac{n_k}{n}     
+                \end{align}
+
+                (Note that since we are actually estimating $\theta_k$, it would be clearer to
+                write $\hat{\theta_k}$)
+
+                This solution for $\hat{\theta_k} $makes sense: the optimal (prior) probability
+                of a given $x_i$ belong to a class $k$ is equal to the proportion of
+                observations (we've estimated in this iteration) that come from class $k$.
+                %(This agrees with slide 20).
+
+            \end{answer}
+
+            %\sum_{i=1}^n 
+            %\sum_{k=1}^c 
+            %\mathcal{N}(\bx_i | \bmu_k, \bSigma_k)
+
+        \item Apply a similar argument to find the value of the $(\mu_k,\Sigma_k)$'s that
+            maximizes the expected complete-data log likelihood. For  $\bmu_k$ case.
+
+            \begin{answer}
+                As in homework 2:
+                \begin{align}
+                    &= \sum_{i=1}^n \sum_{k=1}^c q_{ik} \left(\ln\theta_k + 
+                \ln \mathcal{N}(\bx_i | \bmu_k, \bSigma_k ) \right)  \label{eq:exp}
+            \end{align}
+
+            To solve for optimal $\bmu_k$, taking the derivative of \cref{eq:exp} with respect
+            to $\bmu_k$ and set to zero. Note that the left hand terms drop out. Furthermore, we
+            remove terms in the log gaussian without $\bmu_k$ 
+
+            \begin{align*}
+                &= \sum_{i=1}^n \sum_{k=1}^c q_{ik} \left(\ln\theta_k + 
+            \ln \mathcal{N}(\bx_i | \bmu_k, \bSigma_k )\right) \\ \tag{\ref{eq:exp} revisited}
+            &= \sum_{i=1}^n \sum_{k=1}^c q_{ik} \ln \mathcal{N}(\bx_i | \bmu_k, \bSigma_k)
+        \end{align*}
+
+        The natural log of the Gaussian is equal to 
+        \begin{align}
+            &= - \frac{1}{2} \left( D \ln2\pi + \ln|\bSigma| + (\bx_i - \bmu_k)^T
+        \bSigma^{-1} (\bx_i-\bmu_k) \right)\label{eq:lngauss} \\
+        &= - \frac{1}{2} (\bx_i - \bmu_k)^T \bSigma^{-1} (\bx_i-\bmu_k)
+    \end{align}
+
+
+    Thus we get that we are solving for $\bmu_k$ s.t.
+    \begin{align}
+        \frac{\partial L}{\partial \bmu_k} &=  - \frac{1}{2} \sum_{i=1}^n \sum_{k=1}^c q_{ik} 
+        (\bx_i - \bmu_k)^T \bSigma^{-1} (\bx_i-\bmu_k) + const \\
+        &= 0
+    \end{align}
+
+    Carrying the derivative out:  % not rewriting, because tired
+    \begin{align}
+        0  &=  - \frac{1}{2} (\bSigma^{-1}  + \bSigma^{-T} )
+        \sum_{i=1}^n \sum_{k=1}^c q_{ik} (\bx_i - \bmu_k) \\
+        0 &= \sum_{i=1}^n \sum_{k=1}^c q_{ik} (\bx_i - \bmu_k) \\
+        0 &= \sum_{i=1}^n \sum_{k=1}^c q_{ik} \bx_i - q_{ik} \bmu_k \\
+        \sum_{i=1}^n \sum_{k=1}^c q_{ik} \bmu_k  &= \sum_{i=1}^n \sum_{k=1}^c q_{ik} \bx_i \\
+        % why *can* we take q_ik out of the \mu_k side??
+    \end{align}
+
+    As the $\mu_k$ is the same for all points in the class, $\sum_{k=1}^c q_{ik} \bmu_k$
+    is simply $n_k \bmu_k$. Thus we get that 
+    \begin{align}
+        \bmu_k  &= \frac{1}{n_k}\sum_{i=1}^n q_{ik} \bx_i 
+    \end{align}
+    % According to slides we should get We should get  
+    %\begin{align}
+    %\hat{\mu_k} = \frac{1}{n_k} \sum_{i=1}^n  q_{ik} \bx_i
+    %\end{align}
+
+\end{answer}
+
+            \item Apply a similar argument to find the value of the $(\mu_k,\Sigma_k)$'s that
+                maximizes the expected complete-data log likelihood. $\bSigma_k$ case.  
+
+                As before for $\bmu_k$
+
+                \begin{answer}
+                    % According to slides we should get We should get  
+                    \begin{align}
+                        \hat{\bSigma_k} &= \frac{1}{n_k} \sum_{i=1}^n  q_{ik} (x_i-\hat{\bmu_k})(x_i-\hat{\bmu_k})^T
+                    \end{align}
+
+                    Dropping terms without $\bSigma$
+                    \begin{align}
+                        \mathcal{L} &= \sum_{i=1}^n \sum_{k=1}^c q_{ik} \left[ 
+                            -\frac{1}{2} ( \ln|\bSigma|+(\bx_i-\bmu_k)^T\Sigma^{-1} (\bx_i-\bmu_k) )
+                        \right] 
+                    \end{align}
+
+
+                    Taking the partial derivative and collapsing sums, we get 
+                    \begin{align}
+                        \frac{\partial \mathcal{L}}{\partial \bSigma_k} &=  
+                        \frac{n_k}{2}\bSigma_k - \frac{1}{2}\sum_{i=1}^n 
+                        q_{ik} (x_i-\hat{\bmu_k})(x_i-\hat{\bmu_k})^T \\
+                    \end{align}
+
+                    For our final answer
+                    \begin{align}
+                        \bSigma_k &= \frac{1}{n_k} \sum_{i=1}^n  q_{ik} (x_i-\bmu_k)(x_i-\bmu_k)^T
+                    \end{align}
+                \end{answer}
+        \end{itemize}
+
+	\item Finally, compare this EM approach to the generative model for classification in Homework
+		2.  How are the computations similar?  Different? 
+
+		\begin{answer}
+
+            In homework 2, classification with generative models, we view the data $x$ that we
+            observe as being generated by a random variable $y$. We estimate the joint probability
+            model $p(x,y)$ to create predications about $y$ given future observations of $x$.
+
+            [y] $\to$ [x] 
+
+            In the EM approach, we similarly consider the data to come from a generative *process*,
+            and apply Baye's rule to model the posterior distribution aka our estimate of the class
+            label given a particular datapoint $x$ and parameters for the distribution from which $z$
+            is drawn. But we consider that this process involves an unknown and unobservable random
+            variable $z$. Thus, we do not know which sample came from which class, and we must use
+            EM as a way to maximize the likelihoods we are solving for.
+
+            [z] $\to$ [x]
+
+
+            In short, homework 2 was supervised learning, and the EM approach is unsupervised
+            learning. We are looking at the discrete model in both homework 2 and this homework.
+
+            %In this approach, we are backing out the generative model where we sample a class, and
+            %then conditioned on the class, generate features. Then, if we have some estimate of the
+            %parameters $\phi$, we can predicat a class via Baye's rule. (see s17 lecture 14 slides).
+
+ %           \begin{align}
+                %p(\bx,\bz| \phi) = p(\bz | \phi) p(\bx | \bz, \phi) \\
+                 %\text{by Baye's rule, } 
+                %p(\bz | \bx, \phi) \propto p(\bx|\bz,\phi) p(\bz|\phi)
+            %\end{align}
+
+		\end{answer}
+
+\end{enumerate}
+
+
+\newpage
+
+\section*{K-Means [15 pts]} % FDV: Any more interesting data sets?  
+
+For this problem you will implement  K-Means clustering from scratch. Using \texttt{numpy} is fine,
+but don't use a third-party machine learning implementation like \texttt{scikit-learn}. You will
+then apply this approach to clustering of image data.  
+
+
+
+We have provided you with the MNIST dataset, a collection of handwritten digits used as a benchmark
+of image recogntion (you  can learn more about the data set at
+\url{http://yann.lecun.com/exdb/mnist/}). The MNIST task is widely used in supervised learning, and
+modern algorithms with neural networks do very well on this task. 
+
+Here we will use MNIST unsupervised learning. You have been given representations of 6000 MNIST
+images, each of which are $28\times28$ greyscale handwritten digits. Your job is to implement
+K-means clustering on MNIST, and to test whether this relatively simple algorithm can cluster
+similar-looking images together.
+
+~
+\begin{problem}
+The given code loads the images into your environment as a 6000x28x28 array.
+
+\begin{itemize}
+    \item Implement K-means clustering
+        from different random initializations and for several values of $K$ using the $\ell_2$ norm
+        as your distance metric. (You should feel free to explore other metrics than the $\ell_2$
+        norm, but this is strictly optional.)  Compare the K-means objective for different values of
+        K and across random initializations.
+%
+\item For three different values of K,
+    and a couple of random restarts for each, show the mean images for each cluster (i.e., for the
+    cluster prototypes), as well as the images for a few representative images for each cluster. You
+    should explain how you selected these representative images. To render an image, use the pyplot
+    \texttt{imshow} function. 
+
+\item Are the results wildly different for different restarts and/or different values of K?  For one
+    of your runs, plot the K-means objective function as a function of iteration and verify that it
+    never increases.
+
+\end{itemize}
+
+
+As in past problem sets, please include your plots in this
+document. (There may be several plots for this problem, so feel free
+to take up multiple pages.)
+
+
+
+
+\end{problem}
+\subsection*{Solution: K-Means}
+
+\begin{itemize}
+\item Implement K-means clustering
+from different random initializations 
+and for several values of $K$ using the 
+$\ell_2$ norm as your
+distance metric. (You should feel free to explore other metrics 
+than the $\ell_2$ norm, but this is strictly optional.)  Compare the 
+K-means objective for different values of K and across random
+initializations.
+%
+\begin{answer}
+
+    From the following table \ref{my-label} we may observe that the objective decreases as K increases.
+    Additionally, for each run of K, the final objective (cost) is fairly consistent, without large
+    variations, compared to the changes in final cost between different K values.
+
+    \begin{table}[H]
+        \centering
+        \caption{K-Means l2 objective for different values of K. Normalized = divided by 6000*28*28,
+        for readability.}
+        \label{my-label}
+        \begin{tabular}{@{}lll@{}}
+            \toprule
+            K (\# clusters) & Objective (normalized) & Objective  \\ \midrule
+            2               & 2.2632                 & 10646092.8 \\
+            2               & 2.2631                 & 10645622.4 \\
+            2               & 2.2631                 & 10645622.4 \\
+            5               & 2.1117                 & 9933436.8  \\
+            5               & 2.1191                 & 9968246.4  \\
+            5               & 2.1183                 & 9964483.2  \\
+            10              & 1.99                   & 9360960    \\
+            10              & 1.9888                 & 9355315.2  \\
+            10              & 1.9868                 & 9345907.2  \\
+            15              & 1.9222                 & 9042028.8  \\
+            15              & 1.9212                 & 9037324.8  \\
+            15              & 1.9187                 & 9025564.8  \\ \bottomrule
+        \end{tabular}
+    \end{table}
+
+\end{answer}
+
+\item For three different values of K, and a couple of random restarts for each, show the mean
+    images for each cluster (i.e., for the cluster prototypes), as well as the images for a few
+    representative images for each cluster. You should explain how you selected these representative
+    images. To render an image, use the pyplot \texttt{imshow} function. 
+
+\begin{answer}
+
+In the representative images, each row indicates images from one cluster.
+For each row, the three left images are chosen as the three closest (as defined
+by the objective function) to the centroid, and the three right images are the three worst scoring images.
+
+\begin{figure}[H]
+        \centering
+        \includegraphics[width=\textwidth,height=0.28\paperheight]{p3_means.png}
+        \caption{Problem 3, Mean images, with a bonus K=15 centroid runs.}
+        \label{P3 Means}
+
+        \includegraphics[width=\textwidth,height=0.5\paperheight]{p3_reps.png}
+        \caption{Problem 3, Representative images, note that K=15 is not depicted here. Left 3 are
+        closest to centroid by l2 norm, right 3 are furthest.}
+        \label{P3 Reps}
+\end{figure}
+
+\end{answer}
+
+
+\item Are the results wildly different for different
+restarts and/or different 
+values of K?
+For one of your runs, plot the K-means objective function as a function of iteration and verify that
+it never increases.
+
+\begin{answer}
+        Compared to the k-means objective (as answered in part 1), The representative images /
+        cluster results do seem to vary noticeably between runs, aside from the K=2 case, which
+        exhibits little variation.  The results do vary even more for different values of K; for
+        K=10, the mean images will sometimes miss entire numbers, while for k=15 we will get repeats
+        of a few of the values
+        even if we get most of the digits. 
+
+        For the following, we graph a run of the KMeans algorithm for K=10 clusters. The run
+        converged after 24 iterations (where by converge I set it to mean that the previous and
+        current objective value did not change). 
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.5\textwidth]{p3_costvsiter.png}
+        \caption{Problem 3: Verification that K-means objective function decreases as a function of
+        iteration}
+        \label{cost}
+    \end{figure}
+\end{answer}
+
+\end{itemize}
+
+%Figure out how to load it into your environment and turn it into a set of
+%vectors.  Run K-Means on it for a few different~$K$ and show some results from
+%the fit.  What do the mean images look like?  What are some representative
+%images from each of the clusters?  Are the results wildly different for
+%different restarts and/or different~$K$?  Plot the K-Means objective function
+%(distortion measure) as a function of iteration and verify that it never
+%increases.
+
+%\subsection*{4. Implement K-Means++ [4 pts]} mplement K-Means++ and see if it
+%gives you more satisfying initializations for K-Means.  Explain your findings.
+
+\newpage
+\begin{problem}[Calibration, 1pt]
+Approximately how long did this homework take you to complete?
+\end{problem}
+
+~30-40 hours
+\subsection*{Name, Email, and Collaborators}
+
+Name: Nao Ouyang
+
+Email: nouyang@g.harvard.edu    
+
+Collaborators:
+Eric
+Buse
+Philip
+David
+
+
+\end{document}
+
+% vim --servername vim test.tex
+%https://blog.carbonfive.com/2011/10/17/vim-text-objects-the-definitive-guide/
+% ci} {asdf}
+% cit <h2></h2> 
+% dac \boldface\mu ->  \mu (command)
+% cse  change surrounding environment
+% neovim split terminal

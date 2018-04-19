@@ -218,18 +218,18 @@ function $h(\bphi(x);\boldw,w_0)$.
     %According to reference.com, ``A binding constraint is a constraint used in linear
     %programming equations whose value satisfies the optimal solution; any changes in its value
     %changes the optimal solution."
-
+    The training function uses the discriminant multiplied by $y_i$ to ensure that we get a normalized unsigned loss.
 
     Plugging in the points directly, we get that 
 
     \begin{align*}
-        h(-3) &= (2/3)\cdot 9 - (5/3) =  13/3 \\
-        h(-2) &= (8/3) - (5/3) =  1 \\
-        h(-1) &= (2/3) - (5/3) =  -1 \\
-        h(0) &= (0) - (5/3) =  -5/3 \\
-        h(1) &= (2/3) - (5/3) =  -1 \\
-        h(2) &= (8/3) - (5/3) =  1 \\
-        h(3) &= (18/3) - (5/3) =  13/3 \\
+        h(-3)*y_i &= (2/3)\cdot 9 - (5/3) * (y_i = 1)  =  13/3 \\
+        h(-2)*y_i &= (8/3) - (5/3)  * (y_i = 1)  = 1 \\
+        h(-1)*y_i &= (2/3) - (5/3) * (y_i = -1)    -1 \\
+        h(0)*y_i &= (0) - (5/3) * (y_i = -1) = -5/3 \\
+        h(1)*y_i &= (2/3) - (5/3) * (y_i = -1)  =  -1 \\
+        h(2)*y_i &= (8/3) - (5/3) * (y_i = 1)  =  1 \\
+        h(3)*y_i &= (18/3) - (5/3) * (y_i = 1)  =  13/3 \\
     \end{align*}
 
     Our support vectors are (-2,1), (1,-1),  (-1,1), and (2,1) in terms of (x,y). These points

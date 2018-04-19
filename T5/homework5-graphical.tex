@@ -32,6 +32,16 @@
 \usepackage{tikz}
 \usepackage{xifthen}
 
+%%%
+\usepackage{bm}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{subfig}
+\usepackage{cleveref}
+\usepackage{adjustbox}
+\usepackage{listings}% for code highlighting
 \usepackage[mmddyyyy,hhmmss]{datetime}
 
 \definecolor{verbgray}{gray}{0.9}
@@ -104,28 +114,28 @@ For the following questions, $I(A,B)$ means that events A and B are independent 
 
 %
 \begin{enumerate}
-\item Is $I(\attr{Have Acne},\attr{Was Outside})$? If NO, give
-intuition for why.
-%
-%
-\item Is $I(\attr{Have Acne},\attr{Was Outside}\given \attr{Skin Red})$? If NO, give
-intuition for why.
-%
-%
-\item Is $I(\attr{Get Sunburn},\attr{Bump on Skin})$? If NO, give
-intuition for why.
-%
-\item Is $I(\attr{Get Sunburn},\attr{Bump on Skin}\given \attr{Get Insect Bite})$? If NO, give intuition for why.
-%
-\item Suppose the person has taken a medicine to suppress their
-  response to insect bites: they get red skin, but no bumps.  Draw the
-  modified network.  
-%
-%
-\item For this modified network, is $I(\attr{Get Sunburn},\attr{Bump
-  on Skin})$? If NO, give an intuition why.  If YES, describe what
-  observations (if any) would cause them to no longer be independent.    
-%
+    \item Is $I(\attr{Have Acne},\attr{Was Outside})$? If NO, give
+        intuition for why.
+        %
+        %
+    \item Is $I(\attr{Have Acne},\attr{Was Outside}\given \attr{Skin Red})$? If NO, give
+        intuition for why.
+        %
+        %
+    \item Is $I(\attr{Get Sunburn},\attr{Bump on Skin})$? If NO, give
+        intuition for why.
+        %
+    \item Is $I(\attr{Get Sunburn},\attr{Bump on Skin}\given \attr{Get Insect Bite})$? If NO, give intuition for why.
+        %
+    \item Suppose the person has taken a medicine to suppress their
+        response to insect bites: they get red skin, but no bumps.  Draw the
+        modified network.  
+        %
+        %
+    \item For this modified network, is $I(\attr{Get Sunburn},\attr{Bump
+        on Skin})$? If NO, give an intuition why.  If YES, describe what
+        observations (if any) would cause them to no longer be independent.    
+        %
 \end{enumerate}
 \end{problem}
 
@@ -133,116 +143,239 @@ intuition for why.
 
 \subsection*{Solution Bayesian Networks}
     \textbf{Solution: Please see figure for showing d-separation work.}
-\begin{itemize}
-    \item Is $I(\attr{Have Acne},\attr{Was Outside})$? If NO, give
-    intuition for why.
 
-        \begin{answer}
-        YES, Yes, having acne is independent of going outside. Whether we go outside or not doesn't
-        affect whether we get acne (at least according to this model).
-        Also, having acne doesn't affect whether we go outside or not (according to this model).
-        \end{answer}
+    \begin{itemize}
 
-    \item Is $I(\attr{Have Acne},\attr{Was Outside}\given \attr{Skin Red})$? If NO, give
-    intuition for why.
+        \begin{figure}[H]
+                \centering
 
-        \begin{answer}
-            NO, If we know whether or not we we have acne, does also knowing whether our skin is red
-            or not impact our estimate of of whether we were outside? If we know we have red skin,
-            and knowing we had acne would "explain away" some of our certainty about being outside
-            or not. Thus, having observed R, O and A are no longer independent.
-        \end{answer}
+                \includegraphics[width=\textwidth,height=0.8\paperheight]{Part1_D-sep_diagrams.png}
+                \caption{Part 1. D-Separation Work}
+                \label{d-sep}
+        \end{figure}
+            
+        \item Is $I(\attr{Have Acne},\attr{Was Outside})$? If NO, give
+        intuition for why.
 
-    \item Is $I(\attr{Get Sunburn},\attr{Bump on Skin})$? If NO, give
-    intuition for why.
+            \begin{answer}
+            YES, Yes, having acne is independent of going outside. Whether we go outside or not doesn't
+            affect whether we get acne (at least according to this model).
+            Also, having acne doesn't affect whether we go outside or not (according to this model).
+            \end{answer}
 
-        \begin{answer}
-             NO, Not independent. The likelihood of us getting sunburned impacts our estimate of being
-             outside, which in turn impacts our estimate of getting an insect bite and potentially
-             having a bump on our skin. 
-        \end{answer}
+        \item Is $I(\attr{Have Acne},\attr{Was Outside}\given \attr{Skin Red})$? If NO, give
+        intuition for why.
 
-    \item Is $I(\attr{Get Sunburn},\attr{Bump on Skin}\given \attr{Get Insect Bite})$? If NO, give intuition for why.
-        \begin{answer}
-            YES, Given that we got an insect bite, do we care about whether we have a bump or not, in order to
-            estimate if we are sunburned or not? No! (thus YES, they are independent).
-        \end{answer}
+            \begin{answer}
+                NO, If we know whether or not we we have acne, does also knowing whether our skin is red
+                or not impact our estimate of of whether we were outside? If we know we have red skin,
+                and knowing we had acne would "explain away" some of our certainty about being outside
+                or not. Thus, having observed R, O and A are no longer independent.
+            \end{answer}
 
-    \item Suppose the person has taken a medicine to suppress their
-      response to insect bites: they get red skin, but no bumps.  Draw the
-      modified network.  
+        \item Is $I(\attr{Get Sunburn},\attr{Bump on Skin})$? If NO, give
+        intuition for why.
 
-    \item For this modified network, is $I(\attr{Get Sunburn},\attr{Bump
-      on Skin})$? If NO, give an intuition why.  If YES, describe what
-      observations (if any) would cause them to no longer be independent.    
+            \begin{answer}
+                 NO, Not independent. The likelihood of us getting sunburned impacts our estimate of being
+                 outside, which in turn impacts our estimate of getting an insect bite and potentially
+                 having a bump on our skin. 
+            \end{answer}
 
-		\begin{answer}
-            \begin{align}
-                sdf = 1
-            \end{align}
-		\end{answer}
-\end{itemize}
+        \item Is $I(\attr{Get Sunburn},\attr{Bump on Skin}\given \attr{Get Insect Bite})$? If NO, give intuition for why.
+            \begin{answer}
+                YES, If we know whether or not we got an insect bite, do we care about whether we have a
+                bump or not, in order to estimate if we are sunburned or not? No! (thus YES, they are
+                independent). That is, the insect bite directly tells us whether the bump in the skin
+                was caused by being outside, (vs having acne), and whether we got a sunburn or not
+                provides no additional information.
+            \end{answer}
 
+        \item Suppose the person has taken a medicine to suppress their
+          response to insect bites: they get red skin, but no bumps.  Draw the
+          modified network.  
 
+        \item For this modified network, is $I(\attr{Get Sunburn},\attr{Bump
+          on Skin})$? If NO, give an intuition why.  If YES, describe what
+          observations (if any) would cause them to no longer be independent.    
+
+            \begin{answer}
+                If we observed R, then we would "activate" the V (common effect) structure I R A. There
+                would then be an activate path between S and B, and they would no longer be guaranteed
+                to be independent.
+
+                Intuitively, if we know that we have red skin, then knowing that we got sunburned would
+                lower the likelihood that our red skin was caused by acne. Having acne impacts whether
+                we get bumps or not. Therefore, after we know whether or not we were our skin being
+                reddened, then knowing whether we were sunburned or not adds information to our estimate
+                of whether we have bumps or not.
+                %\begin{align}
+                    %sdf = 1
+                %\end{align}
+            \end{answer}
+    \end{itemize}
+\newpage
 
 \section*{Kalman Filters [7 pts]}
 
+        \begin{problem}
+            In this problem, you will implement a one-dimensional Kalman filter.
+            Assume the following dynamical system model:
+            \begin{eqnarray*}
+                z_{t+1} &= z_{t} + \epsilon_{t} \\
+                x_{t} & = z_{t} + \gamma_{t}  
+            \end{eqnarray*}
+            where $z$ are the hidden variables and $x$ are the observed
+            measurements.  The random variables $\epsilon$ and $\gamma$ are
+            drawn from the following Normal distributions:
+            \begin{eqnarray*}
+                \epsilon_t &\sim& N(\mueps,\sigeps) \\
+                \gamma_t &\sim& N(\mugam,\siggam) 
+            \end{eqnarray*}
+            where $\mueps = 0$, $\sigeps=0.05$, $\mugam = 0$ and $\siggam=1.0$
+
+            You are provided with the observed data $x$ and the hidden data $z$ in kf-data.csv, and
+            the prior on the first hidden state is $p(z_0)$ = N($\muzp$,$\sigzp$) where $\muzp = 5$
+            and $\sigzp=1$
+
+
+            \begin{itemize}
+                \item[(a)] The distribution $p(z_t|x_0...x_t)$ will be Gaussian
+                    $N(\mu_t,\sigma^2_t)$. Derive an iterative update for the mean
+                    $\mu_t$ and variance $\sigma^2_t$ given the mean and variance
+                    at the previous time step ($\mu_{t-1}$ and  $\sigma^2_{t-1}$).
+
+				\item[(b)] Implement this update and apply it to the observed data
+					above (do not use the hidden data to find these updates). Provide a plot of $\mu_t$ over time as well as a
+					$2\sigma_t$ interval around $\mu_t$ (that is $\mu_t \pm
+					2\sigma_t$).  Does the Kalman filter ``catch up'' to the true
+					hidden object?
+
+				\item[(c)] Repeat the same process but change the observation
+					at time $t=10$ to $x_{t=10}=10.2$ (an extreme outlier
+					measurement).  How does the Kalman filter respond to this
+					outlier?  
+
+				\item[(d)] Comment on the misspecification of dynamical system
+					model for these data.  Based on the previous two parts, how
+					does this misspecification affect the predictions?
+
+			\end{itemize}    
+\end{problem}
+
+\newpage
+
+
+\section*{Markov Decision Processes [7 pts]}
 \begin{problem}
-  In this problem, you will implement a one-dimensional Kalman filter.
-  Assume the following dynamical system model:
-  \begin{eqnarray*}
-    z_{t+1} &= z_{t} + \epsilon_{t} \\
-    x_{t} & = z_{t} + \gamma_{t}  
-  \end{eqnarray*}
-  where $z$ are the hidden variables and $x$ are the observed
-  measurements.  The random variables $\epsilon$ and $\gamma$ are
-  drawn from the following Normal distributions:
-  \begin{eqnarray*}
-    \epsilon_t &\sim& N(\mueps,\sigeps) \\
-    \gamma_t &\sim& N(\mugam,\siggam) 
-  \end{eqnarray*}
-  where $\mueps = 0$, $\sigeps=0.05$, $\mugam = 0$ and $\siggam=1.0$
+  ~
 
-  You are provided with the observed data $x$ and the hidden data $z$ in kf-data.csv, and the prior on the first hidden state is $p(z_0)$ = N($\muzp$,$\sigzp$) where $\muzp = 5$ and $\sigzp=1$
+  
+\noindent In this problem we will explore the calculation of the \emph{MDP value function} $V$  in a 2D exploration setting, without time discounting and for a finite time horizon.  %
+Consider a robot navigating the following grid:
+  \begin{center}
+			  \begin{tikzpicture}[darkstyle/.style={circle,draw,fill=gray!40,minimum size=20}]
+				  \foreach \x in {0,...,2}
+				  \foreach \y in {0,...,2} 
+				  {\node [darkstyle]  (\x\y) at (1.5*\x,1.5*\y) {\ifthenelse{\x=2 \AND \y=0}{A}{\ifthenelse{\x=1\AND\y=1}{B}{}}};} 
 
+					  \draw (00)--(01);
+					  \draw (01)--(02);
+
+					  \draw (10)--(11);
+					  \draw (11)--(12);
+
+					  \draw (10)--(11);
+					  \draw (11)--(21);
+
+					  \draw (20)--(21);
+					  \draw (11)--(21);
+
+					  \draw (21)--(22);
+					  \draw (01)--(11);
+					  \draw (00)--(10);
+					  \draw (12)--(22);
+
+					  \draw (10)--(20);
+
+				  \end{tikzpicture}
+			  \end{center}
+			  The robot moves in exactly one direction each turn (and must
+			  move). The robot's goal is to maximize its score in the game after $T$ steps.
+			  The score is defined in the following way:
+			  % fine%
+			  \begin{itemize}
+				  \item If the robot's movement attempts to move it off the grid, then
+					  the robot loses a point (-1) and stays where it is.
+				  \item If the robot ends its motion on node A, it receives 10 points,
+					  and if it moves onto node B, it receives -100 points. Otherwise, it
+					  receives 0 points.  
+			  \end{itemize}
+
+			  \begin{enumerate}
+                \item Model this as a Markov decision process: define the states $S$, actions $A$,
+                    reward function $r:S\times A\mapsto \mathbb{R}$, and transition model
+                    $p(s'\given s, a)$ for $s', s\in S$ and $a\in A$.  For now, assume that the
+                    robot's actions execute perfectly: if the robot tries to move in a particular
+					direction, it always succeeds in doing so.
+
+                \item Consider a \emph{random policy} $\pi$, where in each state the robot moves
+                    uniformly at randomly in any of its available directions (including off the
+                    board). 
+                    For every position on the grid calculate the
+                    value function, $V^\pi_t: S\mapsto 
+                    \mathbb{R}$, under this policy, for $t=2, 1$ steps left to go. You can find
+                    LaTeX code for the tables in the solution template. Note that you should have 2
+                    tables, one for each time horizon. 
+                    %
+                \item Now assume that the robot plays an \emph{optimal policy}
+                    $\pi^\ast_t$ (for $t$ time steps to go). Find the optimal policy in the case of
+                    a finite time horizon of $t = 1, 2$ and give the corresponding MDP value
+                    functions $V^\ast_t: S\mapsto \mathbb{R}$, under this optimal policy. You can
+                    indicate the optimal policy for each time horizon on the corresponding
+                    $V^\ast_t$ table via arrows or words in the direction that the robot should move
+                    from that state. 
+					%
+                \item Now consider the situation where the robot does not have
+					complete control over its movement. In particular, when it
+					chooses a direction, there is a 80\% chance that it will go in that direction,
+					and a 10\% chance it will go in the two adjacent (90$^\circ$ left or 90$^\circ$
+					right) directions. Explain how this changes the elements $S$, $A$, $r$, and
+					$p(s' \given s,a)$ of the MDP model. 
+
+					Assume the robot uses the same policy $\pi^\ast_t$ from the
+					previous question (now possibly non-optimal), and write this as $\pi_t$, and
+					tie-break in favor of N, then E, then S then W.  Give the corresponding MDP
+					value functions $V^\pi_t: S\mapsto \mathbb{R}$, for this policy in this partial
+					control world, for $t=2, 1$ steps left to go. Is the policy still optimal?
+      \end{enumerate}
+    \end{problem}
+
+
+\subsection*{A solution section}
+    \textbf{Some solution}
 
     \begin{itemize}
-      \item[(a)] The distribution $p(z_t|x_0...x_t)$ will be Gaussian
-        $N(\mu_t,\sigma^2_t)$. Derive an iterative update for the mean
-        $\mu_t$ and variance $\sigma^2_t$ given the mean and variance
-        at the previous time step ($\mu_{t-1}$ and  $\sigma^2_{t-1}$).
 
-       \item[(b)] Implement this update and apply it to the observed data
-         above (do not use the hidden data to find these updates). Provide a plot of $\mu_t$ over time as well as a
-    \item Model this as a Markov decision process: define the states $S$, actions $A$, reward function $r:S\times A\mapsto \mathbb{R}$, and transition model $p(s'\given s, a)$ for $s', s\in S$ and $a\in A$.  For now, assume that the robot's actions execute perfectly: if the robot tries to move in a particular direction, it always succeeds in doing so.
+        \begin{figure}[H]
+            \centering
+            %\includegraphics[width=\textwidth,height=0.8\paperheight]{'asdffile.png'}
+            \caption{some caption}
+            \label{somelabel}
+        \end{figure}
+            
+        \item Is blah blah?
 
-    \item Consider a \emph{random policy} $\pi$, where
-in each state the robot moves uniformly at randomly in any of its available directions (including off the board). 
-      For every position on the grid calculate the
-value function, $V^\pi_t: S\mapsto 
-\mathbb{R}$, under this policy, for $t=2, 1$ steps left
-to go. You can find LaTeX code for the tables in the solution template. Note that you should have 2 tables, one for each time horizon. 
-%
-    \item Now assume that the robot plays an \emph{optimal policy}
-      $\pi^\ast_t$ (for $t$ time steps to go). Find the optimal policy in the case of a finite time horizon of $t = 1, 2$ and give the corresponding 
-MDP value functions $V^\ast_t: S\mapsto 
-\mathbb{R}$, under this
-optimal policy. You can indicate the optimal policy for each time horizon on the corresponding $V^\ast_t$ table via arrows or words in the direction that the robot should move from that state. 
-    \item Now consider the situation where the robot does not have
-      complete control over its movement. In particular, 
-when it chooses a direction, there is a 80\% chance that it will go in
-      that direction, and a 10\% chance it will go in the two adjacent
-      (90$^\circ$ left or 90$^\circ$ right) 
-directions. Explain how this changes the elements $S$, $A$, $r$, and $p(s' \given s,a)$ of the MDP model. 
-Assume the robot uses the same
- policy $\pi^\ast_t$ from the previous question (now possibly
-      non-optimal), and write this as $\pi_t$, and tie-break in favor of N, then E, then S then W.
-Give the corresponding 
-MDP value functions $V^\pi_t: S\mapsto 
-\mathbb{R}$, for this policy in this partial control world, for $t=2, 1$ steps left
-to go. Is the policy still optimal?
-  \end{itemize}
-\end{problem}
+            \begin{answer}
+            YES,  blah blah blah
+            \end{answer}
+
+        \item test 
+            asdfsf
+
+    \end{itemize}
+
+%\newpage
 %\subsection*{Solution}
 
 %  Table starter code
@@ -252,8 +385,9 @@ to go. Is the policy still optimal?
 %      State & 0
 %    \end{tabular}
 %  \end{center}
-
 \newpage
+
+
 \begin{problem}[Calibration, 1pt]
 Approximately how long did this homework take you to complete?
 \end{problem}
@@ -265,4 +399,31 @@ Approximately how long did this homework take you to complete?
     \item Collaborators:
 \end{itemize}
 
+
 \end{document}
+
+%\subsection*{A solution section}
+    %\textbf{Some solution}
+
+    %\begin{itemize}
+
+        %\begin{figure}[H]
+            %\centering
+
+            %\includegraphics[width=\textwidth,height=0.8\paperheight]{}
+            %\caption{test}
+            %\label{d-sep}
+        %\end{figure}
+            
+        %\item Is blah blah?
+
+            %\begin{answer}
+            %YES,  blah blah blah
+            %\end{answer}
+
+        %\item test 
+            %asdfsf
+
+    %\end{itemize}
+
+%\newpage
