@@ -165,8 +165,6 @@ is the center of a cluster $G$):
                 \caption{Problem 1, 2d unit ball for l1, l2, and l$\infty$ norms}
                 \label{p1}
             \end{figure}
-        \label{P3 Means}
-
         See \cref{p1}
         \end{answer}
 
@@ -810,7 +808,7 @@ In the representative images, each row indicates images from one cluster.
 For each row, the three left images are chosen as the three closest (as defined
 by the objective function) to the centroid, and the three right images are the three worst scoring images.
 
-\begin{figure}[h]
+\begin{figure}[H]
         \centering
         \includegraphics[width=\textwidth,height=0.28\paperheight]{p3_means.png}
         \caption{Problem 3, Mean images, with a bonus K=15 centroid runs.}
@@ -841,15 +839,14 @@ it never increases.
 
         For the following, we graph a run of the KMeans algorithm for K=10 clusters. The run
         converged after 24 iterations (where by converge I set it to mean that the previous and
-        current objective value did not change). Although a bit hard to see, 
-    \begin{figure}[ht]
+        current objective value did not change). 
+    \begin{figure}[H]
         \centering
         \includegraphics[width=0.5\textwidth]{p3_costvsiter.png}
         \caption{Problem 3: Verification that K-means objective function decreases as a function of
         iteration}
         \label{cost}
     \end{figure}
-    puts 'Hellow World'
 \end{answer}
 
 \end{itemize}
